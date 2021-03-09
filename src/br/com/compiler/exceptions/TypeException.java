@@ -3,7 +3,8 @@ package br.com.compiler.exceptions;
 public enum TypeException {
     INVALID_SYMBOL("InvalidSymbol"),
     INVALID_OPERATOR("InvalidOperator"),
-    NUMBER_FORMAT("NumberFormat");
+    NUMBER_FORMAT("NumberFormat"),
+    IDENTIFIER_FORMAT("IdentifierFormat"),;
 
     private String name;
 

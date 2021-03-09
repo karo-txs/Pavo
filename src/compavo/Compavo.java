@@ -19,11 +19,9 @@ public class Compavo extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
-        
-        Scene scene = new Scene(root);
-        
-        stage.setScene(scene);
+        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/compavo/FXMLDocument.fxml"));
+        Parent root = loader.load();
+        stage.setScene(new Scene(root));
         stage.show();
     }
 

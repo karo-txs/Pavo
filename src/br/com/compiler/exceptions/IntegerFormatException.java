@@ -3,11 +3,11 @@ package br.com.compiler.exceptions;
 import br.com.compiler.util.Cursor;
 import br.com.compiler.util.Printer;
 
-public class InvalidOperatorException extends PersonalizedException{
-    private TypeException type = TypeException.INVALID_OPERATOR;
+public class IntegerFormatException extends PersonalizedException{
+    private TypeException type = TypeException.NUMBER_FORMAT;
     
-    public InvalidOperatorException(String msg,Cursor cs){
-        super("Invalid Operator : "+msg);
+    public IntegerFormatException(String msg, Cursor cs){
+        super("Bad Format of Integer Number : "+msg);
         this.setType(type);
         this.generateMsg(cs);
     }

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 public class App {
     public static void main(String[] args) throws Exception {
         ArrayList<Token> tokens = new ArrayList<>();
-        String filename = "C:\\Users\\karol\\Documents\\NetBeansProjects\\Compiler\\src\\br\\com\\compiler\\arquivos\\input.isi";
+        String filename = "C:\\Users\\karol\\Documents\\NetBeansProjects\\Compavo\\src\\br\\com\\compiler\\arquivos\\input.isi";
         Scanner sc = new Scanner(filename);
         Token token;
         

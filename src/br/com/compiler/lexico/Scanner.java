@@ -1,7 +1,12 @@
 package br.com.compiler.lexico;
 
+import br.com.compiler.exceptions.FloatFormatException;
+import br.com.compiler.exceptions.IdentifierFormatException;
+import br.com.compiler.exceptions.InvalidOperatorException;
+import br.com.compiler.exceptions.IntegerFormatException;
 import br.com.compiler.exceptions.InvalidSymbolException;
 import br.com.compiler.exceptions.PersonalizedException;
+
 import br.com.compiler.util.Cursor;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -75,14 +80,14 @@ public class Scanner {
                         }
                     } else if (Rules.isRelationalOperator(currentChar)) {
                         term += currentChar;
-                        estado = 10;
+                        estado = 12;
                         if (isEOF()) {
                             token = new Token(TokenType.TK_OPERATOR_RELATIONAL, term);
                             return token;
                         }
                     } else if (Rules.isArithmeticOperator(currentChar)) {
                         term += currentChar;
-                        estado = 11;
+                        estado = 13;
                         if (isEOF()) {
                             pause = true;
                         } else {
@@ -91,10 +96,10 @@ public class Scanner {
                         }
                     } else if (Rules.isEqual(currentChar)) {
                         term += currentChar;
-                        estado = 12;
+                        estado = 14;
                         if (isEOF()) {
                             pause = true;
-                            estado = 13;
+                            estado = 15;
                         }
                     } else if (Rules.isSpecialCharacter(currentChar)) {
                         term += currentChar;
@@ -102,13 +107,21 @@ public class Scanner {
                         return token;
                     } else if (currentChar == '.') {
                         term += currentChar;
-                        token = new Token(TokenType.TK_PUNCTUATION, term);
-                        return token;
-                    } else if (currentChar == '/') {
-                        estado = 14;
+                        estado = 11;
+                        if (isEOF()) {
+                            exception = new InvalidSymbolException(term, cs);
+                            exception.throwException();
+                        }
+                    } else if (Rules.isBar(currentChar)) {
+                        estado = 16;
+                        if (isEOF()) {
+                            term += currentChar;
+                            pause = true;
+                            estado = 13;
+                        }
                     } else {
                         term += currentChar;
-                        exception = new InvalidSymbolException("Unrecognized SYMBOL: " + term, cs);
+                        exception = new InvalidSymbolException(term, cs);
                         exception.throwException();
                     }
                     break;
@@ -124,10 +137,16 @@ public class Scanner {
                             estado = 2;
                         }
                     } else {
-                        pause = true;
-                        back();
-                        cs.moveCursorBack(currentChar, antColCursor);
-                        estado = 2;
+                        if (Rules.isUnrecognizableSymbol(currentChar)) {
+                            term += currentChar;
+                            exception = new IdentifierFormatException(term, cs);
+                            exception.throwException();
+                        } else {
+                            pause = true;
+                            back();
+                            cs.moveCursorBack(currentChar, antColCursor);
+                            estado = 2;
+                        }
                     }
                     break;
                 case 2:
@@ -153,7 +172,7 @@ public class Scanner {
                         estado = 5;
                         if (isEOF()) {
                             term += currentChar;
-                            exception = new InvalidSymbolException("Bad Format of Integer Number : " + term, cs);
+                            exception = new FloatFormatException(term, cs);
                             exception.throwException();
                         }
                     } else if (!Rules.isChar(currentChar)) {
@@ -162,15 +181,24 @@ public class Scanner {
                     } else {
                         term += currentChar;
                         estado = 4;
+                        if (isEOF()) {
+                            pause = true;
+                        }
                     }
                     break;
                 case 4:
                     if (!Rules.isChar(currentChar)) {
-                        exception = new InvalidSymbolException("Bad Format of Integer Number : " + term, cs);
+                        exception = new IntegerFormatException(term, cs);
+                        exception.throwException();
+                    } else if (isEOF()) {
+                        if (Rules.isChar(currentChar)) {
+                            term += currentChar;
+                        }
+                        exception = new IntegerFormatException(term, cs);
                         exception.throwException();
                     } else {
-                        cs.moveCursorBack(currentChar, antColCursor);
                         term += currentChar;
+                        cs.moveCursorBack(currentChar, antColCursor);
                         estado = 4;
                     }
                     break;
@@ -180,13 +208,13 @@ public class Scanner {
                         estado = 8;
                         if (isEOF()) {
                             pause = true;
-                            estado = 9;
+                            estado = 10;
                         }
                     } else if (Rules.isChar(currentChar)) {
                         term += currentChar;
                         estado = 6;
                         if (isEOF()) {
-                            exception = new InvalidSymbolException("Bad Format of Float Number : " + term, cs);
+                            exception = new FloatFormatException(term, cs);
                             exception.throwException();
                         }
                     } else {
@@ -199,11 +227,11 @@ public class Scanner {
                         term += currentChar;
                         estado = 6;
                         if (isEOF()) {
-                            exception = new InvalidSymbolException("Bad Format of Float Number : " + term, cs);
+                            exception = new FloatFormatException(term, cs);
                             exception.throwException();
                         }
                     } else {
-                        exception = new InvalidSymbolException("Bad Format of Float Number : " + term, cs);
+                        exception = new FloatFormatException(term, cs);
                         exception.throwException();
                     }
                     break;
@@ -220,26 +248,57 @@ public class Scanner {
                         estado = 8;
                         if (isEOF()) {
                             pause = true;
-                            estado = 9;
+                            estado = 10;
                         }
                     } else if (!Rules.isChar(currentChar)) {
                         back();
                         cs.moveCursorBack(currentChar, antColCursor);
                         pause = true;
-                        estado = 9;
+                        estado = 10;
                     } else {
+                        if (isEOF()) {
+                            pause = true;
+                        }
                         term += currentChar;
-                        exception = new InvalidSymbolException("Bad Format of Float Number : " + term, cs);
-                        exception.throwException();
+                        estado = 9;
                     }
                     break;
                 case 9:
+                    if (isEOF() && Rules.isChar(currentChar)) {
+                        term += currentChar;
+                    }
+                    if (!Rules.isChar(currentChar) || isEOF()) {
+                        exception = new FloatFormatException(term, cs);
+                        exception.throwException();
+                    } else {
+                        term += currentChar;
+                        cs.moveCursorBack(currentChar, antColCursor);
+                        estado = 9;
+                    }
+                    break;
+                case 10:
                     token = new Token(TokenType.TK_FLOAT, term);
                     return token;
+                case 11:
+                    if (!Rules.isChar(currentChar) && !Rules.isDigit(currentChar)) {
+                        exception = new FloatFormatException(term, cs);
+                        exception.throwException();
+                    } else if (isEOF()) {
+                        if (Rules.isChar(currentChar) || Rules.isDigit(currentChar)) {
+                            term += currentChar;
+                        }
+                        exception = new FloatFormatException(term, cs);
+                        exception.throwException();
+                    } else {
+                        term += currentChar;
+                        cs.moveCursorBack(currentChar, antColCursor);
+                        estado = 11;
+                    }
+                    break;
                 /*
                   OPERADORES RELACIONAIS
                  */
-                case 10:
+                case 12:
                     if (Rules.isEqual(currentChar)) {
                         term += currentChar;
                     } else {
@@ -251,26 +310,26 @@ public class Scanner {
                 /*
                   OPERADORES ARITMETICOS
                  */
-                case 11:
+                case 13:
                     token = new Token(TokenType.TK_OPERATOR_ARITHMETIC, term);
                     return token;
                 /*
                   IGUAL COMO OPERADOR RELACIONAL OU ARITMETICO
                  */
-                case 12:
+                case 14:
                     if (Rules.isEqual(currentChar)) {
                         term += currentChar;
-                        estado = 13;
+                        estado = 15;
                         if (isEOF()) {
                             token = new Token(TokenType.TK_OPERATOR_RELATIONAL, term);
                             return token;
                         }
                     } else {
                         pause = true;
-                        estado = 11;
+                        estado = 13;
                     }
                     break;
-                case 13:
+                case 15:
                     if (!Rules.isEqual(currentChar)) {
                         back();
                         cs.moveCursorBack(currentChar, antColCursor);
@@ -278,16 +337,16 @@ public class Scanner {
                         return token;
                     } else if (Rules.isEqual(currentChar) && isEOF()) {
                         term += currentChar;
-                        exception = new InvalidSymbolException("Invalid Operator : " + term, cs);
+                        exception = new InvalidOperatorException(term, cs);
                         exception.throwException();
                     }
                     break;
                 /*
                   CONSUMIR COMENTARIOS (// exemplo de comentario consumido) 
                  */
-                case 14:
-                    if (currentChar == '/') {
-                        estado = 15;
+                case 16:
+                    if (Rules.isBar(currentChar)) {
+                        estado = 17;
                     } else {
                         term += '/';
                         back();
@@ -296,11 +355,11 @@ public class Scanner {
                         return token;
                     }
                     break;
-                case 15:
+                case 17:
                     if (currentChar == '\n') {
                         estado = 0;
                     } else {
-                        estado = 15;
+                        estado = 17;
                     }
                     break;
             }

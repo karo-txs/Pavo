@@ -3,11 +3,11 @@ package br.com.compiler.exceptions;
 import br.com.compiler.util.Cursor;
 import br.com.compiler.util.Printer;
 
-public class NumberFormatException extends PersonalizedException{
-    private TypeException type = TypeException.INVALID_SYMBOL;
+public class FloatFormatException extends PersonalizedException{
+    private TypeException type = TypeException.NUMBER_FORMAT;
     
-    public NumberFormatException(String msg, Cursor cs){
-        super(msg);
+    public FloatFormatException(String msg, Cursor cs){
+        super("Bad Format of Float Number : "+msg);
         this.setType(type);
         this.generateMsg(cs);
     }

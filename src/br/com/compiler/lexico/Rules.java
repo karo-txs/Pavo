@@ -31,9 +31,13 @@ public class Rules {
         return c=='=';
     }
     
+    public static boolean isBar(char c){
+        return c == '/';
+    }
+    
     public static boolean isSpecialCharacter(char c){
-        return c==')' || c=='(' || c=='{' || c=='}' || c=='[' || c==']'|| c==',' || c==';' || c=='#' || c=='"' || c == '%'
-                || c=='&';
+        return c==')' || c=='(' || c=='{' || c=='}' || c=='[' || c==']'|| c==',' || c==';' 
+                || c=='#' || c=='"' ||c=='\'' || c == '%' || c=='&';
     }
 
     public static boolean isSpace(char c){
@@ -44,8 +48,14 @@ public class Rules {
         return c=='\n';
     }
     
+    public static boolean isUnrecognizableSymbol(char c){
+        return !isEqual(c) && !isSpace(c) && !isSpecialCharacter(c) && !isArithmeticOperator(c) && !isChar(c) &&
+               !isDigit(c) && !isJumpLine(c) && !isRelationalOperator(c) && !isBar(c);
+    } 
+    
     public static boolean isReserved(String s){
-        String filename = "C:\\Users\\karol\\Documents\\NetBeansProjects\\Compiler\\src\\br\\com\\compiler\\arquivos\\reservedWords.txt";
+        String filename;
+        filename = "C:\\Users\\karol\\Documents\\NetBeansProjects\\Compavo\\src\\br\\com\\compiler\\arquivos\\reservedWords.txt";
         
         Path path = Paths.get(filename); 
         List<String> palavras = null;
@@ -57,8 +67,8 @@ public class Rules {
         
         Map<Integer, String> resultsMap = new HashMap<>();
         int key = 0;
-        for (String l : palavras) {
-            resultsMap.put(key, l);
+        for (String p : palavras) {
+            resultsMap.put(key, p);
             key++;
         }
         return resultsMap.containsValue(s);
