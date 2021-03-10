@@ -7,8 +7,9 @@ public enum TokenType{
     TK_OPERATOR_RELATIONAL("Operator_Relational", 3),
     TK_OPERATOR_ARITHMETIC("Operator_Arithmetic", 4),
     TK_CHARACTER_SPECIAL("Character_Special", 6),
-    TK_PUNCTUATION("Punctuation",7),
-    TK_RESERVED("Reserved_Word",8);
+    TK_KEYWORD("Key_Word",7),
+    TK_STRING("String",8),
+    TK_CHAR("Char",9);
 
     private String text;
     private int id;

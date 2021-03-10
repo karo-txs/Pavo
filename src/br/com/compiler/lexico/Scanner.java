@@ -1,11 +1,13 @@
 package br.com.compiler.lexico;
 
-import br.com.compiler.exceptions.FloatFormatException;
+import br.com.compiler.exceptions.EmptyCharException;
+import br.com.compiler.exceptions.NumberFormatException;
 import br.com.compiler.exceptions.IdentifierFormatException;
 import br.com.compiler.exceptions.InvalidOperatorException;
-import br.com.compiler.exceptions.IntegerFormatException;
 import br.com.compiler.exceptions.InvalidSymbolException;
 import br.com.compiler.exceptions.PersonalizedException;
+import br.com.compiler.exceptions.TypeException;
+import br.com.compiler.exceptions.UnclosedException;
 
 import br.com.compiler.util.Cursor;
 import java.io.IOException;
@@ -17,7 +19,7 @@ import java.nio.file.Paths;
 public class Scanner {
 
     private char[] content;
-    private int estado;
+    private int state;
     private int pos;
     private static Cursor cs;
 
@@ -36,12 +38,11 @@ public class Scanner {
     public Token nextToken() {
 
         char currentChar = 0;
-        estado = 0;
+        state = 0;
         int antColCursor = 0;
         String term = "";
         Token token;
         boolean pause = false;
-        PersonalizedException exception;
 
         if (isEOF()) {
             return null;
@@ -54,40 +55,39 @@ public class Scanner {
                 antColCursor = cs.getColun() - 1;
             }
 
-            switch (estado) {
+            switch (state) {
                 /*
                   ESTADO INICIAL
                  */
                 case 0:
                     if (Rules.isSpace(currentChar)) {
-                        estado = 0;
+                        state = 0;
                         if (isEOF()) {
                             return null;
                         }
-                    } else if (Rules.isChar(currentChar) || currentChar == '_') {
+                    } else if (Rules.isChar(currentChar) || Rules.isUnderline(currentChar)) {
                         term += currentChar;
-                        estado = 1;
+                        state = 1;
                         if (isEOF()) {
                             pause = true;
-                            estado = 2;
+                            state = 2;
                         }
                     } else if (Rules.isDigit(currentChar)) {
                         term += currentChar;
-                        estado = 3;
+                        state = 3;
                         if (isEOF()) {
                             pause = true;
-                            estado = 7;
+                            state = 7;
                         }
                     } else if (Rules.isRelationalOperator(currentChar)) {
                         term += currentChar;
-                        estado = 12;
+                        state = 12;
                         if (isEOF()) {
-                            token = new Token(TokenType.TK_OPERATOR_RELATIONAL, term);
-                            return token;
+                            return new Token(TokenType.TK_OPERATOR_RELATIONAL, term);
                         }
                     } else if (Rules.isArithmeticOperator(currentChar)) {
                         term += currentChar;
-                        estado = 13;
+                        state = 13;
                         if (isEOF()) {
                             pause = true;
                         } else {
@@ -96,62 +96,70 @@ public class Scanner {
                         }
                     } else if (Rules.isEqual(currentChar)) {
                         term += currentChar;
-                        estado = 14;
+                        state = 14;
                         if (isEOF()) {
                             pause = true;
-                            estado = 15;
+                            state = 15;
                         }
                     } else if (Rules.isSpecialCharacter(currentChar)) {
                         term += currentChar;
-                        token = new Token(TokenType.TK_CHARACTER_SPECIAL, term);
-                        return token;
-                    } else if (currentChar == '.') {
+                        return new Token(TokenType.TK_CHARACTER_SPECIAL, term);
+                    } else if (Rules.isPunctuation(currentChar)) {
                         term += currentChar;
-                        estado = 11;
+                        state = 11;
                         if (isEOF()) {
-                            exception = new InvalidSymbolException(term, cs);
-                            exception.throwException();
+                            throwException(TypeException.INVALID_SYMBOL,term);
                         }
                     } else if (Rules.isBar(currentChar)) {
-                        estado = 16;
+                        state = 16;
                         if (isEOF()) {
                             term += currentChar;
                             pause = true;
-                            estado = 13;
+                            state = 13;
                         }
-                    } else {
+                    } else if (Rules.isDoubleQuotes(currentChar)){
                         term += currentChar;
-                        exception = new InvalidSymbolException(term, cs);
-                        exception.throwException();
+                        state = 18;
+                        if(isEOF()){
+                            throwException(TypeException.UNCLOSED,"String Literal: "+term);
+                        }
+                    } else if(Rules.isSingleQuotes(currentChar)){
+                        term += currentChar;
+                        state = 19;
+                        if(isEOF()){
+                            throwException(TypeException.UNCLOSED,"Character Literal: "+term);
+                        }
+                    }else {
+                        term += currentChar;
+                        throwException(TypeException.INVALID_SYMBOL, term);
                     }
                     break;
                 /*
                   IDENTIFICADOR 
                  */
                 case 1:
-                    if (Rules.isChar(currentChar) || Rules.isDigit(currentChar) || currentChar == '_') {
+                    if (Rules.isChar(currentChar) || Rules.isDigit(currentChar) || Rules.isUnderline(currentChar)) {
                         term += currentChar;
-                        estado = 1;
+                        state = 1;
                         if (isEOF()) {
                             pause = true;
-                            estado = 2;
+                            state = 2;
                         }
                     } else {
                         if (Rules.isUnrecognizableSymbol(currentChar)) {
                             term += currentChar;
-                            exception = new IdentifierFormatException(term, cs);
-                            exception.throwException();
+                            throwException(TypeException.IDENTIFIER_FORMAT, term);
                         } else {
                             pause = true;
                             back();
                             cs.moveCursorBack(currentChar, antColCursor);
-                            estado = 2;
+                            state = 2;
                         }
                     }
                     break;
                 case 2:
                     if (Rules.isReserved(term)) {
-                        token = new Token(TokenType.TK_RESERVED, term);
+                        token = new Token(TokenType.TK_KEYWORD, term);
                     } else {
                         token = new Token(TokenType.TK_IDENTIFIER, term);
                     }
@@ -162,25 +170,24 @@ public class Scanner {
                 case 3:
                     if (Rules.isDigit(currentChar)) {
                         term += currentChar;
-                        estado = 3;
+                        state = 3;
                         if (isEOF()) {
                             pause = true;
-                            estado = 7;
+                            state = 7;
                         }
-                    } else if (currentChar == '.') {
+                    } else if (Rules.isPunctuation(currentChar)) {
                         term += currentChar;
-                        estado = 5;
+                        state = 5;
                         if (isEOF()) {
                             term += currentChar;
-                            exception = new FloatFormatException(term, cs);
-                            exception.throwException();
+                            throwException(TypeException.NUMBER_FORMAT, "Float Number :"+term);
                         }
                     } else if (!Rules.isChar(currentChar)) {
                         pause = true;
-                        estado = 7;
+                        state = 7;
                     } else {
                         term += currentChar;
-                        estado = 4;
+                        state = 4;
                         if (isEOF()) {
                             pause = true;
                         }
@@ -188,51 +195,46 @@ public class Scanner {
                     break;
                 case 4:
                     if (!Rules.isChar(currentChar)) {
-                        exception = new IntegerFormatException(term, cs);
-                        exception.throwException();
+                        throwException(TypeException.NUMBER_FORMAT, "Integer Number : "+term);
                     } else if (isEOF()) {
                         if (Rules.isChar(currentChar)) {
                             term += currentChar;
                         }
-                        exception = new IntegerFormatException(term, cs);
-                        exception.throwException();
+                        throwException(TypeException.NUMBER_FORMAT, "Integer Number : "+term);
                     } else {
                         term += currentChar;
                         cs.moveCursorBack(currentChar, antColCursor);
-                        estado = 4;
+                        state = 4;
                     }
                     break;
                 case 5:
                     if (Rules.isDigit(currentChar)) {
                         term += currentChar;
-                        estado = 8;
+                        state = 8;
                         if (isEOF()) {
                             pause = true;
-                            estado = 10;
+                            state = 10;
                         }
                     } else if (Rules.isChar(currentChar)) {
                         term += currentChar;
-                        estado = 6;
+                        state = 6;
                         if (isEOF()) {
-                            exception = new FloatFormatException(term, cs);
-                            exception.throwException();
+                            throwException(TypeException.NUMBER_FORMAT, "Float Number : "+term);
                         }
                     } else {
                         pause = true;
-                        estado = 7;
+                        state = 7;
                     }
                     break;
                 case 6:
                     if (Rules.isChar(currentChar)) {
                         term += currentChar;
-                        estado = 6;
+                        state = 6;
                         if (isEOF()) {
-                            exception = new FloatFormatException(term, cs);
-                            exception.throwException();
+                            throwException(TypeException.NUMBER_FORMAT, "Float Number : "+term);
                         }
                     } else {
-                        exception = new FloatFormatException(term, cs);
-                        exception.throwException();
+                        throwException(TypeException.NUMBER_FORMAT, "Float Number : "+term);
                     }
                     break;
                 case 7:
@@ -245,22 +247,22 @@ public class Scanner {
                 case 8:
                     if (Rules.isDigit(currentChar)) {
                         term += currentChar;
-                        estado = 8;
+                        state = 8;
                         if (isEOF()) {
                             pause = true;
-                            estado = 10;
+                            state = 10;
                         }
                     } else if (!Rules.isChar(currentChar)) {
                         back();
                         cs.moveCursorBack(currentChar, antColCursor);
                         pause = true;
-                        estado = 10;
+                        state = 10;
                     } else {
                         if (isEOF()) {
                             pause = true;
                         }
                         term += currentChar;
-                        estado = 9;
+                        state = 9;
                     }
                     break;
                 case 9:
@@ -268,31 +270,27 @@ public class Scanner {
                         term += currentChar;
                     }
                     if (!Rules.isChar(currentChar) || isEOF()) {
-                        exception = new FloatFormatException(term, cs);
-                        exception.throwException();
+                        throwException(TypeException.NUMBER_FORMAT, "Float Number : "+term);
                     } else {
                         term += currentChar;
                         cs.moveCursorBack(currentChar, antColCursor);
-                        estado = 9;
+                        state = 9;
                     }
                     break;
                 case 10:
-                    token = new Token(TokenType.TK_FLOAT, term);
-                    return token;
+                    return new Token(TokenType.TK_FLOAT, term);
                 case 11:
                     if (!Rules.isChar(currentChar) && !Rules.isDigit(currentChar)) {
-                        exception = new FloatFormatException(term, cs);
-                        exception.throwException();
+                        throwException(TypeException.NUMBER_FORMAT, "Float Number : "+term);
                     } else if (isEOF()) {
                         if (Rules.isChar(currentChar) || Rules.isDigit(currentChar)) {
                             term += currentChar;
                         }
-                        exception = new FloatFormatException(term, cs);
-                        exception.throwException();
+                        throwException(TypeException.NUMBER_FORMAT, "Float Number : "+term);
                     } else {
                         term += currentChar;
                         cs.moveCursorBack(currentChar, antColCursor);
-                        estado = 11;
+                        state = 11;
                     }
                     break;
                 /*
@@ -305,61 +303,92 @@ public class Scanner {
                         back();
                         cs.moveCursorBack(currentChar, antColCursor);
                     }
-                    token = new Token(TokenType.TK_OPERATOR_RELATIONAL, term);
-                    return token;
+                    return new Token(TokenType.TK_OPERATOR_RELATIONAL, term);
                 /*
                   OPERADORES ARITMETICOS
                  */
                 case 13:
-                    token = new Token(TokenType.TK_OPERATOR_ARITHMETIC, term);
-                    return token;
+                    return  new Token(TokenType.TK_OPERATOR_ARITHMETIC, term);
                 /*
                   IGUAL COMO OPERADOR RELACIONAL OU ARITMETICO
                  */
                 case 14:
                     if (Rules.isEqual(currentChar)) {
                         term += currentChar;
-                        estado = 15;
+                        state = 15;
                         if (isEOF()) {
-                            token = new Token(TokenType.TK_OPERATOR_RELATIONAL, term);
-                            return token;
+                            return new Token(TokenType.TK_OPERATOR_RELATIONAL, term);
                         }
                     } else {
                         pause = true;
-                        estado = 13;
+                        state = 13;
                     }
                     break;
                 case 15:
                     if (!Rules.isEqual(currentChar)) {
                         back();
                         cs.moveCursorBack(currentChar, antColCursor);
-                        token = new Token(TokenType.TK_OPERATOR_RELATIONAL, term);
-                        return token;
+                        return new Token(TokenType.TK_OPERATOR_RELATIONAL, term);
                     } else if (Rules.isEqual(currentChar) && isEOF()) {
                         term += currentChar;
-                        exception = new InvalidOperatorException(term, cs);
-                        exception.throwException();
+                        throwException(TypeException.INVALID_OPERATOR, term);
                     }
                     break;
                 /*
-                  CONSUMIR COMENTARIOS (// exemplo de comentario consumido) 
-                 */
+                  CONSUMIR COMENTARIOS  // exemplo de comentario consumido 
+                */
                 case 16:
                     if (Rules.isBar(currentChar)) {
-                        estado = 17;
+                        state = 17;
                     } else {
                         term += '/';
                         back();
                         cs.moveCursorBack(currentChar, antColCursor);
-                        token = new Token(TokenType.TK_OPERATOR_ARITHMETIC, term);
-                        return token;
+                        return new Token(TokenType.TK_OPERATOR_ARITHMETIC, term);
                     }
                     break;
                 case 17:
                     if (currentChar == '\n') {
-                        estado = 0;
+                        state = 0;
                     } else {
-                        estado = 17;
+                        state = 17;
+                        if(isEOF()){
+                            return null;
+                        }
+                    }
+                    break;
+                /*
+                  STRING
+                */
+                case 18:
+                    term += currentChar;
+                    if(Rules.isDoubleQuotes(currentChar)){
+                        return new Token(TokenType.TK_STRING, term);
+                    }else if(isEOF()){
+                        throwException(TypeException.UNCLOSED, "String Literal: "+term);
+                    }else{
+                        state = 18;
+                    }
+                    break;
+                /*
+                  CHAR
+                */
+                case 19:
+                    term += currentChar;
+                    if(Rules.isSingleQuotes(currentChar)){
+                        throwException(TypeException.EMPTY_CHAR, term);
+                    }else if(isEOF()){
+                         throwException(TypeException.UNCLOSED, "Character Literal: "+term);
+                    }else{
+                        state = 20;
+                    }
+                    break;
+                case 20:
+                    term += currentChar;
+                    if(Rules.isSingleQuotes(currentChar)){
+                        return new Token(TokenType.TK_CHAR,term);
+                    }else{
+                        throwException(TypeException.UNCLOSED, "Character Literal: "+term);
                     }
                     break;
             }
@@ -377,4 +406,30 @@ public class Scanner {
     private void back() {
         pos--;
     }
+    
+    private void throwException(TypeException type,String msg){
+        PersonalizedException ex = null;
+        
+        switch(type){
+            case NUMBER_FORMAT:
+                ex = new NumberFormatException(msg, cs);
+                break;
+            case IDENTIFIER_FORMAT:
+                ex = new IdentifierFormatException(msg, cs);
+                break;
+            case EMPTY_CHAR:
+                ex = new EmptyCharException(msg, cs);
+                break;
+            case INVALID_OPERATOR:
+                ex = new InvalidOperatorException(msg, cs);
+                break;
+            case INVALID_SYMBOL:
+                ex = new InvalidSymbolException(msg, cs);
+                break;
+            case UNCLOSED:
+                ex = new UnclosedException(msg, cs);
+                break;
+        }
+        ex.throwException();
+    } 
 }

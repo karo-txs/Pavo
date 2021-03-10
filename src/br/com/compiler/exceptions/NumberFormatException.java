@@ -3,11 +3,11 @@ package br.com.compiler.exceptions;
 import br.com.compiler.util.Cursor;
 import br.com.compiler.util.Printer;
 
-public class IntegerFormatException extends PersonalizedException{
+public class NumberFormatException extends PersonalizedException{
     private TypeException type = TypeException.NUMBER_FORMAT;
     
-    public IntegerFormatException(String msg, Cursor cs){
-        super("Bad Format of Integer Number : "+msg);
+    public NumberFormatException(String msg, Cursor cs){
+        super("Bad Format of "+msg);
         this.setType(type);
         this.generateMsg(cs);
     }

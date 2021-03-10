@@ -12,11 +12,11 @@ import java.util.logging.Logger;
 
 public class Rules {
     public static boolean isDigit(char c){
-        return c>='0'&&c<='9';
+        return c>='0' && c<='9';
     }
 
     public static boolean isChar(char c){
-        return (c>='a'&&c<='z') || (c>='A' && c<='Z');
+        return (c>='a' && c<='z') || (c>='A' && c<='Z');
     }
 
     public static boolean isRelationalOperator(char c){
@@ -35,9 +35,25 @@ public class Rules {
         return c == '/';
     }
     
+    public static boolean isSingleQuotes(char c){
+        return c == '\'';
+    }
+    
+    public static boolean isDoubleQuotes(char c){
+        return c == '"';
+    }
+    
+    public static boolean isUnderline(char c){
+        return c == '_';
+    }
+    
+    public static boolean isPunctuation(char c){
+        return c == '.';
+    }
+    
     public static boolean isSpecialCharacter(char c){
         return c==')' || c=='(' || c=='{' || c=='}' || c=='[' || c==']'|| c==',' || c==';' 
-                || c=='#' || c=='"' ||c=='\'' || c == '%' || c=='&';
+                || c=='#' || c == '%';
     }
 
     public static boolean isSpace(char c){
@@ -50,7 +66,7 @@ public class Rules {
     
     public static boolean isUnrecognizableSymbol(char c){
         return !isEqual(c) && !isSpace(c) && !isSpecialCharacter(c) && !isArithmeticOperator(c) && !isChar(c) &&
-               !isDigit(c) && !isJumpLine(c) && !isRelationalOperator(c) && !isBar(c);
+               !isDigit(c) && !isRelationalOperator(c) && !isBar(c) && !isSingleQuotes(c) && !isDoubleQuotes(c);
     } 
     
     public static boolean isReserved(String s){
