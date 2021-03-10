@@ -9,7 +9,9 @@ public enum TokenType{
     TK_CHARACTER_SPECIAL("Character_Special", 6),
     TK_KEYWORD("Key_Word",7),
     TK_STRING("String",8),
-    TK_CHAR("Char",9);
+    TK_CHAR("Char",9),
+    TK_PUNCTUATION("Punctuation",10)
+    ;
 
     private String text;
     private int id;
@@ -22,6 +24,7 @@ public enum TokenType{
     public String getText(){
         return this.text;
     }
+    
     public int getId(){
         return this.id;
     }

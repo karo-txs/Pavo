@@ -52,6 +52,7 @@ public enum Color {
             case 7: return CYAN.getCod(); 
             case 8: return WHITE.getCod();
             case 9: return GREEN.getCod();
+            case 10: return YELLOW.getCod();
             default: return null;
         }
     }

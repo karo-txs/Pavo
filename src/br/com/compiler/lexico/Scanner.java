@@ -129,7 +129,11 @@ public class Scanner {
                         if(isEOF()){
                             throwException(TypeException.UNCLOSED,"Character Literal: "+term);
                         }
-                    }else {
+                    } else if(Rules.isPunctuation(currentChar)){
+                        term += currentChar;
+                        return new Token(TokenType.TK_PUNCTUATION,term);
+                    }
+                    else {
                         term += currentChar;
                         throwException(TypeException.INVALID_SYMBOL, term);
                     }
