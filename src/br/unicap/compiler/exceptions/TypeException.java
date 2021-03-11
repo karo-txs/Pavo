@@ -1,4 +1,4 @@
-package br.com.compiler.exceptions;
+package br.unicap.compiler.exceptions;
 
 public enum TypeException {
     INVALID_SYMBOL("InvalidSymbol"),

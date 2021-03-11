@@ -1,4 +1,4 @@
-package br.com.compiler.lexico;
+package br.unicap.compiler.lexicon;
 
 public enum TokenType{
     TK_IDENTIFIER("Identifier", 0), 

@@ -1,6 +1,6 @@
-package br.com.compiler.exceptions;
+package br.unicap.compiler.exceptions;
 
-import br.com.compiler.util.Cursor;
+import br.unicap.compiler.util.Cursor;
 
 public abstract class PersonalizedException {
     private String msg;
@@ -24,5 +24,7 @@ public abstract class PersonalizedException {
         this.type = type;
     }
     
-    public abstract void throwException();
+    public String throwException(){
+        return this.getMsg();
+    }
 }

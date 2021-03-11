@@ -1,7 +1,6 @@
-package br.com.compiler.app;
-import br.com.compiler.lexico.Scanner;
-import br.com.compiler.lexico.Token;
-import br.com.compiler.util.Printer;
+package br.unicap.compiler.app;
+import br.unicap.compiler.lexicon.Scanner;
+import br.unicap.compiler.lexicon.Token;
 import java.util.ArrayList;
 
 public class App {
@@ -17,7 +16,7 @@ public class App {
                 tokens.add(token);
             }
         }while(token!=null);
-        Printer.printTable(tokens);
+        //Printer.printTable(tokens);
     
     }
 }
