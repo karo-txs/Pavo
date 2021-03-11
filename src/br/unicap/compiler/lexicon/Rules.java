@@ -1,16 +1,15 @@
 package br.unicap.compiler.lexicon;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Rules {
+    
+    private static final String[] keyWords = {"asm","auto","break","case","char","const","continue","default","do",
+                                       "double","else","enum","extern","float","for","goto","if","int","long",
+                                       "main","register","return","short","signed","sizeof","static","struct",
+                                       "switch","typedef","union","unsigned","void","volatile","while"};
+    
     public static boolean isDigit(char c){
         return c>='0' && c<='9';
     }
@@ -70,21 +69,9 @@ public class Rules {
     } 
     
     public static boolean isReserved(String s){
-        String filename;
-        //filename = "C:\\Users\\karol\\Documents\\NetBeansProjects\\Compavo\\src\\br\\com\\compiler\\arquivos\\reservedWords.txt";
-        filename = "C:\\Users\\Luiz\\Documents\\NetBeansProjects\\Compiler\\src\\br\\unicap\\compiler\\files\\keyWords.txt";
-        
-        Path path = Paths.get(filename); 
-        List<String> palavras = null;
-        try {
-            palavras = Files.readAllLines(path);
-        } catch (IOException ex) {
-            Logger.getLogger(Rules.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
         Map<Integer, String> resultsMap = new HashMap<>();
         int key = 0;
-        for (String p : palavras) {
+        for (String p : keyWords) {
             resultsMap.put(key, p);
             key++;
         }

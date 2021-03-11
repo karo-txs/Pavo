@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 
@@ -18,6 +19,8 @@ public class Compiler extends Application {
         stage.getScene().getStylesheets().add(getClass()
                 .getResource("/br/unicap/compiler/view/css/classic.css")
                 .toExternalForm());
+        Image icon = new Image(getClass().getResourceAsStream("/br/unicap/compiler/view/images/peacock.png"), 32, 32,false,false);
+        stage.getIcons().add(icon);
         stage.show();
     }
 

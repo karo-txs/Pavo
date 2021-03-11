@@ -107,7 +107,7 @@ public class Scanner {
                         state = 14;
                         if (isEOF()) {
                             pause = true;
-                            state = 15;
+                            state = 13;
                         }
                     } else if (Rules.isSpecialCharacter(currentChar)) {
                         term += currentChar;
@@ -116,7 +116,7 @@ public class Scanner {
                         term += currentChar;
                         state = 11;
                         if (isEOF()) {
-                            exception =throwException(TypeException.INVALID_SYMBOL, term);
+                            exception = throwException(TypeException.INVALID_SYMBOL, term);
                             return null;
                         }
                     } else if (Rules.isBar(currentChar)) {
@@ -130,14 +130,14 @@ public class Scanner {
                         term += currentChar;
                         state = 18;
                         if (isEOF()) {
-                            exception =throwException(TypeException.UNCLOSED, "String Literal: " + term);
+                            exception = throwException(TypeException.UNCLOSED, "String Literal: " + term);
                             return null;
                         }
                     } else if (Rules.isSingleQuotes(currentChar)) {
                         term += currentChar;
                         state = 19;
                         if (isEOF()) {
-                            exception =throwException(TypeException.UNCLOSED, "Character Literal: " + term);
+                            exception = throwException(TypeException.UNCLOSED, "Character Literal: " + term);
                             return null;
                         }
                     } else if (Rules.isPunctuation(currentChar)) {
@@ -145,7 +145,7 @@ public class Scanner {
                         return new Token(TokenType.TK_PUNCTUATION, term);
                     } else {
                         term += currentChar;
-                        exception =throwException(TypeException.INVALID_SYMBOL, term);
+                        exception = throwException(TypeException.INVALID_SYMBOL, term);
                         return null;
                     }
                     break;
@@ -196,7 +196,7 @@ public class Scanner {
                         state = 5;
                         if (isEOF()) {
                             term += currentChar;
-                            exception =throwException(TypeException.NUMBER_FORMAT, "Float Number :" + term);
+                            exception = throwException(TypeException.NUMBER_FORMAT, "Float Number :" + term);
                             return null;
                         }
                     } else if (!Rules.isChar(currentChar)) {
@@ -212,13 +212,13 @@ public class Scanner {
                     break;
                 case 4:
                     if (!Rules.isChar(currentChar)) {
-                        exception =throwException(TypeException.NUMBER_FORMAT, "Integer Number : " + term);
+                        exception = throwException(TypeException.NUMBER_FORMAT, "Integer Number : " + term);
                         return null;
                     } else if (isEOF()) {
                         if (Rules.isChar(currentChar)) {
                             term += currentChar;
                         }
-                        exception =throwException(TypeException.NUMBER_FORMAT, "Integer Number : " + term);
+                        exception = throwException(TypeException.NUMBER_FORMAT, "Integer Number : " + term);
                         return null;
                     } else {
                         term += currentChar;
@@ -345,6 +345,10 @@ public class Scanner {
                             return new Token(TokenType.TK_OPERATOR_RELATIONAL, term);
                         }
                     } else {
+                        if (isEOF()) {
+                            back();
+                            cs.moveCursorBack(currentChar, antColCursor);
+                        }
                         pause = true;
                         state = 13;
                     }
@@ -435,8 +439,8 @@ public class Scanner {
     private void back() {
         pos--;
     }
-    
-    public String getException(){
+
+    public String getException() {
         return this.exception;
     }
 
