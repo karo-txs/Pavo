@@ -16,8 +16,6 @@ public class App {
                 tokens.add(token);
             }
         }while(token!=null);
-        //Printer.printTable(tokens);
-    
     }
 }
 
