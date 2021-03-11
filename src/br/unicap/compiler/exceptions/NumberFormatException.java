@@ -1,7 +1,6 @@
-package br.com.compiler.exceptions;
+package br.unicap.compiler.exceptions;
 
-import br.com.compiler.util.Cursor;
-import br.com.compiler.util.Printer;
+import br.unicap.compiler.util.Cursor;
 
 public class NumberFormatException extends PersonalizedException{
     private TypeException type = TypeException.NUMBER_FORMAT;
@@ -10,11 +9,5 @@ public class NumberFormatException extends PersonalizedException{
         super("Bad Format of "+msg);
         this.setType(type);
         this.generateMsg(cs);
-    }
-    
-    @Override
-    public void throwException(){
-        System.out.println(Printer.colorMsg(this.getMsg(), 'r'));
-        System.exit(0);
     }
 }

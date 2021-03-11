@@ -1,4 +1,4 @@
-package br.com.compiler.util;
+package br.unicap.compiler.util;
 
 public class Cursor {
     private int line;

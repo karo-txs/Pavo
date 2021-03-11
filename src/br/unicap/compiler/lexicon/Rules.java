@@ -1,4 +1,4 @@
-package br.com.compiler.lexico;
+package br.unicap.compiler.lexicon;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -71,7 +71,8 @@ public class Rules {
     
     public static boolean isReserved(String s){
         String filename;
-        filename = "C:\\Users\\karol\\Documents\\NetBeansProjects\\Compavo\\src\\br\\com\\compiler\\arquivos\\reservedWords.txt";
+        //filename = "C:\\Users\\karol\\Documents\\NetBeansProjects\\Compavo\\src\\br\\com\\compiler\\arquivos\\reservedWords.txt";
+        filename = "C:\\Users\\Luiz\\Documents\\NetBeansProjects\\Compiler\\src\\br\\unicap\\compiler\\files\\keyWords.txt";
         
         Path path = Paths.get(filename); 
         List<String> palavras = null;

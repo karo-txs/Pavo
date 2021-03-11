@@ -1,12 +1,12 @@
-package br.com.compiler.lexico;
+package br.unicap.compiler.lexicon;
 
 public class Token {
-    private TokenType type;
+    private String type;
     private String token;
     
     public Token(TokenType type, String token){
         super();
-        this.type = type;
+        this.type = type.getText();
         this.token = token;
     }
 
@@ -14,14 +14,10 @@ public class Token {
         super();
     }
     
-    public TokenType getType(){
+    public String getType(){
         return this.type;
     }
-
-    public void setType(TokenType type){
-        this.type = type;
-    }
-
+    
     public String getToken(){
         return this.token;
     }
@@ -32,6 +28,6 @@ public class Token {
 
     @Override
     public String toString(){
-        return "Type = "+this.type.getText()+", Text = "+this.token;
+        return "Type = "+this.type+", Text = "+this.token;
     }
 }
