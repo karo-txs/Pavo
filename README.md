@@ -16,9 +16,9 @@ Students:
 
 ## Technologies / Libraries Used 
 
-- [JavaJRE] - HTML enhanced for web apps!
-- [Scene Builder] - awesome web-based text editor
-- [JavaFX] - Markdown parser done right. Fast and easy to extend.
+- [JavaJRE] - used to run Java platform applications 
+- [Scene Builder] - generates FXML, an XML-based markup language that enables users to define an application's user interface, separately from the application logic.
+- [JavaFX] - java-based multimedia software platform for creating and making rich Internet applications available.
 
 ## Accepted Tokens 
 
