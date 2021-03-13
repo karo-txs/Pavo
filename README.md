@@ -13,7 +13,7 @@ Students:
 ### - General:
 - Import .txt files to editor;
 - Dark mode. 
-- 
+
 ## Technologies / Libraries Used 
 
 - [JavaJRE] - HTML enhanced for web apps!
