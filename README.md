@@ -6,6 +6,8 @@ Students:
 - Karolayne Teixeira da Silva ([AFKaro](https://github.com/AFKaro))
 - Luiz Fernando Leite ([LuisFernando-o](https://github.com/LuizFernando-o))
 
+> Status do Projeto: Em desenvolvimento :warning:
+
 ## Features (Functionalities)
 ### - Lexica Analysis:
 - Generation of program tokens with C-like syntax;
@@ -45,11 +47,6 @@ Below the list of tokens accepted by the lexical analysis.
 ## Automaton
 Automaton representing the lexical analyzer. 
 
-## License
-
-MIT
-
-**Free Software!**
 
 [//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does its job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
 
