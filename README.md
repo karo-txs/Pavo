@@ -28,21 +28,19 @@ Below the list of tokens accepted by the lexical analysis.
 
 | Expressions | Token Type | Expressions| Token Type |
 | ------ | ------ | ------ | ------
-| [a-z] or [A-Z] | letter |  >= | relational operator _ |
-| [0-9] | digit | <= | relational operator _ |
-| digit+ | int | ! | relational operator not |
-| digit+.digit+ | float | != | relational operator not equal |
-| 'letter' | char | == | relational operator equal |
-| "[anyCharacter]*"| string | ( or ) | special character _ |
-| . | punctuation | { or } | special character _ |
-| + | arithmetic operator plus | [ or ] | special character _ |
-| - | arithmetic operator minus | # | special character hash |
-| * | arithmetic operator multiplication | , | special character comma |
-| ^ | arithmetic operator power | ; | special character _ |
-| / | arithmetic operator division | : | special character two points |
-| = | arithmetic operator assign |
-| > | relational operator _ |
-| < | relational operator _ |
+| [a-z] or [A-Z] | letter | < | relational operator less |
+| [0-9] | digit | >= | relational operator more equal |
+| digit+ | int |<= | relational operator less equal |
+| digit+.digit+ | float | ! | relational operator not |
+| 'letter' | char | != | relational operator not equal |
+| "anything" | char sequence | == | relational operator equal |
+| + | arithmetic operator plus |( or ) | special character parentheses |
+| - | arithmetic operator minus | { or } | special character braces |
+| * | arithmetic operator multiplication| [ or ] | special character brackets |
+| ^ | arithmetic operator power | # | special character hash |         
+| / | arithmetic operator division | , | special character comma |          
+| = | arithmetic operator assign | ; | special character semicolon |       
+| > | relational operator more | : | special character two points |
 
 ## Automaton
 Automaton representing the lexical analyzer [[Slide](https://github.com/AFKaro/Pavo/tree/main/docs)].
