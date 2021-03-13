@@ -42,8 +42,11 @@ Below the list of tokens accepted by the lexical analysis.
 | = | arithmetic operator assign | ; | special character semicolon |       
 | > | relational operator more | : | special character two points |
 
-## Automaton
-Automaton representing the lexical analyzer [[Slide](https://github.com/AFKaro/Pavo/tree/main/docs)].
+## Program Preview
+(gif)
+
+## Automatons
+Automatons representing the lexical analyzer [[Slide](https://github.com/AFKaro/Pavo/tree/main/docs)].
 ![PavoAutomatons](https://user-images.githubusercontent.com/58193125/111038152-32177380-8406-11eb-939e-ac937a65fb86.gif)
 
 
