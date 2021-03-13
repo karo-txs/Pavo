@@ -37,18 +37,16 @@ Below the list of tokens accepted by the lexical analysis.
 | . | punctuation | { or } | special character _ |
 | + | arithmetic operator plus | [ or ] | special character _ |
 | - | arithmetic operator minus | # | special character hash |
-| * | arithmetic operator multiplication | , | special character _ |
+| * | arithmetic operator multiplication | , | special character comma |
 | ^ | arithmetic operator power | ; | special character _ |
-| / | arithmetic operator division | : | special character _ |
+| / | arithmetic operator division | : | special character two points |
 | = | arithmetic operator assign |
 | > | relational operator _ |
 | < | relational operator _ |
 
 ## Automaton
-Automaton representing the lexical analyzer.
+Automaton representing the lexical analyzer [[Slide](https://github.com/AFKaro/Pavo/tree/main/docs)].
 ![PavoAutomatons](https://user-images.githubusercontent.com/58193125/111038152-32177380-8406-11eb-939e-ac937a65fb86.gif)
-- ([Slide](https://github.com/AFKaro/Pavo/tree/main/docs))
-
 
 
 [//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does its job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
