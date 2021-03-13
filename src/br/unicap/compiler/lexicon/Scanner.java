@@ -8,13 +8,7 @@ import br.unicap.compiler.exceptions.InvalidSymbolException;
 import br.unicap.compiler.exceptions.PersonalizedException;
 import br.unicap.compiler.exceptions.TypeException;
 import br.unicap.compiler.exceptions.UnclosedException;
-
 import br.unicap.compiler.util.Cursor;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class Scanner {
 
@@ -130,10 +124,7 @@ public class Scanner {
                             exception = throwException(TypeException.UNCLOSED, "Character Literal: " + term);
                             return null;
                         }
-                    } else if (Rules.isPunctuation(currentChar)) {
-                        term += currentChar;
-                        return new Token(TokenType.TK_PUNCTUATION, term);
-                    } else {
+                    }else {
                         term += currentChar;
                         exception = throwException(TypeException.INVALID_SYMBOL, term);
                         return null;

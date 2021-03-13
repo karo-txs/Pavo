@@ -1,5 +1,5 @@
 package br.unicap.compiler.lexicon;
-import br.unicap.compiler.util.Color;
+import br.unicap.compiler.view.util.Color;
 
 public enum TokenType{
     TK_IDENTIFIER("Identifier",Color.BROWN), 

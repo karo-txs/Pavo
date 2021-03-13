@@ -99,7 +99,7 @@ public class FXMLMainScreenController implements Initializable {
     }
     //******************
 
-    boolean isDark = false;
+    private boolean isDark = false;
 
     @FXML
     private void change() {
@@ -154,8 +154,8 @@ public class FXMLMainScreenController implements Initializable {
     private void newArchive() {
         filename = NewArchiveBox.display("New File", "name of file: ");
         if (!NewArchiveBox.click) {//entra aqui quando se escreve e nao clica em confirmar?
-            if(!filename.contains(".txt")){
-                filename+=".txt";
+            if (!filename.contains(".txt")) {
+                filename += ".txt";
             }
             codigoArea = new TextArea();
             Tab tab1 = new Tab(filename, codigoArea);
@@ -167,7 +167,9 @@ public class FXMLMainScreenController implements Initializable {
 
     @FXML
     private void clearEditor() {
-        codigoArea.setText("");
+        if (codigoArea != null) {
+            codigoArea.setText("");
+        }
     }
 
     private String getArchive() {
@@ -204,6 +206,5 @@ public class FXMLMainScreenController implements Initializable {
         typeCol.setSortable(false);
         tokenCol.setSortable(false);
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
-
     }
 }
