@@ -1,33 +1,32 @@
 package br.unicap.compiler.lexicon;
 
+import javafx.scene.control.Label;
+
 public class Token {
-    private String type;
+
+    private Label type;
     private String token;
-    
-    public Token(TokenType type, String token){
+
+    public Token(TokenType type, String token) {
         super();
-        this.type = type.getText();
+        this.type = new Label(type.getText());
+        this.type.setStyle(type.getColor().getCodColor());
         this.token = token;
     }
 
-    public Token(){
+    public Token() {
         super();
     }
-    
-    public String getType(){
+
+    public Label getType() {
         return this.type;
     }
-    
-    public String getToken(){
+
+    public String getToken() {
         return this.token;
     }
 
-    public void setToken(String token){
-        this.token= token;
-    }
-
-    @Override
-    public String toString(){
-        return "Type = "+this.type+", Text = "+this.token;
+    public void setToken(String token) {
+        this.token = token;
     }
 }

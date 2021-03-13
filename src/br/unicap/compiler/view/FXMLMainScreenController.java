@@ -2,7 +2,14 @@ package br.unicap.compiler.view;
 
 import br.unicap.compiler.lexicon.Scanner;
 import br.unicap.compiler.lexicon.Token;
+import br.unicap.compiler.view.util.NewArchiveBox;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
@@ -11,12 +18,15 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.FileChooser;
 
 public class FXMLMainScreenController implements Initializable {
 
@@ -42,15 +52,31 @@ public class FXMLMainScreenController implements Initializable {
     private TableView table = new TableView();
     TableColumn typeCol = new TableColumn("Type");
     TableColumn tokenCol = new TableColumn("Token");
+    private ObservableList<Token> data = FXCollections.observableArrayList();
 
-    private boolean isFirst = true;
+    @FXML
+    TabPane tabPane = new TabPane();
+
+    private String filename;
+
+    @FXML
+    private Label newFile;
+
+    @FXML
+    private Label openFile;
 
     @FXML
     private void runLexica(ActionEvent event) {
         ArrayList<Token> tokens = new ArrayList<>();
-        //String filename = "C:\\Users\\karol\\Documents\\NetBeansProjects\\Compavo\\src\\br\\com\\compiler\\arquivos\\input.isi";
 
-        Scanner sc = new Scanner(codigoArea.getText(), true);
+        resultArea.setText("");
+        data = FXCollections.observableArrayList(tokens);
+        table.setItems(data);
+
+        Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
+        TextArea ta = (TextArea) selectedTab.getContent();
+
+        Scanner sc = new Scanner(ta.getText(), filename);
         Token token;
 
         do {
@@ -60,23 +86,14 @@ public class FXMLMainScreenController implements Initializable {
             }
         } while (token != null);
         if (!sc.getException().equals("NULL")) {
-            resultArea.setText(sc.getException() + "\n\nFALHA NA CONSTRUÇÃO");
+            resultArea.setText(sc.getException() + "\n\nCONSTRUCTION FAILURE!");
             resultArea.setStyle("-fx-text-fill: red");
         } else {
-            //resultArea.setText(Printer.printTable(tokens)");
-            if (isFirst) {
-                table.getColumns().addAll(tokenCol, typeCol);
-                tokenCol.setMinWidth(161);
-                tokenCol.setCellValueFactory(new PropertyValueFactory<>("token"));
-                typeCol.setMinWidth(161);
-                typeCol.setCellValueFactory(new PropertyValueFactory<>("type"));
-                isFirst = false;
-            }
-            
-            ObservableList<Token> data= FXCollections.observableArrayList(tokens);
+            data = FXCollections.observableArrayList(tokens);
 
             table.setItems(data);
-            //resultArea.setStyle("-fx-text-fill: green");
+            resultArea.setText(tokens.size() + " identified tokens and no lexical errors found.\n\nSUCCESSFULLY BUILT!");
+            resultArea.setStyle("-fx-text-fill: green");
         }
 
     }
@@ -110,10 +127,83 @@ public class FXMLMainScreenController implements Initializable {
         }
     }
 
-    //******************
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
+    @FXML
+    private void openArchive() {
+        String txtConteudo = "";
+        filename = getArchive();
+
+        if (filename != null) {
+            String[] aux = filename.split("\\\\");
+            String name = aux[aux.length - 1];
+            try {
+                Path pathToFile = Paths.get(filename);
+                txtConteudo = new String(Files.readAllBytes(pathToFile), StandardCharsets.UTF_8);
+
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            codigoArea = new TextArea();
+            Tab tab1 = new Tab(name, codigoArea);
+            tabPane.getTabs().add(tab1);
+
+            codigoArea.setText(txtConteudo);
+        }
+    }
+
+    @FXML
+    private void newArchive() {
+        filename = NewArchiveBox.display("New File", "name of file: ");
+        if (!NewArchiveBox.click) {//entra aqui quando se escreve e nao clica em confirmar?
+            if(!filename.contains(".txt")){
+                filename+=".txt";
+            }
+            codigoArea = new TextArea();
+            Tab tab1 = new Tab(filename, codigoArea);
+            tabPane.getTabs().add(tab1);
+            codigoArea.setText("");
+        }
 
     }
 
+    @FXML
+    private void clearEditor() {
+        codigoArea.setText("");
+    }
+
+    private String getArchive() {
+        FileChooser fileChooser = new FileChooser();
+
+        FileChooser.ExtensionFilter extentionFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+        fileChooser.getExtensionFilters().add(extentionFilter);
+
+        String userDirectoryString = System.getProperty("user.home");
+        File userDirectory = new File(userDirectoryString);
+        if (!userDirectory.canRead()) {
+            userDirectory = new File("c:/");
+        }
+        fileChooser.setInitialDirectory(userDirectory);
+
+        File chosenFile = fileChooser.showOpenDialog(null);
+        String path;
+        if (chosenFile != null) {
+            path = chosenFile.getPath();
+        } else {
+            path = null;
+        }
+        return path;
+    }
+
+    //******************
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        table.getColumns().addAll(tokenCol, typeCol);
+        tokenCol.setMinWidth(170);
+        tokenCol.setCellValueFactory(new PropertyValueFactory<>("token"));
+        typeCol.setMinWidth(222);
+        typeCol.setCellValueFactory(new PropertyValueFactory<>("type"));
+        typeCol.setSortable(false);
+        tokenCol.setSortable(false);
+        tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
+
+    }
 }
