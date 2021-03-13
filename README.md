@@ -10,10 +10,10 @@ Students:
 
 ## Features (Functionalities)
 ### - Lexica Analysis:
-- Generation of program tokens with C-like syntax;
+- Token identification of programs with syntax similar to the C programming language ;
 - Personalized error messages.
 ### - General:
-- Import .txt files to editor;
+- Import .txt files to editor
 - Dark mode. 
 
 ## Technologies / Libraries Used 
@@ -45,7 +45,10 @@ Below the list of tokens accepted by the lexical analysis.
 | < | relational operator _ |
 
 ## Automaton
-Automaton representing the lexical analyzer. 
+Automaton representing the lexical analyzer.
+![PavoAutomatons](https://user-images.githubusercontent.com/58193125/111038152-32177380-8406-11eb-939e-ac937a65fb86.gif)
+- ([Slide](https://github.com/AFKaro/Pavo/tree/main/docs))
+
 
 
 [//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does its job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
