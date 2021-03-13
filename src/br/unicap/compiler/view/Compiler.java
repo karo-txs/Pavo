@@ -21,7 +21,10 @@ public class Compiler extends Application {
                 .toExternalForm());
         Image icon = new Image(getClass().getResourceAsStream("/br/unicap/compiler/view/images/peacock.png"), 32, 32,false,false);
         stage.getIcons().add(icon);
+        stage.setResizable(false);
         stage.show();
+        
+        
     }
 
     /**

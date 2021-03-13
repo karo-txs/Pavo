@@ -23,24 +23,14 @@ public class Scanner {
     private int pos;
     private static Cursor cs;
     private String exception;
+    private String nameArchive;
 
-    public Scanner(String filename) {
-        cs = new Cursor();
-        pos = 0;
-        try {
-            Path pathToFile = Paths.get(filename);
-            String txtConteudo = new String(Files.readAllBytes(pathToFile), StandardCharsets.UTF_8);
-            content = txtConteudo.toCharArray();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public Scanner(String filename, boolean isNormal) {
+    public Scanner(String filename, String nameArchive) {
         cs = new Cursor();
         pos = 0;
         content = filename.toCharArray();
         exception = "NULL";
+        this.nameArchive = nameArchive;
     }
 
     public Token nextToken() {
@@ -91,7 +81,7 @@ public class Scanner {
                         term += currentChar;
                         state = 12;
                         if (isEOF()) {
-                            return new Token(TokenType.TK_OPERATOR_RELATIONAL, term);
+                            return new Token(TokenType.returnSubtype(term), term);
                         }
                     } else if (Rules.isArithmeticOperator(currentChar)) {
                         term += currentChar;
@@ -111,7 +101,7 @@ public class Scanner {
                         }
                     } else if (Rules.isSpecialCharacter(currentChar)) {
                         term += currentChar;
-                        return new Token(TokenType.TK_CHARACTER_SPECIAL, term);
+                        return new Token(TokenType.returnSubtype(term), term);
                     } else if (Rules.isPunctuation(currentChar)) {
                         term += currentChar;
                         state = 11;
@@ -195,7 +185,6 @@ public class Scanner {
                         term += currentChar;
                         state = 5;
                         if (isEOF()) {
-                            term += currentChar;
                             exception = throwException(TypeException.NUMBER_FORMAT, "Float Number :" + term);
                             return null;
                         }
@@ -242,8 +231,12 @@ public class Scanner {
                             return null;
                         }
                     } else {
+                        exception = throwException(TypeException.NUMBER_FORMAT, "Float Number : " + term);
+                        return null;
+                        /*
                         pause = true;
                         state = 7;
+                        */
                     }
                     break;
                 case 6:
@@ -328,12 +321,12 @@ public class Scanner {
                         back();
                         cs.moveCursorBack(currentChar, antColCursor);
                     }
-                    return new Token(TokenType.TK_OPERATOR_RELATIONAL, term);
+                    return new Token(TokenType.returnSubtype(term), term);
                 /*
                   OPERADORES ARITMETICOS
                  */
                 case 13:
-                    return new Token(TokenType.TK_OPERATOR_ARITHMETIC, term);
+                    return new Token(TokenType.returnSubtype(term), term);
                 /*
                   IGUAL COMO OPERADOR RELACIONAL OU ARITMETICO
                  */
@@ -342,7 +335,7 @@ public class Scanner {
                         term += currentChar;
                         state = 15;
                         if (isEOF()) {
-                            return new Token(TokenType.TK_OPERATOR_RELATIONAL, term);
+                            return new Token(TokenType.returnSubtype(term), term);
                         }
                     } else {
                         if (isEOF()) {
@@ -357,13 +350,12 @@ public class Scanner {
                     if (!Rules.isEqual(currentChar)) {
                         back();
                         cs.moveCursorBack(currentChar, antColCursor);
-                        return new Token(TokenType.TK_OPERATOR_RELATIONAL, term);
-                    } else if (Rules.isEqual(currentChar) && isEOF()) {
+                        return new Token(TokenType.returnSubtype(term), term);
+                    } else {
                         term += currentChar;
                         exception = throwException(TypeException.INVALID_OPERATOR, term);
                         return null;
                     }
-                    break;
                 /*
                   CONSUMIR COMENTARIOS  // exemplo de comentario consumido 
                  */
@@ -374,7 +366,7 @@ public class Scanner {
                         term += '/';
                         back();
                         cs.moveCursorBack(currentChar, antColCursor);
-                        return new Token(TokenType.TK_OPERATOR_ARITHMETIC, term);
+                        return new Token(TokenType.returnSubtype(term), term);
                     }
                     break;
                 case 17:
@@ -397,7 +389,10 @@ public class Scanner {
                     } else if (isEOF()) {
                         exception = throwException(TypeException.UNCLOSED, "String Literal: " + term);
                         return null;
-                    } else {
+                    } else if(Rules.isJumpLine(currentChar)){
+                        exception = throwException(TypeException.UNCLOSED, "String Literal: " + term);
+                        return null;
+                    }else{
                         state = 18;
                     }
                     break;
@@ -405,14 +400,19 @@ public class Scanner {
                   CHAR
                  */
                 case 19:
-                    term += currentChar;
                     if (Rules.isSingleQuotes(currentChar)) {
+                        term += currentChar;
                         exception = throwException(TypeException.EMPTY_CHAR, term);
                         return null;
                     } else if (isEOF()) {
+                        term += currentChar;
                         exception = throwException(TypeException.UNCLOSED, "Character Literal: " + term);
                         return null;
-                    } else {
+                    }else if(Rules.isJumpLine(currentChar)){
+                        exception = throwException(TypeException.UNCLOSED, "Character Literal: " + term);
+                        return null; 
+                    }else {
+                        term += currentChar;
                         state = 20;
                     }
                     break;
@@ -449,22 +449,22 @@ public class Scanner {
 
         switch (type) {
             case NUMBER_FORMAT:
-                ex = new NumberFormatException(msg, cs);
+                ex = new NumberFormatException(msg, cs,nameArchive);
                 break;
             case IDENTIFIER_FORMAT:
-                ex = new IdentifierFormatException(msg, cs);
+                ex = new IdentifierFormatException(msg, cs,nameArchive);
                 break;
             case EMPTY_CHAR:
-                ex = new EmptyCharException(msg, cs);
+                ex = new EmptyCharException(msg, cs,nameArchive);
                 break;
             case INVALID_OPERATOR:
-                ex = new InvalidOperatorException(msg, cs);
+                ex = new InvalidOperatorException(msg, cs,nameArchive);
                 break;
             case INVALID_SYMBOL:
-                ex = new InvalidSymbolException(msg, cs);
+                ex = new InvalidSymbolException(msg, cs,nameArchive);
                 break;
             case UNCLOSED:
-                ex = new UnclosedException(msg, cs);
+                ex = new UnclosedException(msg, cs,nameArchive);
                 break;
         }
         return ex.throwException();
