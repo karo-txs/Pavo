@@ -21,6 +21,7 @@ Students:
 - [JavaJRE] - used to run Java platform applications 
 - [Scene Builder] - generates FXML, an XML-based markup language that enables users to define an application's user interface, separately from the application logic.
 - [JavaFX] - java-based multimedia software platform for creating and making rich Internet applications available.
+- [RichTextFX] - provides a text area for JavaFX with API to style ranges of text. It is intended as a base for rich-text editors and code editors with syntax highlighting.
 
 ## Accepted Tokens 
 
@@ -55,4 +56,5 @@ Automatons representing the lexical analyzer [[Slide](https://github.com/AFKaro/
    [JavaJRE]: <https://www.java.com/pt-BR/download/manual.jsp>
    [Scene Builder]: <https://gluonhq.com/products/scene-builder/>
    [JavaFX]: <https://openjfx.io/>
+   [RichTextFX]: <https://github.com/FXMisc/RichTextFX>
 
