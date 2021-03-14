@@ -27,6 +27,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
+import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.LineNumberFactory;
 
 public class FXMLMainScreenController implements Initializable {
 
@@ -36,8 +38,7 @@ public class FXMLMainScreenController implements Initializable {
     @FXML
     private AnchorPane pn;
 
-    @FXML
-    private TextArea codigoArea;
+    private CodeArea codeArea;
 
     @FXML
     private TextArea resultArea;
@@ -74,9 +75,9 @@ public class FXMLMainScreenController implements Initializable {
         table.setItems(data);
 
         Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
-        TextArea ta = (TextArea) selectedTab.getContent();
+        CodeArea ca = (CodeArea) selectedTab.getContent();
 
-        Scanner sc = new Scanner(ta.getText(), filename);
+        Scanner sc = new Scanner(ca.getText(), filename);
         Token token;
 
         do {
@@ -142,11 +143,11 @@ public class FXMLMainScreenController implements Initializable {
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-            codigoArea = new TextArea();
-            Tab tab1 = new Tab(name, codigoArea);
+            codeArea = new CodeArea();
+            codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
+            Tab tab1 = new Tab(name, codeArea);
             tabPane.getTabs().add(tab1);
-
-            codigoArea.setText(txtConteudo);
+            codeArea.replaceText(txtConteudo);
         }
     }
 
@@ -157,18 +158,18 @@ public class FXMLMainScreenController implements Initializable {
             if (!filename.contains(".txt")) {
                 filename += ".txt";
             }
-            codigoArea = new TextArea();
-            Tab tab1 = new Tab(filename, codigoArea);
+            codeArea = new CodeArea();
+            codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
+            Tab tab1 = new Tab(filename, codeArea);
             tabPane.getTabs().add(tab1);
-            codigoArea.setText("");
         }
 
     }
 
     @FXML
     private void clearEditor() {
-        if (codigoArea != null) {
-            codigoArea.setText("");
+        if (codeArea != null) {
+            codeArea.replaceText(0, 0, "");
         }
     }
 
