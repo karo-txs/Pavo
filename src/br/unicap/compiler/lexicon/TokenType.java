@@ -12,6 +12,7 @@ public enum TokenType{
     
     TK_ARITHMETIC_OPERATOR_PLUS("Arithmetic_Operator_Plus",Color.RED),
     TK_ARITHMETIC_OPERATOR_MINUS("Arithmetic_Operator_Minus",Color.RED),
+    TK_ARITHMETIC_OPERATOR_POWER("Arithmetic_Operator_Power",Color.RED),
     TK_ARITHMETIC_OPERATOR_MULTIPLICATION("Arithmetic_Operator_Multiplication",Color.RED),
     TK_ARITHMETIC_OPERATOR_DIVISION("Arithmetic_Operator_Division",Color.RED),
     TK_ARITHMETIC_OPERATOR_ASSIGN("Arithmetic_Operator_Assign",Color.RED),
@@ -55,6 +56,8 @@ public enum TokenType{
                 return TokenType.TK_ARITHMETIC_OPERATOR_PLUS;
             case "-":
                 return TokenType.TK_ARITHMETIC_OPERATOR_MINUS;
+            case "^":
+                return TokenType.TK_ARITHMETIC_OPERATOR_POWER;
             case "*":
                 return TokenType.TK_ARITHMETIC_OPERATOR_MULTIPLICATION;
             case "/":
