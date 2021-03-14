@@ -6,7 +6,7 @@ public class InvalidSymbolException extends PersonalizedException{
     private TypeException type = TypeException.INVALID_SYMBOL;
     
     public InvalidSymbolException(String msg, Cursor cs, String filename){
-        super("Unrecognized SYMBOL: "+msg,filename);
+        super("Unrecognized Symbol: "+msg,filename);
         this.setType(type);
         this.generateMsg(cs);
     }
