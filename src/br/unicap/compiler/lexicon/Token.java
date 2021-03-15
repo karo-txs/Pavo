@@ -10,7 +10,7 @@ public class Token {
     public Token(TokenType type, String token) {
         super();
         this.type = new Label(type.getText());
-        this.type.setStyle(type.getColor().getCodColor());
+        this.type.setStyle(type.getColor().getColorInLightMode());
         this.token = token;
     }
 

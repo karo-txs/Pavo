@@ -23,7 +23,7 @@ public class Rules {
     }
     
     public static boolean isArithmeticOperator(char c){
-        return c== '+' || c == '-' || c=='*';
+        return c== '+' || c == '-' || c=='*' || c=='^';
     }
     
     public static boolean isEqual(char c){
@@ -65,7 +65,8 @@ public class Rules {
     
     public static boolean isUnrecognizableSymbol(char c){
         return !isEqual(c) && !isSpace(c) && !isSpecialCharacter(c) && !isArithmeticOperator(c) && !isChar(c) &&
-               !isDigit(c) && !isRelationalOperator(c) && !isBar(c) && !isSingleQuotes(c) && !isDoubleQuotes(c);
+               !isDigit(c) && !isRelationalOperator(c) && !isBar(c) && !isSingleQuotes(c) && !isDoubleQuotes(c) &&
+               !isPunctuation(c);
     } 
     
     public static boolean isReserved(String s){

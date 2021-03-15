@@ -13,7 +13,7 @@ public class Compiler extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         stage = primaryStage;
-        stage.setTitle("Compiler");
+        stage.setTitle("Pavo Compiler");
         Parent root = FXMLLoader.load(getClass().getResource("/br/unicap/compiler/view/fxml/FXMLMainScreen.fxml"));
         stage.setScene(new Scene(root));
         stage.getScene().getStylesheets().add(getClass()
@@ -23,8 +23,6 @@ public class Compiler extends Application {
         stage.getIcons().add(icon);
         stage.setResizable(false);
         stage.show();
-        
-        
     }
 
     /**

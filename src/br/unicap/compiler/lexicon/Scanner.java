@@ -8,13 +8,7 @@ import br.unicap.compiler.exceptions.InvalidSymbolException;
 import br.unicap.compiler.exceptions.PersonalizedException;
 import br.unicap.compiler.exceptions.TypeException;
 import br.unicap.compiler.exceptions.UnclosedException;
-
 import br.unicap.compiler.util.Cursor;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class Scanner {
 
@@ -49,8 +43,8 @@ public class Scanner {
         while (true) {
             if (!pause) {
                 currentChar = nextChar();
+                antColCursor = cs.getColun();
                 cs.moveCursorFront(currentChar);
-                antColCursor = cs.getColun() - 1;
             }
 
             switch (state) {
@@ -120,19 +114,16 @@ public class Scanner {
                         term += currentChar;
                         state = 18;
                         if (isEOF()) {
-                            exception = throwException(TypeException.UNCLOSED, "String Literal: " + term);
+                            exception = throwException(TypeException.UNCLOSED, "Char Sequence: " + term);
                             return null;
                         }
                     } else if (Rules.isSingleQuotes(currentChar)) {
                         term += currentChar;
                         state = 19;
                         if (isEOF()) {
-                            exception = throwException(TypeException.UNCLOSED, "Character Literal: " + term);
+                            exception = throwException(TypeException.UNCLOSED, "Char: " + term);
                             return null;
                         }
-                    } else if (Rules.isPunctuation(currentChar)) {
-                        term += currentChar;
-                        return new Token(TokenType.TK_PUNCTUATION, term);
                     } else {
                         term += currentChar;
                         exception = throwException(TypeException.INVALID_SYMBOL, term);
@@ -236,7 +227,7 @@ public class Scanner {
                         /*
                         pause = true;
                         state = 7;
-                        */
+                         */
                     }
                     break;
                 case 6:
@@ -380,19 +371,26 @@ public class Scanner {
                     }
                     break;
                 /*
-                  STRING
+                  CHAR SEQUENCE
                  */
                 case 18:
-                    term += currentChar;
                     if (Rules.isDoubleQuotes(currentChar)) {
-                        return new Token(TokenType.TK_STRING, term);
+                        term += currentChar;
+                        return new Token(TokenType.TK_CHAR_SEQUENCE, term);
                     } else if (isEOF()) {
-                        exception = throwException(TypeException.UNCLOSED, "String Literal: " + term);
+                        if (currentChar != '\n') {
+                            term += currentChar;
+                        }else{
+                            cs.moveCursorBack(currentChar, antColCursor);
+                        }
+                        exception = throwException(TypeException.UNCLOSED, "Char Sequence: " + term);
                         return null;
-                    } else if(Rules.isJumpLine(currentChar)){
-                        exception = throwException(TypeException.UNCLOSED, "String Literal: " + term);
+                    } else if (currentChar == '\n') {
+                        cs.moveCursorBack(currentChar, antColCursor);
+                        exception = throwException(TypeException.UNCLOSED, "Char Sequence: " + term);
                         return null;
-                    }else{
+                    } else {
+                        term += currentChar;
                         state = 18;
                     }
                     break;
@@ -405,23 +403,29 @@ public class Scanner {
                         exception = throwException(TypeException.EMPTY_CHAR, term);
                         return null;
                     } else if (isEOF()) {
-                        term += currentChar;
-                        exception = throwException(TypeException.UNCLOSED, "Character Literal: " + term);
+                        if (currentChar != '\n') {
+                            term += currentChar;
+                        }else{
+                            cs.moveCursorBack(currentChar, antColCursor);
+                        }
+                        exception = throwException(TypeException.UNCLOSED, "Char: " + term);
                         return null;
-                    }else if(Rules.isJumpLine(currentChar)){
-                        exception = throwException(TypeException.UNCLOSED, "Character Literal: " + term);
-                        return null; 
-                    }else {
+                    } else if (Rules.isJumpLine(currentChar)) {
+                        cs.moveCursorBack(currentChar, antColCursor);
+                        exception = throwException(TypeException.UNCLOSED, "Char: " + term);
+                        return null;
+                    } else {
                         term += currentChar;
                         state = 20;
                     }
                     break;
                 case 20:
-                    term += currentChar;
                     if (Rules.isSingleQuotes(currentChar)) {
+                        term += currentChar;
                         return new Token(TokenType.TK_CHAR, term);
                     } else {
-                        exception = throwException(TypeException.UNCLOSED, "Character Literal: " + term);
+                        cs.moveCursorBack(currentChar, antColCursor);
+                        exception = throwException(TypeException.UNCLOSED, "Char: " + term);
                         return null;
                     }
             }
@@ -449,22 +453,22 @@ public class Scanner {
 
         switch (type) {
             case NUMBER_FORMAT:
-                ex = new NumberFormatException(msg, cs,nameArchive);
+                ex = new NumberFormatException(msg, cs, nameArchive);
                 break;
             case IDENTIFIER_FORMAT:
-                ex = new IdentifierFormatException(msg, cs,nameArchive);
+                ex = new IdentifierFormatException(msg, cs, nameArchive);
                 break;
             case EMPTY_CHAR:
-                ex = new EmptyCharException(msg, cs,nameArchive);
+                ex = new EmptyCharException(msg, cs, nameArchive);
                 break;
             case INVALID_OPERATOR:
-                ex = new InvalidOperatorException(msg, cs,nameArchive);
+                ex = new InvalidOperatorException(msg, cs, nameArchive);
                 break;
             case INVALID_SYMBOL:
-                ex = new InvalidSymbolException(msg, cs,nameArchive);
+                ex = new InvalidSymbolException(msg, cs, nameArchive);
                 break;
             case UNCLOSED:
-                ex = new UnclosedException(msg, cs,nameArchive);
+                ex = new UnclosedException(msg, cs, nameArchive);
                 break;
         }
         return ex.throwException();
