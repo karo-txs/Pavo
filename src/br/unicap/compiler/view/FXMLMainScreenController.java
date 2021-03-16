@@ -87,6 +87,8 @@ public class FXMLMainScreenController implements Initializable {
         scroll = (VirtualizedScrollPane) selectedTab.getContent();
         //CodeArea ca = (CodeArea) selectedTab.getContent();
         CodeArea ca = (CodeArea) scroll.getContent();
+        
+        filename = selectedTab.getText();
 
         Scanner sc = new Scanner(ca.getText(), filename);
         Token token;

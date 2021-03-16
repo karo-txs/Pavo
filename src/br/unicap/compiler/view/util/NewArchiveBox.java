@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -63,11 +64,14 @@ public class NewArchiveBox {
         VBox layout = new VBox(10);
         layout.getChildren().addAll(label, nomeArquivo, confirmar);
         layout.setAlignment(Pos.CENTER);
+        
         window.setResizable(false);
 
         p.getChildren().addAll(layout);
         p.setAlignment(Pos.CENTER);
         Scene scene = new Scene(p);
+        Image icon = new Image("/br/unicap/compiler/view/images/add-file.png", 32, 32,false,false);
+        window.getIcons().add(icon);
         window.setScene(scene);
         window.showAndWait();
         return filename;
