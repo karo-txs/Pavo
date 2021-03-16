@@ -4,23 +4,23 @@ Work done for the Compilers course at the Universidade Católica de Pernambuco (
 
 Students:
 - Karolayne Teixeira da Silva ([AFKaro](https://github.com/AFKaro))
-- Luiz Fernando Leite ([LuisFernando-o](https://github.com/LuizFernando-o))
+- Luiz Fernando Leite ([LuizFernando-o](https://github.com/LuizFernando-o))
 
-> Status do Projeto: Em desenvolvimento :warning:
+> Project Status: In development :warning:
 
 ## Features (Functionalities)
-### - Lexica Analysis:
-- Token identification of programs with syntax similar to the C programming language ;
+### - Lexical Analysis:
+- Token identification of programs with syntax similar to the C programming language;
 - Personalized error messages.
 ### - General:
-- Import .txt files to editor
+- Import .txt files to editor;
 - Dark mode. 
 
 ## Technologies / Libraries Used 
 
-- [JavaJRE] - used to run Java platform applications 
-- [Scene Builder] - generates FXML, an XML-based markup language that enables users to define an application's user interface, separately from the application logic.
-- [JavaFX] - java-based multimedia software platform for creating and making rich Internet applications available.
+- [JavaJRE] - used to run Java platform applications; 
+- [Scene Builder] - generates FXML, an XML-based markup language that enables users to define an application's user interface, separately from the application logic;
+- [JavaFX] - java-based multimedia software platform for creating and making rich Internet applications available;
 - [RichTextFX] - provides a text area for JavaFX with API to style ranges of text. It is intended as a base for rich-text editors and code editors with syntax highlighting.
 
 ## Accepted Tokens 
@@ -29,19 +29,21 @@ Below the list of tokens accepted by the lexical analysis.
 
 | Expressions | Token Type | Expressions| Token Type |
 | ------ | ------ | ------ | ------
-| [a-z] or [A-Z] | letter | < | relational operator less |
-| [0-9] | digit | >= | relational operator more equal |
-| digit+ | int |<= | relational operator less equal |
-| digit+.digit+ | float | ! | relational operator not |
-| 'letter' | char | != | relational operator not equal |
-| "anything" | char sequence | == | relational operator equal |
-| + | arithmetic operator plus |( or ) | special character parentheses |
-| - | arithmetic operator minus | { or } | special character braces |
-| * | arithmetic operator multiplication| [ or ] | special character brackets |
-| ^ | arithmetic operator power | # | special character hash |         
-| / | arithmetic operator division | , | special character comma |          
-| = | arithmetic operator assign | ; | special character semicolon |       
-| > | relational operator more | : | special character two points |
+| [a-z] or [A-Z]  | letter | <= | relational operator less equal|
+| [0-9] | digit | ! | relational operator not |
+| digit+ | int | != | relational operator not equal |
+| digit+.digit+ | float | == | relational operator equal | 
+| 'letter' | char | ( | special character parentheses open |
+| "anything" | char sequence | ) | special character parentheses closed |
+| + | arithmetic operator plus | { | special character braces open |
+| - | arithmetic operator minus | } | special character braces closed |
+| * | arithmetic operator multiplication| [ | special character brackets open |
+| ^ | arithmetic operator power | ] | special character brackets closed |     
+| / | arithmetic operator division | # | special character hash |           
+| = | arithmetic operator assign | , | special character comma |   
+| > | relational operator more | ; | special character semicolon |     
+| < | relational operator less | : | special character two points |
+| >= | relational operator more equal
 
 ## Program Preview
 (gif)
