@@ -11,7 +11,7 @@ import javafx.stage.Stage;
 public class Compiler extends Application {
     public static Stage stage;
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) throws Exception { 
         stage = primaryStage;
         stage.setTitle("Pavo Compiler");
         Parent root = FXMLLoader.load(getClass().getResource("/br/unicap/compiler/view/fxml/FXMLMainScreen.fxml"));

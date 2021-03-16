@@ -69,6 +69,9 @@ public class FXMLMainScreenController implements Initializable {
     @FXML
     private Label openFile;
 
+    @FXML //barra de rolagem do codeArea
+    VirtualizedScrollPane scroll;
+
     public static boolean isDark = false;
     ArrayList<Token> tokens = new ArrayList<>();
 
@@ -80,7 +83,10 @@ public class FXMLMainScreenController implements Initializable {
         table.setItems(data);
 
         Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
-        CodeArea ca = (CodeArea) selectedTab.getContent();
+        //cast pra receber o codeArea que esta dentro de scroll
+        scroll = (VirtualizedScrollPane) selectedTab.getContent();
+        //CodeArea ca = (CodeArea) selectedTab.getContent();
+        CodeArea ca = (CodeArea) scroll.getContent();
 
         Scanner sc = new Scanner(ca.getText(), filename);
         Token token;
@@ -148,17 +154,17 @@ public class FXMLMainScreenController implements Initializable {
 
         data = FXCollections.observableArrayList(tokens);
         table.setItems(data);
-        
-         if (isDark) {
-             if (resultArea.getText().contains("SUCCESSFULLY")) {
-                 resultArea.setStyle("-fx-text-fill: #8DE38D");
-             }else{
-                 resultArea.setStyle("-fx-text-fill: #FF2800");
-             }
+
+        if (isDark) {
+            if (resultArea.getText().contains("SUCCESSFULLY")) {
+                resultArea.setStyle("-fx-text-fill: #8DE38D");
+            } else {
+                resultArea.setStyle("-fx-text-fill: #FF2800");
+            }
         } else {
             if (resultArea.getText().contains("SUCCESSFULLY")) {
-                  resultArea.setStyle("-fx-text-fill: green");
-             }else{
+                resultArea.setStyle("-fx-text-fill: green");
+            } else {
                 resultArea.setStyle("-fx-text-fill: #B82524");
             }
         }
@@ -182,7 +188,11 @@ public class FXMLMainScreenController implements Initializable {
             codeArea = new CodeArea();
             codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
             codeArea.setId("codearea");
-            Tab tab1 = new Tab(name, codeArea);
+            
+            //cria uma ScrollBar, coloca o codeArea e adiciona na tab1 o scroll ao inves do codeArea
+            scroll = new VirtualizedScrollPane(codeArea);
+            Tab tab1 = new Tab(name, scroll);
+
             tabPane.getTabs().add(tab1);
             codeArea.replaceText(txtConteudo);
         }
@@ -196,10 +206,14 @@ public class FXMLMainScreenController implements Initializable {
                 filename += ".txt";
             }
             codeArea = new CodeArea();
-            
+
             codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
             codeArea.setId("codearea");
-            Tab tab1 = new Tab(filename, codeArea);
+            
+            //cria uma ScrollBar, coloca o codeArea e adiciona na tab1 o scroll ao inves do codeArea
+            scroll = new VirtualizedScrollPane(codeArea);
+
+            Tab tab1 = new Tab(filename, scroll);
             tabPane.getTabs().add(tab1);
         }
     }

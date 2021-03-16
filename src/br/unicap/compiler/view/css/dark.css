@@ -12,6 +12,11 @@
     -fx-background-color: linear-gradient(to bottom, -fx-base, derive(-fx-base,30%));
 }
 
+/*estilo pronto do LineNumber*/
+.lineno{
+    -fx-background-color: derive(-fx-base,-40%);
+}
+
 #codearea .text{
     -fx-fill: whitesmoke;
 }
