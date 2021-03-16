@@ -10,17 +10,17 @@ Students:
 
 ## Features (Functionalities)
 ### - Lexical Analysis:
-- Token identification of programs with syntax similar to the C programming language ;
+- Token identification of programs with syntax similar to the C programming language;
 - Personalized error messages.
 ### - General:
-- Import .txt files to editor
+- Import .txt files to editor;
 - Dark mode. 
 
 ## Technologies / Libraries Used 
 
-- [JavaJRE] - used to run Java platform applications 
-- [Scene Builder] - generates FXML, an XML-based markup language that enables users to define an application's user interface, separately from the application logic.
-- [JavaFX] - java-based multimedia software platform for creating and making rich Internet applications available.
+- [JavaJRE] - used to run Java platform applications; 
+- [Scene Builder] - generates FXML, an XML-based markup language that enables users to define an application's user interface, separately from the application logic;
+- [JavaFX] - java-based multimedia software platform for creating and making rich Internet applications available;
 - [RichTextFX] - provides a text area for JavaFX with API to style ranges of text. It is intended as a base for rich-text editors and code editors with syntax highlighting.
 
 ## Accepted Tokens 
