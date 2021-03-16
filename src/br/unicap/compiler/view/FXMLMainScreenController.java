@@ -253,6 +253,7 @@ public class FXMLMainScreenController implements Initializable {
     //******************
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        table.setPlaceholder(new Label("No tokens read so far"));
         table.getColumns().addAll(tokenCol, typeCol);
         tokenCol.setMinWidth(170);
         tokenCol.setCellValueFactory(new PropertyValueFactory<>("token"));
