@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -26,7 +27,9 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Paint;
 import javafx.stage.FileChooser;
+import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 
@@ -66,10 +69,12 @@ public class FXMLMainScreenController implements Initializable {
     @FXML
     private Label openFile;
 
+    public static boolean isDark = false;
+    ArrayList<Token> tokens = new ArrayList<>();
+
     @FXML
     private void runLexica(ActionEvent event) {
-        ArrayList<Token> tokens = new ArrayList<>();
-
+        tokens = new ArrayList<>();
         resultArea.setText("");
         data = FXCollections.observableArrayList(tokens);
         table.setItems(data);
@@ -88,19 +93,25 @@ public class FXMLMainScreenController implements Initializable {
         } while (token != null);
         if (!sc.getException().equals("NULL")) {
             resultArea.setText(sc.getException() + "\n\nCONSTRUCTION FAILURE!");
-            resultArea.setStyle("-fx-text-fill: red");
+            if (isDark) {
+                resultArea.setStyle("-fx-text-fill: #FF2800");
+            } else {
+                resultArea.setStyle("-fx-text-fill: #B82524");
+            }
         } else {
             data = FXCollections.observableArrayList(tokens);
-
             table.setItems(data);
             resultArea.setText(tokens.size() + " identified tokens and no lexical errors found.\n\nSUCCESSFULLY BUILT!");
-            resultArea.setStyle("-fx-text-fill: green");
+            if (isDark) {
+                resultArea.setStyle("-fx-text-fill: #8DE38D");
+            } else {
+                resultArea.setStyle("-fx-text-fill: green");
+
+            }
         }
 
     }
     //******************
-
-    private boolean isDark = false;
 
     @FXML
     private void change() {
@@ -112,9 +123,9 @@ public class FXMLMainScreenController implements Initializable {
                             .getResource("/br/unicap/compiler/view/css/classic.css")
                             .toExternalForm());
             isDark = !isDark;
-
             iconMoon.setVisible(true);
             iconSun.setVisible(false);
+            updateColors();
         } else {
             Compiler.stage.getScene().getStylesheets().clear();
             Compiler.stage.getScene().setUserAgentStylesheet(null);
@@ -125,6 +136,31 @@ public class FXMLMainScreenController implements Initializable {
             isDark = !isDark;
             iconSun.setVisible(true);
             iconMoon.setVisible(false);
+            updateColors();
+        }
+    }
+
+    private void updateColors() {
+
+        tokens.forEach((t) -> {
+            t.updateColor();
+        });
+
+        data = FXCollections.observableArrayList(tokens);
+        table.setItems(data);
+        
+         if (isDark) {
+             if (resultArea.getText().contains("SUCCESSFULLY")) {
+                 resultArea.setStyle("-fx-text-fill: #8DE38D");
+             }else{
+                 resultArea.setStyle("-fx-text-fill: #FF2800");
+             }
+        } else {
+            if (resultArea.getText().contains("SUCCESSFULLY")) {
+                  resultArea.setStyle("-fx-text-fill: green");
+             }else{
+                resultArea.setStyle("-fx-text-fill: #B82524");
+            }
         }
     }
 
@@ -145,6 +181,7 @@ public class FXMLMainScreenController implements Initializable {
             }
             codeArea = new CodeArea();
             codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
+            codeArea.setId("codearea");
             Tab tab1 = new Tab(name, codeArea);
             tabPane.getTabs().add(tab1);
             codeArea.replaceText(txtConteudo);
@@ -153,23 +190,24 @@ public class FXMLMainScreenController implements Initializable {
 
     @FXML
     private void newArchive() {
-        filename = NewArchiveBox.display("New File", "name of file: ");
-        if (!NewArchiveBox.click) {//entra aqui quando se escreve e nao clica em confirmar?
+        filename = NewArchiveBox.display("New File", "Name of file: ");
+        if (!NewArchiveBox.click) {
             if (!filename.contains(".txt")) {
                 filename += ".txt";
             }
             codeArea = new CodeArea();
+            
             codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
+            codeArea.setId("codearea");
             Tab tab1 = new Tab(filename, codeArea);
             tabPane.getTabs().add(tab1);
         }
-
     }
 
     @FXML
     private void clearEditor() {
         if (codeArea != null) {
-            codeArea.replaceText(0, 0, "");
+            codeArea.replaceText(" ");
         }
     }
 

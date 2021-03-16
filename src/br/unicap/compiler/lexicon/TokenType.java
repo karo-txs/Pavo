@@ -1,4 +1,5 @@
 package br.unicap.compiler.lexicon;
+import br.unicap.compiler.view.FXMLMainScreenController;
 import br.unicap.compiler.view.util.Color;
 
 public enum TokenType{
@@ -25,9 +26,12 @@ public enum TokenType{
     TK_RELATIONAL_OPERATOR_NOT("Relational_Operator_Not",Color.PURPLE),
     TK_RELATIONAL_OPERATOR_NOT_EQUAL("Relational_Operator_Not_Equal",Color.PURPLE),
     
-    TK_SPECIAL_CHARACTER_PARENTHESES("Special_Character_Parentheses",Color.GRAY),
-    TK_SPECIAL_CHARACTER_BRACKETS("Special_Character_Brackets",Color.GRAY),
-    TK_SPECIAL_CHARACTER_BRACES("Special_Character_Braces",Color.GRAY),
+    TK_SPECIAL_CHARACTER_PARENTHESES_OPEN("Special_Character_Parentheses_Open",Color.GRAY),
+    TK_SPECIAL_CHARACTER_PARENTHESES_CLOSED("Special_Character_Parentheses_Closed",Color.GRAY),
+    TK_SPECIAL_CHARACTER_BRACKETS_OPEN("Special_Character_Brackets_Open",Color.GRAY),
+    TK_SPECIAL_CHARACTER_BRACKETS_CLOSED("Special_Character_Brackets_Closed",Color.GRAY),
+    TK_SPECIAL_CHARACTER_BRACES_OPEN("Special_Character_Braces_Open",Color.GRAY),
+    TK_SPECIAL_CHARACTER_BRACES_CLOSED("Special_Character_Braces_Closed",Color.GRAY),
     TK_SPECIAL_CHARACTER_COMMA("Special_Character_Comma",Color.GRAY),
     TK_SPECIAL_CHARACTER_SEMICOLON("Special_Character_Semicolon",Color.GRAY),
     TK_SPECIAL_CHARACTER_TWO_POINTS("Special_Character_Two_Points",Color.GRAY),
@@ -46,8 +50,12 @@ public enum TokenType{
         return this.text;
     }
     
-    public Color getColor(){
-        return this.color;
+    public String getColor(){
+        if(FXMLMainScreenController.isDark){
+            return this.color.getColorInDarkMode();
+        }else{
+            return this.color.getColorInLightMode();
+        }
     }
     
     public static TokenType returnSubtype(String term){
@@ -81,17 +89,17 @@ public enum TokenType{
                 return TokenType.TK_RELATIONAL_OPERATOR_NOT_EQUAL;
                 
             case "(":
-                return TokenType.TK_SPECIAL_CHARACTER_PARENTHESES; 
+                return TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_OPEN; 
             case ")":
-                return TokenType.TK_SPECIAL_CHARACTER_PARENTHESES; 
+                return TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_CLOSED; 
             case "{":
-                return TokenType.TK_SPECIAL_CHARACTER_BRACES;  
+                return TokenType.TK_SPECIAL_CHARACTER_BRACES_OPEN;  
             case "}":
-                return TokenType.TK_SPECIAL_CHARACTER_BRACES; 
+                return TokenType.TK_SPECIAL_CHARACTER_BRACES_CLOSED; 
             case "[":
-                return TokenType.TK_SPECIAL_CHARACTER_BRACKETS;  
+                return TokenType.TK_SPECIAL_CHARACTER_BRACKETS_OPEN;  
             case "]":
-                return TokenType.TK_SPECIAL_CHARACTER_BRACKETS;
+                return TokenType.TK_SPECIAL_CHARACTER_BRACKETS_CLOSED;
             case ",":
                 return TokenType.TK_SPECIAL_CHARACTER_COMMA; 
             case ";":

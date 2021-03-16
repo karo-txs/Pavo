@@ -56,11 +56,6 @@
                      </accelerator></MenuItem>
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Syntactic Analysis">
-            <items>
-              <MenuItem mnemonicParsing="false" text="Run" />
-            </items>
-          </Menu>
         </menus>
       </MenuBar>
       <TextArea fx:id="resultArea" editable="false" focusTraversable="false" layoutX="8.0" layoutY="563.0" pickOnBounds="false" prefHeight="74.0" prefWidth="853.0" />

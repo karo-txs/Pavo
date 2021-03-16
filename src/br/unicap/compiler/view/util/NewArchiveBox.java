@@ -1,5 +1,6 @@
 package br.unicap.compiler.view.util;
 
+import br.unicap.compiler.view.FXMLMainScreenController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -32,17 +33,25 @@ public class NewArchiveBox {
         p.maxHeight(100);
         p.minHeight(100);
         p.setPrefSize(300, 100);
-        p.setBackground(new Background(new BackgroundFill(Color.DARKGREEN, CornerRadii.EMPTY, Insets.EMPTY)));
+        Label label = new Label();
+        Button confirmar = new Button("Confirm");
+
+        if (FXMLMainScreenController.isDark) {
+            p.setBackground(new Background(new BackgroundFill(Color.rgb(69, 67, 67), CornerRadii.EMPTY, Insets.EMPTY)));
+            label.setStyle("-fx-text-fill: white;");
+            confirmar.setStyle(" -fx-text-fill: white; -fx-base: rgb(50, 50, 50);");
+        } else {
+            confirmar.setStyle("-fx-text-fill: black; -fx-base: rgb(255, 255, 255);");
+            p.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
+            label.setStyle("-fx-text-fill: black;");
+        }
         p.setVisible(true);
 
-        Label label = new Label();
         label.setText(message);
 
         TextField nomeArquivo = new TextField();
 
         nomeArquivo.setMaxWidth(200);
-
-        Button confirmar = new Button("Confirmar");
 
         confirmar.setOnAction(e -> {
             filename = nomeArquivo.getText();
@@ -50,7 +59,7 @@ public class NewArchiveBox {
             window.close();
         }
         );
-        
+
         VBox layout = new VBox(10);
         layout.getChildren().addAll(label, nomeArquivo, confirmar);
         layout.setAlignment(Pos.CENTER);

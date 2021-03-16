@@ -12,6 +12,14 @@
     -fx-prompt-text-fill: black;
 }
 
+#codearea .text{
+    -fx-fill: black;
+}
+
+#codearea {
+    -fx-background-color: #ececec;
+}
+
 .titulo{
     -fx-font-weight: bold;
     -fx-font-size: 18px;
