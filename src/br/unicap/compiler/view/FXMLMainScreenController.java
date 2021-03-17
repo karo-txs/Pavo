@@ -87,6 +87,8 @@ public class FXMLMainScreenController implements Initializable {
         scroll = (VirtualizedScrollPane) selectedTab.getContent();
         //CodeArea ca = (CodeArea) selectedTab.getContent();
         CodeArea ca = (CodeArea) scroll.getContent();
+        
+        filename = selectedTab.getText();
 
         Scanner sc = new Scanner(ca.getText(), filename);
         Token token;
@@ -251,6 +253,7 @@ public class FXMLMainScreenController implements Initializable {
     //******************
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        table.setPlaceholder(new Label("No tokens read so far"));
         table.getColumns().addAll(tokenCol, typeCol);
         tokenCol.setMinWidth(170);
         tokenCol.setCellValueFactory(new PropertyValueFactory<>("token"));

@@ -46,11 +46,10 @@ Below the list of tokens accepted by the lexical analysis.
 | >= | relational operator more equal
 
 ## Program Preview
-(gif)
+![PavoReview](https://user-images.githubusercontent.com/58193125/111394529-a87fd400-8699-11eb-8cc5-14f40b43cd29.gif)
 
 ## Automatons
 Automatons representing the lexical analyzer [[Slide](https://github.com/AFKaro/Pavo/tree/main/docs)].
-![PavoAutomatons](https://user-images.githubusercontent.com/58193125/111038152-32177380-8406-11eb-939e-ac937a65fb86.gif)
 
 
 [//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does its job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
