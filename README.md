@@ -43,7 +43,7 @@ Below the list of tokens accepted by the lexical analysis.
 | = | arithmetic operator assign | , | special character comma |   
 | > | relational operator more | ; | special character semicolon |     
 | < | relational operator less | : | special character two points |
-| >= | relational operator more equal
+| >= | relational operator more equal | & | special character address |
 
 ## Program Preview
 ![PavoReview](https://user-images.githubusercontent.com/58193125/111394529-a87fd400-8699-11eb-8cc5-14f40b43cd29.gif)
