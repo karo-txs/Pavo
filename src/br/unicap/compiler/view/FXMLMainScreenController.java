@@ -11,7 +11,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -77,47 +76,50 @@ public class FXMLMainScreenController implements Initializable {
 
     @FXML
     private void runLexica(ActionEvent event) {
-        tokens = new ArrayList<>();
-        resultArea.setText("");
-        data = FXCollections.observableArrayList(tokens);
-        table.setItems(data);
 
-        Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
-        //cast pra receber o codeArea que esta dentro de scroll
-        scroll = (VirtualizedScrollPane) selectedTab.getContent();
-        //CodeArea ca = (CodeArea) selectedTab.getContent();
-        CodeArea ca = (CodeArea) scroll.getContent();
-        
-        filename = selectedTab.getText();
+        if (codeArea != null) {
 
-        Scanner sc = new Scanner(ca.getText(), filename);
-        Token token;
-
-        do {
-            token = sc.nextToken();
-            if (token != null) {
-                tokens.add(token);
-            }
-        } while (token != null);
-        if (!sc.getException().equals("NULL")) {
-            resultArea.setText(sc.getException() + "\n\nCONSTRUCTION FAILURE!");
-            if (isDark) {
-                resultArea.setStyle("-fx-text-fill: #FF2800");
-            } else {
-                resultArea.setStyle("-fx-text-fill: #B82524");
-            }
-        } else {
+            tokens = new ArrayList<>();
+            resultArea.setText("");
             data = FXCollections.observableArrayList(tokens);
             table.setItems(data);
-            resultArea.setText(tokens.size() + " identified tokens and no lexical errors found.\n\nSUCCESSFULLY BUILT!");
-            if (isDark) {
-                resultArea.setStyle("-fx-text-fill: #8DE38D");
-            } else {
-                resultArea.setStyle("-fx-text-fill: green");
 
+            Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
+            //cast pra receber o codeArea que esta dentro de scroll
+            scroll = (VirtualizedScrollPane) selectedTab.getContent();
+            //CodeArea ca = (CodeArea) selectedTab.getContent();
+            CodeArea ca = (CodeArea) scroll.getContent();
+
+            filename = selectedTab.getText();
+
+            Scanner sc = new Scanner(ca.getText(), filename);
+            Token token;
+
+            do {
+                token = sc.nextToken();
+                if (token != null) {
+                    tokens.add(token);
+                }
+            } while (token != null);
+            if (!sc.getException().equals("NULL")) {
+                resultArea.setText(sc.getException() + "\n\nCONSTRUCTION FAILURE!");
+                if (isDark) {
+                    resultArea.setStyle("-fx-text-fill: #FF2800");
+                } else {
+                    resultArea.setStyle("-fx-text-fill: #B82524");
+                }
+            } else {
+                data = FXCollections.observableArrayList(tokens);
+                table.setItems(data);
+                resultArea.setText(tokens.size() + " identified tokens and no lexical errors found.\n\nSUCCESSFULLY BUILT!");
+                if (isDark) {
+                    resultArea.setStyle("-fx-text-fill: #8DE38D");
+                } else {
+                    resultArea.setStyle("-fx-text-fill: green");
+
+                }
             }
         }
-
     }
     //******************
 
@@ -190,7 +192,7 @@ public class FXMLMainScreenController implements Initializable {
             codeArea = new CodeArea();
             codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
             codeArea.setId("codearea");
-            
+
             //cria uma ScrollBar, coloca o codeArea e adiciona na tab1 o scroll ao inves do codeArea
             scroll = new VirtualizedScrollPane(codeArea);
             Tab tab1 = new Tab(name, scroll);
@@ -211,7 +213,7 @@ public class FXMLMainScreenController implements Initializable {
 
             codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
             codeArea.setId("codearea");
-            
+
             //cria uma ScrollBar, coloca o codeArea e adiciona na tab1 o scroll ao inves do codeArea
             scroll = new VirtualizedScrollPane(codeArea);
 
