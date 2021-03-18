@@ -52,7 +52,7 @@ public class Rules {
     
     public static boolean isSpecialCharacter(char c){
         return c==')' || c=='(' || c=='{' || c=='}' || c=='[' || c==']'|| c==',' || c==';' 
-                || c == ':' || c=='#';
+                || c == ':' || c=='#' || c=='&';
     }
 
     public static boolean isSpace(char c){

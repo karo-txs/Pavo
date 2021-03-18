@@ -36,6 +36,7 @@ public enum TokenType{
     TK_SPECIAL_CHARACTER_SEMICOLON("Special_Character_Semicolon",Color.GRAY),
     TK_SPECIAL_CHARACTER_TWO_POINTS("Special_Character_Two_Points",Color.GRAY),
     TK_SPECIAL_CHARACTER_HASH("Special_Character_Hash",Color.GRAY),
+    TK_SPECIAL_CHARACTER_ADDRESS("Special_Character_Address",Color.GRAY),
     ;
 
     private String text;
@@ -108,6 +109,8 @@ public enum TokenType{
                 return TokenType.TK_SPECIAL_CHARACTER_TWO_POINTS;  
             case "#":
                 return TokenType.TK_SPECIAL_CHARACTER_HASH;  
+            case "&":
+                return TokenType.TK_SPECIAL_CHARACTER_ADDRESS;  
             
             default:
                 return null;
