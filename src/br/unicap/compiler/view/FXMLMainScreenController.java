@@ -109,8 +109,6 @@ public class FXMLMainScreenController implements Initializable {
                     resultArea.setStyle("-fx-text-fill: #B82524");
                 }
             } else {
-                data = FXCollections.observableArrayList(tokens);
-                table.setItems(data);
                 resultArea.setText(tokens.size() + " identified tokens and no lexical errors found.\n\nSUCCESSFULLY BUILT!");
                 if (isDark) {
                     resultArea.setStyle("-fx-text-fill: #8DE38D");
@@ -119,6 +117,8 @@ public class FXMLMainScreenController implements Initializable {
 
                 }
             }
+            data = FXCollections.observableArrayList(tokens);
+            table.setItems(data);
         }
     }
     //******************

@@ -200,15 +200,28 @@ public class Scanner {
                         cs.moveCursorBack(currentChar, antColCursor);
                     }
                     if (isEOF()) {
-                        if (Rules.isChar(currentChar) && pause == false) {
-                            term += currentChar;
+                        if (Rules.isChar(currentChar) || Rules.isDigit(currentChar)) {
+                            if(pause == false) term += currentChar;
+                            exception = throwException(TypeException.NUMBER_FORMAT, "Integer Number : " + term);
+                        }else if(Rules.isPunctuation(currentChar)){
+                            if (pause == false)term += currentChar;
+                            exception = throwException(TypeException.NUMBER_FORMAT, "Float Number : " + term);
+                        }else{
+                            exception = throwException(TypeException.NUMBER_FORMAT, "Integer Number : " + term);
                         }
+                        return null;
+                    } else if (!Rules.isChar(currentChar) && !Rules.isDigit(currentChar) && !Rules.isPunctuation(currentChar)) {
                         exception = throwException(TypeException.NUMBER_FORMAT, "Integer Number : " + term);
                         return null;
-                    } else if (!Rules.isChar(currentChar)) {
-                        exception = throwException(TypeException.NUMBER_FORMAT, "Integer Number : " + term);
-                        return null;
-                    } else {
+                    } else if(Rules.isPunctuation(currentChar)){
+                        state = 6;
+                        term += currentChar;
+                        if(isEOF()){
+                            exception = throwException(TypeException.NUMBER_FORMAT, "Float Number : " + term);
+                            return null;
+                        }
+                    }
+                    else {
                         term += currentChar;
                         state = 4;
                     }
@@ -221,7 +234,7 @@ public class Scanner {
                             pause = true;
                             state = 10;
                         }
-                    } else if (Rules.isChar(currentChar)) {
+                    } else if (Rules.isChar(currentChar)||Rules.isDigit(currentChar)||Rules.isPunctuation(currentChar)) {
                         term += currentChar;
                         state = 6;
                         if (isEOF()) {
@@ -232,14 +245,10 @@ public class Scanner {
                         cs.moveCursorBack(currentChar, antColCursor);
                         exception = throwException(TypeException.NUMBER_FORMAT, "Float Number : " + term);
                         return null;
-                        /*
-                        pause = true;
-                        state = 7;
-                         */
                     }
                     break;
                 case 6:
-                    if (Rules.isChar(currentChar)) {
+                    if (Rules.isChar(currentChar)||Rules.isDigit(currentChar)||Rules.isPunctuation(currentChar)) {
                         term += currentChar;
                         state = 6;
                         if (isEOF()) {
@@ -267,7 +276,7 @@ public class Scanner {
                             pause = true;
                             state = 10;
                         }
-                    } else if (!Rules.isChar(currentChar)) {
+                    } else if (!Rules.isChar(currentChar) && !Rules.isPunctuation(currentChar)) {
                         back();
                         cs.moveCursorBack(currentChar, antColCursor);
                         pause = true;
@@ -287,8 +296,13 @@ public class Scanner {
                     }
                     if (isEOF() && Rules.isChar(currentChar)) {
                         term += currentChar;
+                        exception = throwException(TypeException.NUMBER_FORMAT, "Float Number : " + term);
+                        return null;
                     }
-                    if (!Rules.isChar(currentChar) || isEOF()) {
+                    if (!Rules.isChar(currentChar) && !Rules.isDigit(currentChar) && !Rules.isPunctuation(currentChar) || isEOF()) {
+                        if (Rules.isChar(currentChar) || Rules.isDigit(currentChar)) {
+                            term += currentChar;
+                        }
                         exception = throwException(TypeException.NUMBER_FORMAT, "Float Number : " + term);
                         return null;
                     } else {
@@ -395,15 +409,9 @@ public class Scanner {
                     }
                     break;
                 case 15:
-                    if (!Rules.isEqual(currentChar)) {
-                        back();
-                        cs.moveCursorBack(currentChar, antColCursor);
-                        return new Token(TokenType.returnSubtype(term), term);
-                    } else {
-                        term += currentChar;
-                        exception = throwException(TypeException.INVALID_OPERATOR, term);
-                        return null;
-                    }
+                    back();
+                    cs.moveCursorBack(currentChar, antColCursor);
+                    return new Token(TokenType.returnSubtype(term), term);
                 /*
                   CONSUMIR COMENTARIOS  // exemplo de comentario consumido 
                  */
