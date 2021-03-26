@@ -24,8 +24,12 @@ public class Token {
         this.typeColor.setStyle(type.getColor());
     }
 
-    public Label getType() {
+    public Label getTypeColor() {
         return this.typeColor;
+    }
+    
+    public TokenType getType() {
+        return this.type;
     }
 
     public String getToken() {

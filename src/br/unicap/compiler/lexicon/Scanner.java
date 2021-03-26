@@ -96,13 +96,16 @@ public class Scanner {
                     } else if (Rules.isSpecialCharacter(currentChar)) {
                         term += currentChar;
                         return new Token(TokenType.returnSubtype(term), term);
-                    } else if (Rules.isPunctuation(currentChar)) {
+                    } else if (Rules.isPunctuation(currentChar)) { // . não é "pontuação" ?
                         term += currentChar;
                         state = 11;
                         if (isEOF()) {
                             exception = throwException(TypeException.INVALID_SYMBOL, term);
                             return null;
                         }
+                    } else if (currentChar == ';'){
+                        term += currentChar;
+                        return new Token(TokenType.TK_PUNCTUATION, term);
                     } else if (Rules.isBar(currentChar)) {
                         state = 16;
                         if (isEOF()) {

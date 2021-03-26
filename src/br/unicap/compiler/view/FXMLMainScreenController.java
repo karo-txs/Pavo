@@ -31,6 +31,7 @@ import javafx.stage.FileChooser;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
+import br.unicap.compiler.syntactic.Parser;
 
 public class FXMLMainScreenController implements Initializable {
 
@@ -94,7 +95,12 @@ public class FXMLMainScreenController implements Initializable {
 
             Scanner sc = new Scanner(ca.getText(), filename);
             Token token;
-
+            
+            Parser ps = new Parser(sc);
+            ps.BLK_S();
+            System.out.println("Compilado com sucesso!");
+            
+            /*
             do {
                 token = sc.nextToken();
                 if (token != null) {
@@ -119,6 +125,7 @@ public class FXMLMainScreenController implements Initializable {
             }
             data = FXCollections.observableArrayList(tokens);
             table.setItems(data);
+*/
         }
     }
     //******************

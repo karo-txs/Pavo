@@ -51,7 +51,7 @@ public class Rules {
     }
     
     public static boolean isSpecialCharacter(char c){
-        return c==')' || c=='(' || c=='{' || c=='}' || c=='[' || c==']'|| c==',' || c==';' 
+        return c==')' || c=='(' || c=='{' || c=='}' || c=='[' || c==']'|| c==',' 
                 || c == ':' || c=='#' || c=='&';
     }
 

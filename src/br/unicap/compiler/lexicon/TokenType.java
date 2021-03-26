@@ -103,8 +103,8 @@ public enum TokenType{
                 return TokenType.TK_SPECIAL_CHARACTER_BRACKETS_CLOSED;
             case ",":
                 return TokenType.TK_SPECIAL_CHARACTER_COMMA; 
-            case ";":
-                return TokenType.TK_SPECIAL_CHARACTER_SEMICOLON;  
+            /*case ";":
+                return TokenType.TK_SPECIAL_CHARACTER_SEMICOLON;*/
             case ":":
                 return TokenType.TK_SPECIAL_CHARACTER_TWO_POINTS;  
             case "#":
