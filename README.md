@@ -2,7 +2,6 @@
 ## _A minimalist compiler_
 Work done for the Compilers course at the Universidade Católica de Pernambuco (UNICAP).
 
-[![Download](https://img.shields.io/static/v1?label=Download&message=1.0.0&color=blue&style=for-the-badge")](http://www.twitter.com/meunome)
 [![Doc](https://img.shields.io/static/v1?label=Documentation&message=1.0.0&color=blue&style=for-the-badge")](https://afkaro.github.io/Pavo/)
 
 Students:
