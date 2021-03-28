@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" fx:id="pn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="644.0" prefWidth="1262.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.unicap.compiler.view.FXMLMainScreenController">
+<AnchorPane id="AnchorPane" fx:id="pn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="644.0" prefWidth="1262.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="br.unicap.compiler.view.FXMLMainScreenController">
     <children>
       <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="354.0" layoutY="209.0" opacity="0.66" pickOnBounds="true" preserveRatio="true">
          <image>
@@ -56,6 +56,15 @@
                      </accelerator></MenuItem>
             </items>
           </Menu>
+            <Menu mnemonicParsing="false" onAction="#runSintatica" text="Syntax Analysis">
+               <items>
+                  <MenuItem mnemonicParsing="false" onAction="#runLexica" text="Analyze">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="F6" control="UP" meta="UP" shift="DOWN" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+               </items>
+            </Menu>
         </menus>
       </MenuBar>
       <TextArea fx:id="resultArea" editable="false" focusTraversable="false" layoutX="8.0" layoutY="563.0" pickOnBounds="false" prefHeight="74.0" prefWidth="853.0" />

@@ -1,4 +1,4 @@
-package br.unicap.compiler.syntactic;
+package br.unicap.compiler.syntax;
 
 import br.unicap.compiler.exceptions.syntactic.SyntaxException;
 import br.unicap.compiler.lexicon.Scanner;
