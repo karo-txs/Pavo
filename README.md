@@ -2,6 +2,9 @@
 ## _A minimalist compiler_
 Work done for the Compilers course at the Universidade Católica de Pernambuco (UNICAP).
 
+[![Download](https://img.shields.io/static/v1?label=Download&message=1.0.0&color=blue&style=for-the-badge")](http://www.twitter.com/meunome)
+[![Doc](https://img.shields.io/static/v1?label=Documentation&message=1.0.0&color=blue&style=for-the-badge")](https://afkaro.github.io/Pavo/)
+
 Students:
 - Karolayne Teixeira da Silva ([AFKaro](https://github.com/AFKaro))
 - Luiz Fernando Leite ([LuizFernando-o](https://github.com/LuizFernando-o))
@@ -41,6 +44,7 @@ Below the list of tokens accepted by the lexical analysis.
 | ^ | arithmetic operator power | ] | special character brackets closed |     
 | / | arithmetic operator division | # | special character hash |           
 | = | arithmetic operator assign | , | special character comma |   
+
 | > | relational operator more | ; | special character semicolon |     
 | < | relational operator less | : | special character two points |
 | >= | relational operator more equal | & | special character address |
