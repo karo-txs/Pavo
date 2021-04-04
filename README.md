@@ -43,7 +43,6 @@ Below the list of tokens accepted by the lexical analysis.
 | ^ | arithmetic operator power | ] | special character brackets closed |     
 | / | arithmetic operator division | # | special character hash |           
 | = | arithmetic operator assign | , | special character comma |   
-
 | > | relational operator more | ; | special character semicolon |     
 | < | relational operator less | : | special character two points |
 | >= | relational operator more equal | & | special character address |
