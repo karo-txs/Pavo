@@ -143,7 +143,7 @@ public class FXMLMainScreenController implements Initializable {
             Scanner sc = new Scanner(ca.getText(), filename);
             
             Parser ps = new Parser(sc);
-            ps.BLK_S();
+            ps.runParser();
             System.out.println("Compilado com sucesso!");
             
         }

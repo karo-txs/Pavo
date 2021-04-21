@@ -6,6 +6,15 @@ import br.unicap.compiler.lexicon.Token;
 import br.unicap.compiler.lexicon.TokenType;
 
 public class Parser {
+	/*
+		1º Testar e ajustar (finalizar o basico)
+		2º exceções
+		3º Analizar recusão a esquerda 
+		4º implementar outras funções (for, do while, ...)
+
+		extra: branch nova: Design de ide
+	*/
+
 
     private Scanner scan;
     private Token token;
