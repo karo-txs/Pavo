@@ -6,7 +6,6 @@ public enum TokenType{
     TK_IDENTIFIER("Identifier",Color.BROWN), 
     TK_FLOAT("Float",Color.BLUE),
     TK_INT("Integer",Color.GREEN),
-    TK_KEYWORD("KeyWord",Color.PINK),
     TK_CHAR_SEQUENCE("Char_Sequence",Color.ORANGE),
     TK_CHAR("Char",Color.YELLOW),
     TK_PUNCTUATION("Punctuation",Color.BEIGE),
@@ -37,6 +36,11 @@ public enum TokenType{
     TK_SPECIAL_CHARACTER_TWO_POINTS("Special_Character_Two_Points",Color.GRAY),
     TK_SPECIAL_CHARACTER_HASH("Special_Character_Hash",Color.GRAY),
     TK_SPECIAL_CHARACTER_ADDRESS("Special_Character_Address",Color.GRAY),
+
+	TK_KEYWORD("KeyWord",Color.PINK),
+	TK_IF("If",Color.PINK),
+	TK_WHILE("While",Color.PINK),
+	TK_MAIN("Main",Color.PINK),
     ;
 
     private String text;
