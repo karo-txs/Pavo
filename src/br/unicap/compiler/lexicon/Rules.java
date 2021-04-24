@@ -50,6 +50,10 @@ public class Rules {
         return c == '.';
     }
     
+    public static boolean isSemiColon(char c){
+        return c == ';';
+    }
+    
     public static boolean isSpecialCharacter(char c){
         return c==')' || c=='(' || c=='{' || c=='}' || c=='[' || c==']'|| c==',' 
                 || c == ':' || c=='#' || c=='&';
@@ -66,7 +70,7 @@ public class Rules {
     public static boolean isUnrecognizableSymbol(char c){
         return !isEqual(c) && !isSpace(c) && !isSpecialCharacter(c) && !isArithmeticOperator(c) && !isChar(c) &&
                !isDigit(c) && !isRelationalOperator(c) && !isBar(c) && !isSingleQuotes(c) && !isDoubleQuotes(c) &&
-               !isPunctuation(c);
+               !isPunctuation(c) && !isSemiColon(c);
     } 
     
     public static boolean isReserved(String s){

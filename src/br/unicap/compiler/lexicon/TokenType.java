@@ -37,10 +37,13 @@ public enum TokenType{
     TK_SPECIAL_CHARACTER_HASH("Special_Character_Hash",Color.GRAY),
     TK_SPECIAL_CHARACTER_ADDRESS("Special_Character_Address",Color.GRAY),
 
-	TK_KEYWORD("KeyWord",Color.PINK),
-	TK_IF("If",Color.PINK),
-	TK_WHILE("While",Color.PINK),
-	TK_MAIN("Main",Color.PINK),
+    TK_KEYWORD("KeyWord",Color.PINK),
+    TK_KEYWORD_MAIN("Main",Color.PINK),
+    TK_KEYWORD_IF("If",Color.PINK),
+    TK_KEYWORD_WHILE("While",Color.PINK),
+    TK_KEYWORD_INT("Int",Color.PINK),
+    TK_KEYWORD_FLOAT("float",Color.PINK),
+    TK_KEYWORD_CHAR("char",Color.PINK),
     ;
 
     private String text;
@@ -65,6 +68,7 @@ public enum TokenType{
     
     public static TokenType returnSubtype(String term){
         switch (term) {
+            // Arithmetic
             case "+":
                 return TokenType.TK_ARITHMETIC_OPERATOR_PLUS;
             case "-":
@@ -77,7 +81,8 @@ public enum TokenType{
                 return TokenType.TK_ARITHMETIC_OPERATOR_DIVISION;
             case "=":
                 return TokenType.TK_ARITHMETIC_OPERATOR_ASSIGN;
-                
+               
+            // Relacional
             case "==":
                 return TokenType.TK_RELATIONAL_OPERATOR_EQUAL;
             case ">":
@@ -93,6 +98,7 @@ public enum TokenType{
             case "!=":
                 return TokenType.TK_RELATIONAL_OPERATOR_NOT_EQUAL;
                 
+            // Special Character
             case "(":
                 return TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_OPEN; 
             case ")":
@@ -116,6 +122,19 @@ public enum TokenType{
             case "&":
                 return TokenType.TK_SPECIAL_CHARACTER_ADDRESS;  
             
+            // Keyword
+            case "if":
+                return TokenType.TK_KEYWORD_IF;
+            case "main":
+                return TokenType.TK_KEYWORD_MAIN;
+            case "while":
+                return TokenType.TK_KEYWORD_WHILE;
+            case "int":
+                return TokenType.TK_KEYWORD_INT;
+            case "float":
+                return TokenType.TK_KEYWORD_FLOAT;
+            case "char":
+                return TokenType.TK_KEYWORD_CHAR;
             default:
                 return null;
         }

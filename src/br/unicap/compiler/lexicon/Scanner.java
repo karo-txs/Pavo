@@ -96,7 +96,7 @@ public class Scanner {
                     } else if (Rules.isSpecialCharacter(currentChar)) {
                         term += currentChar;
                         return new Token(TokenType.returnSubtype(term), term);
-                    } else if (Rules.isPunctuation(currentChar)) { // . não é "pontuação" ?
+                    } else if (Rules.isPunctuation(currentChar)) {
                         term += currentChar;
                         state = 11;
                         if (isEOF()) {
@@ -105,7 +105,7 @@ public class Scanner {
                         }
                     } else if (currentChar == ';'){
                         term += currentChar;
-                        return new Token(TokenType.TK_PUNCTUATION, term);
+                        return new Token(TokenType.TK_SPECIAL_CHARACTER_SEMICOLON, term);
                     } else if (Rules.isBar(currentChar)) {
                         state = 16;
                         if (isEOF()) {
@@ -159,7 +159,7 @@ public class Scanner {
                     break;
                 case 2:
                     if (Rules.isReserved(term)) {
-                        token = new Token(TokenType.TK_KEYWORD, term);
+                        token = new Token(TokenType.returnSubtype(term), term);
                     } else {
                         token = new Token(TokenType.TK_IDENTIFIER, term);
                     }
@@ -504,7 +504,7 @@ public class Scanner {
         return content[pos++];
     }
 
-    private boolean isEOF() {
+    public  boolean isEOF() {
         return pos == content.length;
     }
 
