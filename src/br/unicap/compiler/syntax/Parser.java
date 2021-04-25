@@ -1,24 +1,28 @@
 package br.unicap.compiler.syntax;
 
+import br.unicap.compiler.exceptions.syntactic.SyntaxException;
 import br.unicap.compiler.lexicon.Scanner;
 import br.unicap.compiler.lexicon.Token;
 import br.unicap.compiler.lexicon.TokenType;
+import java.util.List;
 
 public class Parser {
 
     /*
-		1º Testar e ajustar (finalizar o basico)
-		2º exceções
-		3º Analizar recusão a esquerda 
-		4º implementar outras funções (for, do while, ...)
+                1º testes
+		2º implementar outras funções (for, do while, ...)
 
 		extra: branch nova: Design de ide
      */
     private Scanner scan;
     private Token token;
+    private String nameArchive;
+    private String exception;
 
-    public Parser(Scanner scan) {
+    public Parser(Scanner scan, String nameArchive) {
         this.scan = scan;
+        this.nameArchive = nameArchive;
+        exception = "NULL";
     }
 
     public void runParser() {
@@ -33,58 +37,67 @@ public class Parser {
 
     public void programa() {
         //int main"("")" <bloco>
-        if (token.getType() == TokenType.TK_KEYWORD_INT) {
+        if (verificacao(TokenType.TK_KEYWORD_INT)) {
             scan();
-            if (token.getType() == TokenType.TK_KEYWORD_MAIN) {
+            if (verificacao(TokenType.TK_KEYWORD_MAIN)) {
                 scan();
-                if (token.getType() == TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_OPEN) {
+                if (verificacao(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_OPEN)) {
                     scan();
-                    if (token.getType() == TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_CLOSED) {
+                    if (verificacao(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_CLOSED)) {
                         scan();
                         bloco();
                     } else {
-                        System.out.println("parserError(CodigosToken.FECHA_PARENTESES)");
+                        exception = throwException("não fechou parenteses");
                     }
                 } else {
-                    System.out.println("parserError(CodigosToken.ABRE_PARENTESES)");
+                    exception = throwException("nao abriu parenteses");
                 }
             } else {
-                System.out.println("main");
+                exception = throwException("falta main");
             }
         } else {
-            System.out.println("int");
+            exception = throwException("falta int");
         }
     }
 
     /* ------------------------------------------- *
-                       BLOCK <BLK>
+                        BLOCO
 	   <bloco> ::= “{“ {<decl_var>}* {<comando>}* “}”
      * ------------------------------------------- */
     public void bloco() {
-        if (token.getType() == TokenType.TK_SPECIAL_CHARACTER_BRACES_OPEN) {
+        if (verificacao(TokenType.TK_SPECIAL_CHARACTER_BRACES_OPEN)) {
             scan();
-            if (scan.isEOF() && token != null && token.getType() != TokenType.TK_SPECIAL_CHARACTER_BRACES_CLOSED
-                    || token == null) {
-                System.out.println("2Não fechou o bloco");
+
+            if (verificacao(TokenType.TK_SPECIAL_CHARACTER_BRACES_CLOSED)) {
+                scan();
                 return;
             }
-            while (token != null && !scan.isEOF() && (token.getType() != TokenType.TK_SPECIAL_CHARACTER_BRACES_CLOSED)) {
-                while (token != null && First.decl_var.contains(token.getType())) {
-                    decl_var();
-                }
-
-                while (token != null && First.comando.contains(token.getType())) {
-                    comando();
-                    scan();
+            if (scan.isEOF() && token != null && verificacao(TokenType.TK_SPECIAL_CHARACTER_BRACES_CLOSED)
+                    || token == null) {
+                exception = throwException("não fechou bloco");
+                return;
+            }
+            while (exception.equals("NULL") && token != null && !scan.isEOF() && (token.getType() != TokenType.TK_SPECIAL_CHARACTER_BRACES_CLOSED)) {
+//first(First.decl_var);
+                if (first(First.decl_var)) {
+                    while (first(First.decl_var)) {
+                        decl_var();
+                    }
+                } else if (first(First.comando)) {
+                    while (first(First.comando)) {
+                        comando();
+                    }
+                } else {
+                    exception = throwException("não reconhecido");
                 }
             }
-            if (scan.isEOF() && token != null && token.getType() != TokenType.TK_SPECIAL_CHARACTER_BRACES_CLOSED
-                    || token==null) {
-                System.out.println("2Não fechou o bloco");
+            if (scan.isEOF() && token != null && verificacao(TokenType.TK_SPECIAL_CHARACTER_BRACES_CLOSED)
+                    || token == null) {
+                exception = throwException("não fechou bloco");
                 return;
             }
         } else {
-            System.out.println("3Não abriu o bloco");
+            exception = throwException("não abriu bloco");
         }
     }
 
@@ -95,17 +108,20 @@ public class Parser {
 						  | if "("<expr_relacional>")" <comando> {else <comando>}?
      * ------------------------------------------- */
     public void comando() {
-        if (First.comando_basico.contains(token.getType())) {
+        if (first(First.comando_basico)) {
             comando_basico();
-            scan();
-        } else if (First.iteracao.contains(token.getType())) {
+        } else if (first(First.iteracao)) {
             iteracao();
-            scan();
-        } else if (First.if_.contains(token.getType())) {
+        } else if (first(First.if_)) {
             if_();
-            scan();
-        } else {
-            //erro
+        }
+    }
+
+    public void comando_() {
+        if (first(First.comando_basico)) {
+            comando_basico();
+        } else if (first(First.if_)) {
+            if_();
         }
     }
 
@@ -115,12 +131,10 @@ public class Parser {
 								| <bloco>
      * ------------------------------------------- */
     public void comando_basico() {
-        if (First.atribuicao.contains(token.getType())) {
+        if (first(First.atribuicao)) {
             atribuicao();
-            scan();
-        } else if (First.bloco.contains(token.getType())) {
+        } else if (first(First.bloco)) {
             bloco();
-            scan();
         }
     }
 
@@ -129,20 +143,26 @@ public class Parser {
 	while "("<expr_relacional>")" <comando>
      * ------------------------------------------- */
     public void iteracao() {
-
-        if (token.getType() == TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_OPEN) {
+        scan();
+        if (verificacao(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_OPEN)) {
             scan();
-            if (First.expr_relacional.contains(token.getType())) {
+            if (first(First.expr_relacional)) {
                 expr_relacional();
-                scan();
-                if (token.getType() == TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_CLOSED) {
+                if (verificacao(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_CLOSED)) {
                     scan();
-                    if (First.comando.contains(token.getType())) {
+                    if (first(First.comando)) {
                         comando();
-                        scan();
+                    } else {
+                        exception = throwException("não abriu bloco e ta sem comando");
                     }
+                } else {
+                    exception = throwException("Parenteses não fechado");
                 }
+            } else {
+                exception = throwException("Falta a relacional");
             }
+        } else {
+            exception = throwException("não abriu parenteses");
         }
     }
 
@@ -151,20 +171,23 @@ public class Parser {
 		     <id> "=" <expr_arit> ";"
      * ------------------------------------------- */
     public void atribuicao() {
-        if (token.getType()==TokenType.TK_IDENTIFIER) {
+        if (verificacao(TokenType.TK_IDENTIFIER)) {
             scan();
-
-            if (token.getType() == TokenType.TK_RELATIONAL_OPERATOR_EQUAL) {
+            if (verificacao(TokenType.TK_ARITHMETIC_OPERATOR_ASSIGN)) {
                 scan();
-
-                if (First.expr_arit.contains(token.getType())) {
+                if (first(First.expr_arit)) {
                     expr_arit();
-                    scan();
-
-                    if (token.getType() == TokenType.TK_SPECIAL_CHARACTER_SEMICOLON) {
+                    if (verificacao(TokenType.TK_SPECIAL_CHARACTER_SEMICOLON)) {
+                        scan();
                         return; //esta ok
+                    } else {
+                        exception = throwException("nao fechou ;");
                     }
+                } else {
+                    exception = throwException("Sem expressão arit ou valor");
                 }
+            } else {
+                exception = throwException("sem operador = ");
             }
         }
     }
@@ -175,23 +198,25 @@ public class Parser {
      * ------------------------------------------- */
     public void expr_relacional() {
 
-        if (First.expr_arit.contains(token.getType())) {
+        if (first(First.expr_arit)) {
             expr_arit();
-            scan();
-            if (First.op_relacional.contains(token.getType())) {
+            if (first(First.op_relacional)) {
                 op_relacional();
-                scan();
-                if (First.expr_arit.contains(token.getType())) {
+                if (first(First.expr_arit)) {
                     expr_arit();
-                    scan();
+                } else {
+                    exception = throwException("Faltou expressão");
                 }
+            } else {
+                exception = throwException("Faltou operador rel");
             }
+        } else {
+            exception = throwException("Faltou expressão");
         }
     }
 
     /* ------------------------------------------- *
-		expr_relacional
-	<expr_relacional> ::= <expr_arit> <op_relacional> <expr_arit>
+		op_relacional
      * ------------------------------------------- */
     public void op_relacional() {
         if (token.getType() == TokenType.TK_RELATIONAL_OPERATOR_EQUAL
@@ -201,6 +226,7 @@ public class Parser {
                 || token.getType() == TokenType.TK_RELATIONAL_OPERATOR_MORE_EQUAL
                 || token.getType() == TokenType.TK_RELATIONAL_OPERATOR_NOT
                 || token.getType() == TokenType.TK_RELATIONAL_OPERATOR_NOT_EQUAL) {
+            scan();
             return;//ok
         } else {
             //erro
@@ -208,60 +234,91 @@ public class Parser {
     }
 
     /* ------------------------------------------- *
-						expr_arit
+			expr_arit
+    antes>>
 		<expr_arit> ::= <expr_arit> "+" <termo>
-                      | <expr_arit> "-" <termo>
-  				  	  | <termo>
+                              | <expr_arit> "-" <termo>
+  			      | <termo>
+    depois>>
+                <expr_arit> ::= <termo> <expr_arit_>
      * ------------------------------------------- */
     public void expr_arit() {
-        if (First.expr_arit.contains(token.getType())) {
-            expr_arit();
-            scan();
-            if (token.getType() == TokenType.TK_ARITHMETIC_OPERATOR_PLUS) {
-                scan();
-                if (First.termo.contains(token.getType())) {
-                    termo();
-                    scan();
-                }
-            } else if (token.getType() == TokenType.TK_ARITHMETIC_OPERATOR_MINUS) {
-                scan();
-                if (First.termo.contains(token.getType())) {
-                    termo();
-                    scan();
-                }
-            }
-        } else if (First.termo.contains(token.getType())) {
+        if (first(First.termo)) {
             termo();
-            scan();
+            expr_arit_();
         }
     }
 
     /* ------------------------------------------- *
-						termo
-		<expr_arit> ::= <termo> "*" <fator>
+		<expr_arit_> ::= "+" <termo> <expr_arit_>
+                                | "+" <termo> <expr_arit_>
+                                | vazio
+     * ------------------------------------------- */
+    public void expr_arit_() {
+        if (verificacao(TokenType.TK_ARITHMETIC_OPERATOR_PLUS)) {
+            scan();
+            if (first(First.termo)) {
+                termo();
+                expr_arit_();
+            } else {
+                exception = throwException("ta errado 1+ nada");
+            }
+
+        } else if (verificacao(TokenType.TK_ARITHMETIC_OPERATOR_MINUS)) {
+            scan();
+            if (first(First.termo)) {
+                termo();
+                expr_arit_();
+            } else {
+                exception = throwException("ta errado 1- nada");
+            }
+        } else {
+            return;
+        }
+
+    }
+
+    /* ------------------------------------------- *
+			termo
+    antes>>
+		<termo> ::= <termo> "*" <fator>
                       | <termo> "\" <fator>
-  				  	  | <fator>
+  		      | <fator>
+    depois>>
+                <termo> ::= <fator> <termo_>
      * ------------------------------------------- */
     public void termo() {
-        if (First.termo.contains(token.getType())) {
-            termo();
-            scan();
-            if (token.getType() == TokenType.TK_ARITHMETIC_OPERATOR_MULTIPLICATION) {
-                scan();
-                if (First.fator.contains(token.getType())) {
-                    fator();
-                    scan();
-                }
-            } else if (token.getType() == TokenType.TK_ARITHMETIC_OPERATOR_DIVISION) {
-                scan();
-                if (First.fator.contains(token.getType())) {
-                    fator();
-                    scan();
-                }
-            }
-        } else if (First.fator.contains(token.getType())) {
+        if (first(First.fator)) {
             fator();
+            termo_();
+        }
+    }
+
+    /* ------------------------------------------- *
+			termo_
+		<termo> ::= "*" <fator> <termo_>
+                           |"\" <fator> <termo_>
+  		           | vazio
+     * ------------------------------------------- */
+    public void termo_() {
+        if (verificacao(TokenType.TK_ARITHMETIC_OPERATOR_MULTIPLICATION)) {
             scan();
+            if (first(First.fator)) {
+                fator();
+                termo_();
+            } else {
+                exception = throwException("ta errado 1* nadao");
+            }
+        } else if (verificacao(TokenType.TK_ARITHMETIC_OPERATOR_DIVISION)) {
+            scan();
+            if (first(First.fator)) {
+                fator();
+                termo_();
+            } else {
+                exception = throwException("ta errado 1/ por nada");
+            }
+        } else {
+            return;
         }
     }
 
@@ -274,20 +331,25 @@ public class Parser {
 				  | <char>
      * ------------------------------------------- */
     public void fator() {
-        if (token.getType() == TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_OPEN) {
+        if (verificacao(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_OPEN)) {
             scan();
-            if (First.expr_arit.contains(token.getType())) {
+            if (first(First.expr_arit)) {
                 expr_arit();
-                scan();
-                if (token.getType() == TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_OPEN) {
+
+                if (verificacao(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_CLOSED)) {
+                    scan();
                     return; //ok
+                } else {
+                    exception = throwException("Parenteses não fechado");
                 }
+            } else if (verificacao(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_CLOSED)) {
+                exception = throwException("sem nada dentro-> ilegal");
             }
-        } else if (token.getType() == TokenType.TK_IDENTIFIER
+        } else if (scan.getException().equals("NULL") && (token.getType() == TokenType.TK_IDENTIFIER
                 || token.getType() == TokenType.TK_INT
                 || token.getType() == TokenType.TK_CHAR
                 || token.getType() == TokenType.TK_FLOAT
-                || token.getType() == TokenType.TK_CHAR_SEQUENCE) {
+                || token.getType() == TokenType.TK_CHAR_SEQUENCE)) {
             scan();
             return; //ok
         }
@@ -298,64 +360,58 @@ public class Parser {
 		    <decl_var> ::= <tipo> <id> ";"
      * ------------------------------------------- */
     public void decl_var() {
-        if (First.tipo.contains(token.getType())) {
+        if (first(First.tipo)) {
             scan();
-            if (token.getType() == TokenType.TK_IDENTIFIER) {
+            if (verificacao(TokenType.TK_IDENTIFIER)) {
                 scan();
-                if (token.getType() == TokenType.TK_SPECIAL_CHARACTER_SEMICOLON) {
+                if (verificacao(TokenType.TK_SPECIAL_CHARACTER_SEMICOLON)) {
                     scan();
                     return;
                 } else {
-                    System.out.println("não fechou ;");
+                    exception = throwException("não fechou ;");
                 }
             } else {
-                System.out.println("Identificador Esperado");
+                exception = throwException("Identificador Esperado");
             }
-        } else {
-            System.out.println("Tipo esperado");
         }
     }
-         
-
-    /* ------------------------------------------- *
-	            	declaração tipo		
-		     <tipo> ::= int | float | char
-     * ------------------------------------------- */
-//    public void tipo() {
-//        if (token.getType() == TokenType.TK_KEYWORD_INT
-//                || token.getType() == TokenType.TK_KEYWORD_CHAR
-//                || token.getType() == TokenType.TK_KEYWORD_FLOAT
-//                || token.getType() == TokenType.TK_CHAR_SEQUENCE) {//ver isso aqui <-
-//            scan();
-//        }
-//    }
 
     /* ------------------------------------------- *
 	            	    if		
-   if "("<expr_relacional>")" <comando> {else <comando>}?
+   if "("<expr_relacional>")" <comando> {else <comando_>}?
      * ------------------------------------------- */
     public void if_() {
-        if (token.getType() == TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_OPEN) {
+        scan();
+        if (verificacao(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_OPEN)) {
             scan();
-            if (First.expr_relacional.contains(token.getType())) {
+            if (first(First.expr_relacional)) {
                 expr_relacional();
-                scan();
-                if (token.getType() == TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_CLOSED) {
+                if (verificacao(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_CLOSED)) {
                     scan();
-                    if (First.comando.contains(token.getType())) {
+                    if (first(First.comando)) {
                         comando();
-                        scan();
-                        // while
-                        if (token.getType() == TokenType.TK_KEYWORD) {//else
+                        //scan();
+                        System.out.println("Token " + token);
+                        if (token != null
+                                && verificacao(TokenType.TK_KEYWORD_ELSE)) {
                             scan();
-                            if (First.comando.contains(token.getType())) {
-                                comando();
-                                scan();
+                            if (first(First.comando_)) {
+                                comando_();
                             }
+                        } else if (token == null) {
+                            exception = throwException("não fechou bloco main");
                         }
+                    } else {
+                        exception = throwException("Não é um comando...");
                     }
+                } else {
+                    exception = throwException("Não fechou parenteses");
                 }
+            } else {
+                exception = throwException("Não é exp rel");
             }
+        } else {
+            exception = throwException("Não abriu parenteses");
         }
     }
 
@@ -365,4 +421,24 @@ public class Parser {
     private void scan() {
         token = scan.nextToken();
     }
+
+    private String throwException(String msg) {
+        SyntaxException ex = new SyntaxException(msg, scan.getCursor(), nameArchive);
+        return ex.throwException();
+    }
+
+    public String getException() {
+        return this.exception;
+    }
+
+    private boolean verificacao(TokenType tokenType) {
+        return scan.getException().equals("NULL")
+                && token.getType() == tokenType;
+    }
+
+    private boolean first(List first) {
+        return token != null && first.contains(token.getType());
+    }
+    
+    
 }

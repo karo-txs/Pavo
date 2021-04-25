@@ -515,6 +515,10 @@ public class Scanner {
     public String getException() {
         return this.exception;
     }
+    
+    public Cursor getCursor(){
+        return this.cs;
+    }
 
     private String throwException(TypeException type, String msg) {
         PersonalizedException ex = null;

@@ -40,6 +40,7 @@ public enum TokenType{
     TK_KEYWORD("KeyWord",Color.PINK),
     TK_KEYWORD_MAIN("Main",Color.PINK),
     TK_KEYWORD_IF("If",Color.PINK),
+    TK_KEYWORD_ELSE("While",Color.PINK),
     TK_KEYWORD_WHILE("While",Color.PINK),
     TK_KEYWORD_INT("Int",Color.PINK),
     TK_KEYWORD_FLOAT("float",Color.PINK),
@@ -125,6 +126,8 @@ public enum TokenType{
             // Keyword
             case "if":
                 return TokenType.TK_KEYWORD_IF;
+            case "else":
+                return TokenType.TK_KEYWORD_ELSE;
             case "main":
                 return TokenType.TK_KEYWORD_MAIN;
             case "while":

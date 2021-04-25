@@ -6,7 +6,8 @@ public enum TypeException {
     NUMBER_FORMAT("NumberFormat"),
     IDENTIFIER_FORMAT("IdentifierFormat"),
     UNCLOSED("Unclosed"),
-    EMPTY_CHAR("EmptyChar")
+    EMPTY_CHAR("EmptyChar"),
+    SYNTAX("Syntax"),
     ;
 
     private String name;

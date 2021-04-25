@@ -121,7 +121,7 @@ public class FXMLMainScreenController implements Initializable {
 
         }
     }
-    
+
     @FXML
     private void runSintatica(ActionEvent event) {
 
@@ -141,11 +141,34 @@ public class FXMLMainScreenController implements Initializable {
             filename = selectedTab.getText();
 
             Scanner sc = new Scanner(ca.getText(), filename);
-            
-            Parser ps = new Parser(sc);
+            Parser ps = new Parser(sc, filename);
             ps.runParser();
-            System.out.println("Compilado com sucesso!");
-            
+            if (!sc.getException().equals("NULL")) {
+                resultArea.setText(sc.getException() + "\n\nCONSTRUCTION FAILURE!");
+                if (isDark) {
+                    resultArea.setStyle("-fx-text-fill: #FF2800");
+                } else {
+                    resultArea.setStyle("-fx-text-fill: #B82524");
+                }
+            } else {
+                if (!ps.getException().equals("NULL")) {
+                    resultArea.setText(ps.getException() + "\n\nCONSTRUCTION FAILURE!");
+                    if (isDark) {
+                        resultArea.setStyle("-fx-text-fill: #FF2800");
+                    } else {
+                        resultArea.setStyle("-fx-text-fill: #B82524");
+                    }
+                } else {
+                    resultArea.setText(tokens.size() + " identified tokens and no sintax errors found.\n\nSUCCESSFULLY BUILT!");
+                    if (isDark) {
+                        resultArea.setStyle("-fx-text-fill: #8DE38D");
+                    } else {
+                        resultArea.setStyle("-fx-text-fill: green");
+
+                    }
+                }
+
+            }
         }
     }
     //******************
