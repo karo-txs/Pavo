@@ -127,7 +127,22 @@ public class Scanner {
                             exception = throwException(TypeException.UNCLOSED, "Char: " + term);
                             return null;
                         }
-                    } else {
+                    } else if(Rules.isAmpersand(currentChar)){
+                        term += currentChar;
+                        state = 24;
+                        if (isEOF()) {
+                            exception = throwException(TypeException.INVALID_OPERATOR, "And: " + term);
+                            return null;
+                        }
+                    }else if(Rules.isPipe(currentChar)){
+                        term += currentChar;
+                        state = 25;
+                        if (isEOF()) {
+                            exception = throwException(TypeException.INVALID_OPERATOR, "Or: " + term);
+                            return null;
+                        }
+                    }
+                    else {
                         term += currentChar;
                         exception = throwException(TypeException.INVALID_SYMBOL, term);
                         return null;
@@ -494,6 +509,27 @@ public class Scanner {
                     } else {
                         cs.moveCursorBack(currentChar, antColCursor);
                         exception = throwException(TypeException.UNCLOSED, "Char: " + term);
+                        return null;
+                    }
+                /*
+                  LOGIC
+                 */
+                case 24:
+                    if (Rules.isAmpersand(currentChar)) {
+                        term += currentChar;
+                        return new Token(TokenType.TK_LOGIC_AND, term);
+                    }else {
+                        cs.moveCursorBack(currentChar, antColCursor);
+                        exception = throwException(TypeException.INVALID_OPERATOR, "And: " + term);
+                        return null;
+                    }
+                case 25:
+                    if (Rules.isPipe(currentChar)) {
+                        term += currentChar;
+                        return new Token(TokenType.TK_LOGIC_OR, term);
+                    }else {
+                        cs.moveCursorBack(currentChar, antColCursor);
+                        exception = throwException(TypeException.INVALID_OPERATOR, "Or: " + term);
                         return null;
                     }
             }

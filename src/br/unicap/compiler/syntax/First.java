@@ -27,6 +27,8 @@ public class First {
     static final List<TokenType> expr_arit = termo;
 
     static final List<TokenType> expr_relacional = expr_arit;
+    
+    static final List<TokenType> expr_logica= expr_arit;
 
     static final List<TokenType> op_relacional = Arrays.asList(
             TokenType.TK_RELATIONAL_OPERATOR_EQUAL,
@@ -41,32 +43,44 @@ public class First {
     static final List<TokenType> atribuicao = Arrays.asList(
             TokenType.TK_IDENTIFIER);
 
-    static final List<TokenType> iteracao = Arrays.asList(
-            TokenType.TK_KEYWORD_WHILE
-    );
+    static final List<TokenType> while_ = Arrays.asList(
+            TokenType.TK_KEYWORD_WHILE);
+    
+    static final List<TokenType> do_while_ = Arrays.asList(
+            TokenType.TK_KEYWORD_DO_WHILE);
+    
+    static final List<TokenType> for_ = Arrays.asList(
+            TokenType.TK_KEYWORD_FOR);
 
     static final List<TokenType> if_ = Arrays.asList(
-            TokenType.TK_KEYWORD_IF
-    );
+            TokenType.TK_KEYWORD_IF);
+    
+    static final List<TokenType> print = Arrays.asList(
+            TokenType.TK_KEYWORD_PRINT);
+    
+    static final List<TokenType> print_ = concatList(Arrays.asList(
+            TokenType.TK_CHAR_SEQUENCE),expr_logica, expr_arit);
 
     static final List<TokenType> bloco = Arrays.asList(
             TokenType.TK_SPECIAL_CHARACTER_BRACES_OPEN);
 
     static final List<TokenType> comando_basico = concatList(atribuicao, bloco);
 
-    static final List<TokenType> comando = concatList(concatList(Arrays.asList(
-            TokenType.TK_KEYWORD_IF
-    ), iteracao), comando_basico);
+    static final List<TokenType> comando = concatList(if_, while_, for_,do_while_, comando_basico);
     
-    static final List<TokenType> comando_ = concatList(Arrays.asList(
-            TokenType.TK_KEYWORD_IF), comando_basico);
+    static final List<TokenType> comando_ = concatList(if_, comando_basico);
 
-    static final List<TokenType> programa = Arrays.asList(
-            TokenType.TK_KEYWORD_INT);
+    static final List<TokenType> main = Arrays.asList(TokenType.TK_KEYWORD_INT);
+    
+    static final List<TokenType> metodo = Arrays.asList(TokenType.TK_KEYWORD_VOID, TokenType.TK_KEYWORD_INT);
+    
+    static final List<TokenType> chamada_metodo = Arrays.asList(TokenType.TK_IDENTIFIER);
 
-    static private List<TokenType> concatList(List<TokenType> primeiraLista, List<TokenType> segundaLista) {
-        List<TokenType> novaLista = new ArrayList<TokenType>(primeiraLista);
-        novaLista.addAll(segundaLista);
+    static private List<TokenType> concatList(List<TokenType> ... listas) {
+        List<TokenType> novaLista = new ArrayList<TokenType>();
+        for (List<TokenType> lista: listas){
+            novaLista.addAll(lista);
+        }
         return novaLista;
     }
 }

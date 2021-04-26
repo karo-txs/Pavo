@@ -8,7 +8,7 @@ public class Rules {
     private static final String[] keyWords = {"asm","auto","break","case","char","const","continue","default","do",
                                        "double","else","enum","extern","float","for","goto","if","int","long",
                                        "main","register","return","short","signed","sizeof","static","struct",
-                                       "switch","typedef","union","unsigned","void","volatile","while"};
+                                       "switch","typedef","union","unsigned","void","volatile","while", "print"};
     
     public static boolean isDigit(char c){
         return c>='0' && c<='9';
@@ -56,7 +56,7 @@ public class Rules {
     
     public static boolean isSpecialCharacter(char c){
         return c==')' || c=='(' || c=='{' || c=='}' || c=='[' || c==']'|| c==',' 
-                || c == ':' || c=='#' || c=='&';
+                || c == ':' || c=='#';
     }
 
     public static boolean isSpace(char c){
@@ -67,10 +67,18 @@ public class Rules {
         return c=='\n';
     }
     
+    public static boolean isAmpersand(char c){
+        return c=='&';
+    }
+    
+    public static boolean isPipe(char c){
+        return c=='|';
+    }
+    
     public static boolean isUnrecognizableSymbol(char c){
         return !isEqual(c) && !isSpace(c) && !isSpecialCharacter(c) && !isArithmeticOperator(c) && !isChar(c) &&
                !isDigit(c) && !isRelationalOperator(c) && !isBar(c) && !isSingleQuotes(c) && !isDoubleQuotes(c) &&
-               !isPunctuation(c) && !isSemiColon(c);
+               !isPunctuation(c) && !isSemiColon(c) && !isAmpersand(c) && !isPipe(c);
     } 
     
     public static boolean isReserved(String s){

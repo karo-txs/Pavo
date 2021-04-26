@@ -10,7 +10,8 @@ public class Parser {
 
     /*
                 1º testes
-		2º implementar outras funções (for, do while, ...)
+                2º refatoraçao do codigo (ingles e padronização)
+                3º documentação pavo github
 
 		extra: branch nova: Design de ide
      */
@@ -18,6 +19,7 @@ public class Parser {
     private Token token;
     private String nameArchive;
     private String exception;
+    private boolean mainCriado = false;
 
     public Parser(Scanner scan, String nameArchive) {
         this.scan = scan;
@@ -27,36 +29,69 @@ public class Parser {
 
     public void runParser() {
         scan();
-        if (!scan.isEOF()) {
-            programa();
-            if (!scan.isEOF()) {
-                //parserError(CodigosToken.EOF);
-            }
-        }//else parserError(First.programa);
-    }
-
-    public void programa() {
-        //int main"("")" <bloco>
-        if (verificacao(TokenType.TK_KEYWORD_INT)) {
-            scan();
-            if (verificacao(TokenType.TK_KEYWORD_MAIN)) {
+        if (scan.isEOF()) {
+            throwException("ta sem nada");
+        }
+        while (!scan.isEOF() && exception.equals("NULL")) {
+            if (verificacao(TokenType.TK_KEYWORD_INT)) {
                 scan();
-                if (verificacao(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_OPEN)) {
+                programa_();
+            } else if (verificacao(TokenType.TK_KEYWORD_VOID)) {
+                scan();
+                if (verificacao(TokenType.TK_IDENTIFIER)) {
                     scan();
-                    if (verificacao(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_CLOSED)) {
-                        scan();
-                        bloco();
-                    } else {
-                        exception = throwException("não fechou parenteses");
-                    }
+                    metodo();
                 } else {
-                    exception = throwException("nao abriu parenteses");
+                    throwException("metodo errado");
                 }
             } else {
-                exception = throwException("falta main");
+                throwException("irreconhecido");
+            }
+        }
+    }
+
+    public void programa_() {
+        if (verificacao(TokenType.TK_KEYWORD_MAIN)) {
+            if (mainCriado) {
+                throwException("metodo main duplicado");
+            } else {
+                mainCriado = true;
+                scan();
+                main();
+            }
+        } else if (verificacao(TokenType.TK_IDENTIFIER)) {
+            scan();
+            metodo();
+        } else {
+            throwException("metodo errado");
+        }
+    }
+
+    public void metodo() {
+        if (verificacao(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_OPEN)) {
+            scan();
+            if (verificacao(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_CLOSED)) {
+                scan();
+                bloco();
+            } else {
+                throwException("não fechou parenteses");
             }
         } else {
-            exception = throwException("falta int");
+            throwException("nao abriu parenteses");
+        }
+    }
+
+    public void main() {
+        if (verificacao(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_OPEN)) {
+            scan();
+            if (verificacao(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_CLOSED)) {
+                scan();
+                bloco();
+            } else {
+                throwException("não fechou parenteses");
+            }
+        } else {
+            throwException("nao abriu parenteses");
         }
     }
 
@@ -68,17 +103,16 @@ public class Parser {
         if (verificacao(TokenType.TK_SPECIAL_CHARACTER_BRACES_OPEN)) {
             scan();
 
-            if (verificacao(TokenType.TK_SPECIAL_CHARACTER_BRACES_CLOSED)) {
+            if (token != null && verificacao(TokenType.TK_SPECIAL_CHARACTER_BRACES_CLOSED)) {
                 scan();
                 return;
             }
             if (scan.isEOF() && token != null && verificacao(TokenType.TK_SPECIAL_CHARACTER_BRACES_CLOSED)
                     || token == null) {
-                exception = throwException("não fechou bloco");
+                throwException("não fechou bloco");
                 return;
             }
             while (exception.equals("NULL") && token != null && !scan.isEOF() && (token.getType() != TokenType.TK_SPECIAL_CHARACTER_BRACES_CLOSED)) {
-//first(First.decl_var);
                 if (first(First.decl_var)) {
                     while (first(First.decl_var)) {
                         decl_var();
@@ -87,31 +121,44 @@ public class Parser {
                     while (first(First.comando)) {
                         comando();
                     }
+                } else if (first(First.print)) {
+                    while (first(First.print)) {
+                        print();
+                    }
                 } else {
-                    exception = throwException("não reconhecido");
+                    throwException("não reconhecido");
                 }
             }
-            if (scan.isEOF() && token != null && verificacao(TokenType.TK_SPECIAL_CHARACTER_BRACES_CLOSED)
+            if (scan.isEOF() && token != null && !verificacao(TokenType.TK_SPECIAL_CHARACTER_BRACES_CLOSED)
                     || token == null) {
-                exception = throwException("não fechou bloco");
+                throwException("não fechou bloco");
                 return;
             }
+            if (verificacao(TokenType.TK_SPECIAL_CHARACTER_BRACES_CLOSED)) {
+                scan();
+            } else {
+                throwException("não fechou bloco");
+            }
         } else {
-            exception = throwException("não abriu bloco");
+            throwException("não abriu bloco");
         }
     }
 
     /* ------------------------------------------- *
                        comando
 		     <comando> ::=	<comando_básico>
- 						  |	<iteração>
-						  | if "("<expr_relacional>")" <comando> {else <comando>}?
+ 			|	<iteração>
+			| <if_>
      * ------------------------------------------- */
     public void comando() {
         if (first(First.comando_basico)) {
             comando_basico();
-        } else if (first(First.iteracao)) {
-            iteracao();
+        } else if (first(First.while_)) {
+            while_();
+        } else if (first(First.do_while_)) {
+            do_while_();
+        } else if (first(First.for_)) {
+            for_();
         } else if (first(First.if_)) {
             if_();
         }
@@ -139,34 +186,6 @@ public class Parser {
     }
 
     /* ------------------------------------------- *
-		     iteração
-	while "("<expr_relacional>")" <comando>
-     * ------------------------------------------- */
-    public void iteracao() {
-        scan();
-        if (verificacao(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_OPEN)) {
-            scan();
-            if (first(First.expr_relacional)) {
-                expr_relacional();
-                if (verificacao(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_CLOSED)) {
-                    scan();
-                    if (first(First.comando)) {
-                        comando();
-                    } else {
-                        exception = throwException("não abriu bloco e ta sem comando");
-                    }
-                } else {
-                    exception = throwException("Parenteses não fechado");
-                }
-            } else {
-                exception = throwException("Falta a relacional");
-            }
-        } else {
-            exception = throwException("não abriu parenteses");
-        }
-    }
-
-    /* ------------------------------------------- *
 			atribuição
 		     <id> "=" <expr_arit> ";"
      * ------------------------------------------- */
@@ -181,23 +200,69 @@ public class Parser {
                         scan();
                         return; //esta ok
                     } else {
-                        exception = throwException("nao fechou ;");
+                        throwException("nao fechou ;");
                     }
                 } else {
-                    exception = throwException("Sem expressão arit ou valor");
+                    throwException("Sem expressão arit ou valor");
                 }
+            } else if (verificacao(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_OPEN)) {
+                chamada_metodo();
             } else {
-                exception = throwException("sem operador = ");
+                throwException("sem operador =");
+
             }
         }
     }
 
     /* ------------------------------------------- *
-						expr_relacional
-		<expr_relacional> ::= <expr_arit> <op_relacional> <expr_arit>
+			atribuição
+		     <id> "=" <expr_arit>
+     * ------------------------------------------- */
+    public void atribuicao_() {
+        if (verificacao(TokenType.TK_IDENTIFIER)) {
+            scan();
+            if (verificacao(TokenType.TK_ARITHMETIC_OPERATOR_ASSIGN)) {
+                scan();
+                if (first(First.expr_arit)) {
+                    expr_arit();
+                    return;
+                } else {
+                    throwException("Sem expressão arit ou valor");
+                }
+            } else {
+                throwException("sem operador = ");
+            }
+        }
+    }
+
+    /* ------------------------------------------- *
+		      chamada_metodo
+	    <chamada_metodo>::= <id> "(" ")" ";"
+     * ------------------------------------------- */
+    public void chamada_metodo() {
+//        scan();
+        if (verificacao(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_OPEN)) { //não precisa
+            scan();
+            if (verificacao(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_CLOSED)) {
+                scan();
+                if (verificacao(TokenType.TK_SPECIAL_CHARACTER_SEMICOLON)) {
+                    scan();
+                } else {
+                    throwException("Não fechou ;");
+                }
+            } else {
+                throwException("Não fechou parenteses");
+            }
+        } else {
+            throwException("Não abriu parenteses");
+        }
+    }
+
+    /* ------------------------------------------- *
+		expr_relacional
+<expr_relacional> ::= <expr_arit> <op_relacional> <expr_arit>
      * ------------------------------------------- */
     public void expr_relacional() {
-
         if (first(First.expr_arit)) {
             expr_arit();
             if (first(First.op_relacional)) {
@@ -205,13 +270,44 @@ public class Parser {
                 if (first(First.expr_arit)) {
                     expr_arit();
                 } else {
-                    exception = throwException("Faltou expressão");
+                    throwException("Faltou expressão");
                 }
             } else {
-                exception = throwException("Faltou operador rel");
+                throwException("Faltou operador rel");
             }
         } else {
-            exception = throwException("Faltou expressão");
+            throwException("Faltou expressão");
+        }
+    }
+
+    /* ------------------------------------------- *
+		expr_logica
+      <expr_logica> ::= <expr_relacional> <logica> 
+     * ------------------------------------------- */
+    public void expr_logica() {
+        if (first(First.expr_relacional)) {
+            expr_relacional();
+            logica();
+        } else {
+            throwException("Faltou expressão");
+        }
+    }
+
+    /* ------------------------------------------- *
+            <logica> ::=   “||” <expr_logica>
+                            | “&&” <expr_logica>
+                            | vazio
+     * ------------------------------------------- */
+    public void logica() {
+        if (!scan.getException().equals("NULL")) {
+            throwException(scan.getException());
+        } else if (token.getType() == TokenType.TK_LOGIC_AND || token.getType() == TokenType.TK_LOGIC_OR) {
+            scan();
+            if (first(First.expr_logica)) {
+                expr_logica();
+            }
+        } else {
+            return;
         }
     }
 
@@ -261,7 +357,7 @@ public class Parser {
                 termo();
                 expr_arit_();
             } else {
-                exception = throwException("ta errado 1+ nada");
+                throwException("ta errado 1+ nada");
             }
 
         } else if (verificacao(TokenType.TK_ARITHMETIC_OPERATOR_MINUS)) {
@@ -270,7 +366,7 @@ public class Parser {
                 termo();
                 expr_arit_();
             } else {
-                exception = throwException("ta errado 1- nada");
+                throwException("ta errado 1- nada");
             }
         } else {
             return;
@@ -307,7 +403,7 @@ public class Parser {
                 fator();
                 termo_();
             } else {
-                exception = throwException("ta errado 1* nadao");
+                throwException("ta errado 1* nadao");
             }
         } else if (verificacao(TokenType.TK_ARITHMETIC_OPERATOR_DIVISION)) {
             scan();
@@ -315,7 +411,7 @@ public class Parser {
                 fator();
                 termo_();
             } else {
-                exception = throwException("ta errado 1/ por nada");
+                throwException("ta errado 1/ por nada");
             }
         } else {
             return;
@@ -335,15 +431,16 @@ public class Parser {
             scan();
             if (first(First.expr_arit)) {
                 expr_arit();
-
                 if (verificacao(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_CLOSED)) {
                     scan();
                     return; //ok
                 } else {
-                    exception = throwException("Parenteses não fechado");
+                    throwException("Parenteses não fechado");
                 }
             } else if (verificacao(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_CLOSED)) {
-                exception = throwException("sem nada dentro-> ilegal");
+                throwException("sem nada dentro-> ilegal");
+            } else {
+                throwException("ilegal start of expression");
             }
         } else if (scan.getException().equals("NULL") && (token.getType() == TokenType.TK_IDENTIFIER
                 || token.getType() == TokenType.TK_INT
@@ -368,30 +465,28 @@ public class Parser {
                     scan();
                     return;
                 } else {
-                    exception = throwException("não fechou ;");
+                    throwException("não fechou ;");
                 }
             } else {
-                exception = throwException("Identificador Esperado");
+                throwException("Identificador Esperado");
             }
         }
     }
 
     /* ------------------------------------------- *
 	            	    if		
-   if "("<expr_relacional>")" <comando> {else <comando_>}?
+   if "("<expr_logica>")" <comando> {else <comando_>}?
      * ------------------------------------------- */
     public void if_() {
         scan();
         if (verificacao(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_OPEN)) {
             scan();
-            if (first(First.expr_relacional)) {
-                expr_relacional();
+            if (first(First.expr_logica)) {
+                expr_logica();
                 if (verificacao(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_CLOSED)) {
                     scan();
                     if (first(First.comando)) {
                         comando();
-                        //scan();
-                        System.out.println("Token " + token);
                         if (token != null
                                 && verificacao(TokenType.TK_KEYWORD_ELSE)) {
                             scan();
@@ -399,32 +494,200 @@ public class Parser {
                                 comando_();
                             }
                         } else if (token == null) {
-                            exception = throwException("não fechou bloco main");
+                            throwException("não fechou bloco main");
                         }
+                    } else if (verificacao(TokenType.TK_SPECIAL_CHARACTER_BRACES_CLOSED)) {
+                        throwException("Não abriu bloco...");
                     } else {
-                        exception = throwException("Não é um comando...");
+                        throwException("Não é um comando...");
                     }
                 } else {
-                    exception = throwException("Não fechou parenteses");
+                    throwException("Não fechou parenteses");
                 }
             } else {
-                exception = throwException("Não é exp rel");
+                throwException("Não é exp rel");
             }
         } else {
-            exception = throwException("Não abriu parenteses");
+            throwException("Não abriu parenteses");
         }
     }
 
     /* ------------------------------------------- *
-	            	OUTROS METODOS AUXILIARES
+		     iteração
+	while "("<expr_logica>")" <comando>
+     * ------------------------------------------- */
+    public void while_() {
+        scan();
+        if (verificacao(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_OPEN)) {
+            scan();
+            if (first(First.expr_logica)) {
+                expr_logica();
+                if (verificacao(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_CLOSED)) {
+                    scan();
+                    if (first(First.comando)) {
+                        comando();
+                    } else {
+                        throwException("não abriu bloco e ta sem comando");
+                    }
+                } else {
+                    throwException("Parenteses não fechado");
+                }
+            } else {
+                throwException("Falta a relacional");
+            }
+        } else {
+            throwException("não abriu parenteses");
+        }
+    }
+
+    /* ------------------------------------------- *
+            <do_while> ::= do <comando> while “(“ <expr_logica> “)” “;”
+     * ------------------------------------------- */
+    public void do_while_() {
+        scan();
+        if (first(First.comando)) {
+            comando();
+            if (first(First.while_)) {
+                scan();
+                if (verificacao(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_OPEN)) {
+                    scan();
+                    if (first(First.expr_logica)) {
+                        expr_logica();
+                        if (verificacao(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_CLOSED)) {
+                            scan();
+                            if (verificacao(TokenType.TK_SPECIAL_CHARACTER_SEMICOLON)) {
+                                scan();
+                            } else {
+                                throwException("Não fechou ;");
+                            }
+                        } else {
+                            throwException("Não fechou parenteses");
+                        }
+                    } else {
+                        throwException("Faltou exp logica");
+                    }
+                } else {
+                    throwException("Não abriu parenteses");
+                }
+            } else {
+                throwException("Faltou while");
+            }
+        } else {
+            throwException("Faltou comando...");
+        }
+
+    }
+
+    /* ------------------------------------------- *
+	<for_> ::= for “(“ <atribuicao_>  ";" <exp_logica>  “;” <atribuicao_> “)” <comando>
+     * ------------------------------------------- */
+    public void for_() {
+        scan();
+        if (token.getType() == TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_OPEN) {
+            scan();
+            if (first(First.atribuicao)) {
+                atribuicao_();
+                if (token.getType() == TokenType.TK_SPECIAL_CHARACTER_SEMICOLON) {
+                    scan();
+                    if (first(First.expr_logica)) {
+                        expr_logica();
+                        if (token.getType() == TokenType.TK_SPECIAL_CHARACTER_SEMICOLON) {
+                            scan();
+                            if (first(First.atribuicao)) {
+                                atribuicao_();
+                                if (token.getType() == TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_CLOSED) {
+                                    scan();
+                                    if (first(First.comando)) {
+                                        comando();
+                                    } else {
+                                        throwException("Não é um comando...");
+                                    }
+                                } else {
+                                    throwException("Não fechou parenteses");
+                                }
+                            } else {
+                                throwException("Não é atribuicao");
+                            }
+                        } else {
+                            throwException("Não fechou ;");
+                        }
+                    } else {
+                        throwException("Não é exp logica");
+                    }
+                } else {
+                    throwException("Não fechou ;");
+                }
+            } else {
+                throwException("Não é atribuicao");
+            }
+        } else {
+            throwException("Não abriu parenteses");
+        }
+    }
+
+    /* ------------------------------------------- *
+	 <print>::= “(“ <print_> “)” “;”
+     * ------------------------------------------- */
+    public void print() {
+        scan();
+        if (verificacao(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_OPEN)) {
+            scan();
+            if (first(First.print_)) {
+                print_();
+                if (verificacao(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_CLOSED)) {
+                    scan();
+                    if (verificacao(TokenType.TK_SPECIAL_CHARACTER_SEMICOLON)) {
+                        scan();
+                        return; //esta ok
+                    } else {
+                        throwException("nao fechou ;");
+                    }
+                } else {
+                    throwException("Não fechou parenteses");
+                }
+            } else if (token.getType() != TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_CLOSED) {
+                throwException("valor invalido");
+            } else if (token.getType() == TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_CLOSED) {
+                scan();
+                if (verificacao(TokenType.TK_SPECIAL_CHARACTER_SEMICOLON)) {
+                    scan();
+                    return; //esta ok
+                } else {
+                    throwException("nao fechou ;");
+                }
+            }
+        } else {
+            throwException("Não abriu parenteses");
+        }
+    }
+
+    /* ------------------------------------------- *
+	  <print_> ::= <char_sequence> 
+		| <expr_logica> 
+                | <expr_arit>
+     * ------------------------------------------- */
+    public void print_() {
+        if (token.getType() == TokenType.TK_CHAR_SEQUENCE) {
+            scan();
+        } else if (first(First.expr_logica)) {
+            expr_logica();
+        } else if (first(First.expr_arit)) {
+            expr_arit();
+        }
+    }
+
+    /* ------------------------------------------- *
+	       OUTROS METODOS AUXILIARES
      * ------------------------------------------- */
     private void scan() {
         token = scan.nextToken();
     }
 
-    private String throwException(String msg) {
-        SyntaxException ex = new SyntaxException(msg, scan.getCursor(), nameArchive);
-        return ex.throwException();
+    private void throwException(String msg) {
+        if (exception.equals("NULL")) {
+            SyntaxException ex = new SyntaxException(msg, scan.getCursor(), nameArchive);
+            exception = ex.throwException();
+        }
     }
 
     public String getException() {
@@ -439,6 +702,5 @@ public class Parser {
     private boolean first(List first) {
         return token != null && first.contains(token.getType());
     }
-    
-    
+
 }
