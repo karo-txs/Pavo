@@ -58,45 +58,5 @@ Below the list of tokens accepted by the lexical analysis.
 ### 2.1. Parser
 The parser, also known as parser, has the main task of determining whether the input program represented by the token flow has the valid sentences for the programming language.
 ### 2.2. Context-Free Grammars (CFG)
-
-<program> ::= int main "(" ")" <block>
-<block> ::= "{" (<statement_var>)* {<command>}* "}"
-<command> ::= <basic_command>
-            | <while_>
-            | <do_while>
-            | <for_>
-            | <if_>    
-<command_> ::= <basic_command>
-            | <if_>           
-<basic_command> ::= <assignment>
-            | <block>
-<while> ::= while "("<relational_exp>")" <command>
-<assignment> ::= <id> "=" <arithmetic_exp> ";"
-<assignment_> ::= <id> "=" <arithmetic_exp>
-<relational_exp> ::= <arithmetic_exp> <relational_operator> <arithmetic_exp>
-<arithmetic_exp> ::= <term>  <arithmetic_exp_>
-<arithmetic_exp_> ::= "+" <term> <arithmetic_exp_>
-            | "-" <term> <arithmetic_exp>
-            | ε
-<term> ::= <factor> <term_>
-<term_> ::=  "*" <factor> <term_>
- 	          | "/" <factor><term_>
-            | ε
-<factor> ::= "(" <arithmetic_exp> ")"
-            | <id>
-            | <float>
-            | <integer>
-            | <char>
-<logical_exp> ::= <relational_exp> <logical> 
-<logical> ::= "||" <relational_exp>
-            | "&&" <relational_exp>
-            | ε
-<statement_var> ::= <type> <id> ";"
-<type> ::= int | float | char
-<if_> ::= if "("<relational_exp>")" <command> (else <command>)*
-<for_> ::= for "("<assignment_> ";" <relational_exp>  ";" <assignment_>  ")" <command>
-<do_while> ::= do <command> while "(" <logical_exp> ")" ";"
-<print>::= "(" <print_> ")" ";"
-<print_> ::= <char_sequence> 
-		          | <arithmetic_exp>
-            | <logical_exp>
+![image](https://user-images.githubusercontent.com/70172712/116276235-b75aab80-a75a-11eb-9907-28f38c3ed3bc.png)
+![image](https://user-images.githubusercontent.com/70172712/116276348-cd686c00-a75a-11eb-9de6-029d1c404240.png)
