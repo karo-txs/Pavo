@@ -11,7 +11,7 @@ Students:
 > Project Status: In development :warning:
 
 ## Features (Functionalities)
-### - Lexical Analysis:
+### - Lexical Analysis
 - Token identification of programs with syntax similar to the C programming language;
 - Personalized error messages.
 ### - Syntactic Analyzer
