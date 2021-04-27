@@ -25,34 +25,8 @@ Students:
 - [JavaFX] - java-based multimedia software platform for creating and making rich Internet applications available;
 - [RichTextFX] - provides a text area for JavaFX with API to style ranges of text. It is intended as a base for rich-text editors and code editors with syntax highlighting.
 
-## Accepted Tokens 
-
-Below the list of tokens accepted by the lexical analysis.
-
-| Expressions | Token Type | Expressions| Token Type |
-| ------ | ------ | ------ | ------
-| [a-z] or [A-Z]  | letter | <= | relational operator less equal|
-| [0-9] | digit | ! | relational operator not |
-| digit+ | int | != | relational operator not equal |
-| digit+.digit+ | float | == | relational operator equal | 
-| 'letter' | char | ( | special character parentheses open |
-| "anything" | char sequence | ) | special character parentheses closed |
-| + | arithmetic operator plus | { | special character braces open |
-| - | arithmetic operator minus | } | special character braces closed |
-| * | arithmetic operator multiplication| [ | special character brackets open |
-| ^ | arithmetic operator power | ] | special character brackets closed |     
-| / | arithmetic operator division | # | special character hash |           
-| = | arithmetic operator assign | , | special character comma |   
-| > | relational operator more | ; | special character semicolon |     
-| < | relational operator less | : | special character two points |
-| >= | relational operator more equal | & | special character address |
-
 ## Program Preview
 ![PavoReview](https://user-images.githubusercontent.com/58193125/111394529-a87fd400-8699-11eb-8cc5-14f40b43cd29.gif)
-
-## Automatons
-Automatons representing the lexical analyzer [[Slide](https://github.com/AFKaro/Pavo/tree/main/docs)].
-
 
 [//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does its job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
 
