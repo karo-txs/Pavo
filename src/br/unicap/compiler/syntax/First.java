@@ -7,30 +7,30 @@ import java.util.List;
 
 public class First {
 
-    static final List<TokenType> tipo = Arrays.asList(
+    static final List<TokenType> type = Arrays.asList(
             TokenType.TK_KEYWORD_FLOAT,
             TokenType.TK_KEYWORD_INT,
             TokenType.TK_KEYWORD_CHAR,
             TokenType.TK_CHAR_SEQUENCE);
 
-    static final List<TokenType> decl_var = tipo;
+    static final List<TokenType> statement_var = type;
 
-    static final List<TokenType> fator = Arrays.asList(
+    static final List<TokenType> factor = Arrays.asList(
             TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_OPEN,
             TokenType.TK_IDENTIFIER,
             TokenType.TK_INT,
             TokenType.TK_FLOAT,
             TokenType.TK_CHAR);
 
-    static final List<TokenType> termo = fator;
+    static final List<TokenType> term = factor;
 
-    static final List<TokenType> expr_arit = termo;
+    static final List<TokenType> arithmetic_exp = term;
 
-    static final List<TokenType> expr_relacional = expr_arit;
+    static final List<TokenType> relational_exp = arithmetic_exp;
     
-    static final List<TokenType> expr_logica= expr_arit;
+    static final List<TokenType> logical_exp = arithmetic_exp;
 
-    static final List<TokenType> op_relacional = Arrays.asList(
+    static final List<TokenType> relational_operator = Arrays.asList(
             TokenType.TK_RELATIONAL_OPERATOR_EQUAL,
             TokenType.TK_RELATIONAL_OPERATOR_LESS,
             TokenType.TK_RELATIONAL_OPERATOR_LESS_EQUAL,
@@ -40,7 +40,7 @@ public class First {
             TokenType.TK_RELATIONAL_OPERATOR_NOT_EQUAL
     );
 
-    static final List<TokenType> atribuicao = Arrays.asList(
+    static final List<TokenType> assignment = Arrays.asList(
             TokenType.TK_IDENTIFIER);
 
     static final List<TokenType> while_ = Arrays.asList(
@@ -59,28 +59,28 @@ public class First {
             TokenType.TK_KEYWORD_PRINT);
     
     static final List<TokenType> print_ = concatList(Arrays.asList(
-            TokenType.TK_CHAR_SEQUENCE),expr_logica, expr_arit);
+            TokenType.TK_CHAR_SEQUENCE),logical_exp, arithmetic_exp);
 
-    static final List<TokenType> bloco = Arrays.asList(
+    static final List<TokenType> block = Arrays.asList(
             TokenType.TK_SPECIAL_CHARACTER_BRACES_OPEN);
 
-    static final List<TokenType> comando_basico = concatList(atribuicao, bloco);
+    static final List<TokenType> basic_command = concatList(assignment, block);
 
-    static final List<TokenType> comando = concatList(if_, while_, for_,do_while_, comando_basico);
+    static final List<TokenType> command = concatList(if_, while_, for_,do_while_, basic_command);
     
-    static final List<TokenType> comando_ = concatList(if_, comando_basico);
+    static final List<TokenType> command_ = concatList(if_, basic_command);
 
     static final List<TokenType> main = Arrays.asList(TokenType.TK_KEYWORD_INT);
     
-    static final List<TokenType> metodo = Arrays.asList(TokenType.TK_KEYWORD_VOID, TokenType.TK_KEYWORD_INT);
+    static final List<TokenType> method = Arrays.asList(TokenType.TK_KEYWORD_VOID, TokenType.TK_KEYWORD_INT);
     
-    static final List<TokenType> chamada_metodo = Arrays.asList(TokenType.TK_IDENTIFIER);
+    static final List<TokenType> method_call = Arrays.asList(TokenType.TK_IDENTIFIER);
 
-    static private List<TokenType> concatList(List<TokenType> ... listas) {
-        List<TokenType> novaLista = new ArrayList<TokenType>();
-        for (List<TokenType> lista: listas){
-            novaLista.addAll(lista);
+    static private List<TokenType> concatList(List<TokenType> ... lists) {
+        List<TokenType> newList = new ArrayList<TokenType>();
+        for (List<TokenType> list: lists){
+            newList.addAll(list);
         }
-        return novaLista;
+        return newList;
     }
 }
