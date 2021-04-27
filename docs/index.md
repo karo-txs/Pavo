@@ -1,6 +1,7 @@
 # Theoretical Documentation
 ## Abstract
 This document aims to show the theoretical framework as well as the basis behind the Pavo compiler.
+
 *******
 ## Index
  1. [Lexical Analyzer](#analisador-lexico)
