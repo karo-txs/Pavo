@@ -14,6 +14,9 @@ Students:
 ### - Lexical Analysis:
 - Token identification of programs with syntax similar to the C programming language;
 - Personalized error messages.
+### - Syntactic Analyzer
+- Determines whether the input program represented by the token stream has valid sentences for the programming language with syntax similar to C.
+- Personalized error messages.
 ### - General:
 - Import .txt files to editor;
 - Dark mode. 
