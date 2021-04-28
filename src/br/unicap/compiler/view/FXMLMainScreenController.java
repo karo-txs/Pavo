@@ -2,7 +2,6 @@ package br.unicap.compiler.view;
 
 import br.unicap.compiler.lexicon.Scanner;
 import br.unicap.compiler.lexicon.Token;
-import br.unicap.compiler.view.util.NewArchiveBox;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -31,6 +30,8 @@ import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import br.unicap.compiler.syntax.Parser;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.Pane;
 
 public class FXMLMainScreenController implements Initializable {
 
@@ -60,6 +61,9 @@ public class FXMLMainScreenController implements Initializable {
     @FXML
     TabPane tabPane = new TabPane();
 
+    @FXML
+    private TextField nameArchive;
+
     private String filename;
 
     @FXML
@@ -75,10 +79,18 @@ public class FXMLMainScreenController implements Initializable {
     ArrayList<Token> tokens = new ArrayList<>();
 
     @FXML
+    private Pane paneArchive = new Pane();
+
+    @FXML
+    private void run(ActionEvent event) {
+        runSintatica(event);
+    }
+
+    @FXML
     private void runLexica(ActionEvent event) {
 
         if (codeArea != null) {
-
+            padraoLexica();
             tokens = new ArrayList<>();
             resultArea.setText("");
             data = FXCollections.observableArrayList(tokens);
@@ -126,7 +138,7 @@ public class FXMLMainScreenController implements Initializable {
     private void runSintatica(ActionEvent event) {
 
         if (codeArea != null) {
-
+            padrao();
             tokens = new ArrayList<>();
             resultArea.setText("");
             data = FXCollections.observableArrayList(tokens);
@@ -254,22 +266,22 @@ public class FXMLMainScreenController implements Initializable {
 
     @FXML
     private void newArchive() {
-        filename = NewArchiveBox.display("New File", "Name of file: ");
-        if (!NewArchiveBox.click) {
-            if (!filename.contains(".txt")) {
-                filename += ".txt";
+        if (this.nameArchive.getText().equals("")) {
+            this.filename = "Untitled.c";
+        } else {
+            if (!this.nameArchive.getText().contains(".c")) {
+                this.filename = nameArchive.getText() + ".c";
+            } else {
+                this.filename = nameArchive.getText();
             }
-            codeArea = new CodeArea();
-
-            codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
-            codeArea.setId("codearea");
-
-            //cria uma ScrollBar, coloca o codeArea e adiciona na tab1 o scroll ao inves do codeArea
-            scroll = new VirtualizedScrollPane(codeArea);
-
-            Tab tab1 = new Tab(filename, scroll);
-            tabPane.getTabs().add(tab1);
         }
+        codeArea = new CodeArea();
+        codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
+        codeArea.setId("codearea");
+        //cria uma ScrollBar, coloca o codeArea e adiciona na tab1 o scroll ao inves do codeArea
+        scroll = new VirtualizedScrollPane(codeArea);
+        Tab tab1 = new Tab(this.filename, scroll);
+        tabPane.getTabs().add(tab1);
     }
 
     @FXML
@@ -300,6 +312,16 @@ public class FXMLMainScreenController implements Initializable {
             path = null;
         }
         return path;
+    }
+
+    public void padrao() {
+        tabPane.setPrefWidth(1033);
+        table.setVisible(false);
+    }
+
+    public void padraoLexica() {
+        tabPane.setPrefWidth(1033 - table.getWidth());
+        table.setVisible(true);
     }
 
     //******************

@@ -1,7 +1,7 @@
 .root {
-    -fx-base: rgb(50, 50, 50);
-    -fx-background: rgb(50, 50, 50);
-    -fx-control-inner-background:  rgb(50, 50, 50);
+    -fx-base: rgb(40, 42, 52);
+    -fx-background: rgb(40, 42, 52);
+    -fx-control-inner-background:  rgb(40, 42, 52);
 }
 
 .tab {
@@ -18,15 +18,20 @@
 }
 
 #codearea .text{
-    -fx-fill: whitesmoke;
+    -fx-fill: #DADADA;
 }
 
 #codearea {
-    -fx-background-color: derive(-fx-base,5%);
+    -fx-background-color: #1F2128;
+}
+
+#resultArea {
+    -fx-background-color: #1F2128;
 }
 
 .button{
     -fx-focus-traversable: false;
+    -fx-background-color: #333641;
 
 }
 
