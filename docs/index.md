@@ -59,5 +59,10 @@ Below the list of tokens accepted by the lexical analysis.
 ### 2.1. Parser
 The parser, also known as parser, has the main task of determining whether the input program represented by the token flow has the valid sentences for the programming language.
 ### 2.2. Context-Free Grammars (CFG)
-![image](https://user-images.githubusercontent.com/70172712/116276235-b75aab80-a75a-11eb-9907-28f38c3ed3bc.png)
-![image](https://user-images.githubusercontent.com/70172712/116276348-cd686c00-a75a-11eb-9de6-029d1c404240.png)
+![image](https://user-images.githubusercontent.com/70172712/116501033-3993be80-a886-11eb-83f5-e7e12006b3b9.png)
+![image](https://user-images.githubusercontent.com/70172712/116501096-5a5c1400-a886-11eb-9d0d-03cd4b6d7d97.png)
+![image](https://user-images.githubusercontent.com/70172712/116501125-67790300-a886-11eb-9760-43e60bbac370.png)
+![image](https://user-images.githubusercontent.com/70172712/116501132-6fd13e00-a886-11eb-8b5e-fede1b68a6e8.png)
+
+
+
