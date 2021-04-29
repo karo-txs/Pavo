@@ -20,6 +20,10 @@
     -fx-background-color: #ececec;
 }
 
+#line{
+    -fx-stroke: black;
+}
+
 .titulo{
     -fx-font-weight: bold;
     -fx-font-size: 18px;

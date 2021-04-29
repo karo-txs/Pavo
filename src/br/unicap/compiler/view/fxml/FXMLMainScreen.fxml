@@ -11,62 +11,216 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" fx:id="pn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="644.0" prefWidth="1262.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.unicap.compiler.view.FXMLMainScreenController">
+<AnchorPane id="AnchorPane" fx:id="pn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="644.0" prefWidth="1262.0" style="-fx-background-color: #282A34;" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.unicap.compiler.view.FXMLMainScreenController">
     <children>
-      <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="652.0" layoutY="209.0" opacity="0.66" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="584.0" layoutY="213.0" opacity="0.66" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../images/peacock.png" />
          </image>
       </ImageView>
-      <Label fx:id="openFile" layoutX="652.0" layoutY="409.0" text="Open File     CTRL+O">
+      <Label fx:id="newFile" alignment="CENTER" layoutX="575.0" layoutY="362.0" prefHeight="27.0" prefWidth="170.0" text="Welcome to Pavo">
          <font>
             <Font size="18.0" />
          </font>
+         <textFill>
+            <LinearGradient endX="1.0" endY="1.0">
+               <stops>
+                  <Stop>
+                     <color>
+                        <Color red="0.28049999475479126" green="0.550000011920929" blue="0.336929589509964" />
+                     </color>
+                  </Stop>
+                  <Stop offset="0.007662835249042145">
+                     <color>
+                        <Color red="0.28049999475479126" green="0.550000011920929" blue="0.336929589509964" />
+                     </color>
+                  </Stop>
+                  <Stop offset="0.8084291187739463">
+                     <color>
+                        <Color red="0.8513588309288025" green="0.9700000286102295" blue="0.5432000160217285" />
+                     </color>
+                  </Stop>
+                  <Stop offset="1.0">
+                     <color>
+                        <Color red="0.8513588309288025" green="0.9700000286102295" blue="0.5432000160217285" />
+                     </color>
+                  </Stop>
+               </stops>
+            </LinearGradient>
+         </textFill>
       </Label>
-      <Label fx:id="newFile" layoutX="652.0" layoutY="378.0" text="New File     CTRL+N ">
+      <Label fx:id="openFile" layoutX="575.0" layoutY="381.0" prefHeight="27.0" prefWidth="170.0" text="a minimalist compiler">
          <font>
             <Font size="18.0" />
          </font>
+         <textFill>
+            <LinearGradient endX="1.0" endY="1.0">
+               <stops>
+                  <Stop>
+                     <color>
+                        <Color red="0.6315789222717285" green="0.6315789222717285" blue="0.6315789222717285" />
+                     </color>
+                  </Stop>
+                  <Stop offset="0.007662835249042145">
+                     <color>
+                        <Color red="0.6315789222717285" green="0.6315789222717285" blue="0.6315789222717285" />
+                     </color>
+                  </Stop>
+                  <Stop offset="0.20594857210569983">
+                     <color>
+                        <Color red="0.786460280418396" green="0.8100000023841858" blue="0.6237000226974487" />
+                     </color>
+                  </Stop>
+                  <Stop offset="0.36805308685863236">
+                     <color>
+                        <Color red="0.7651742100715637" green="0.7763158082962036" blue="0.5534843802452087" />
+                     </color>
+                  </Stop>
+                  <Stop offset="0.9181972587589368">
+                     <color>
+                        <Color red="0.3400000035762787" green="0.8500000238418579" blue="0.7394999861717224" />
+                     </color>
+                  </Stop>
+                  <Stop offset="0.9540229885057471">
+                     <color>
+                        <Color red="0.3400000035762787" green="0.8500000238418579" blue="0.7412490844726562" />
+                     </color>
+                  </Stop>
+                  <Stop offset="1.0">
+                     <color>
+                        <Color red="1.0" green="1.0" blue="1.0" />
+                     </color>
+                  </Stop>
+               </stops>
+            </LinearGradient>
+         </textFill>
       </Label>
-      <TextArea fx:id="resultArea" editable="false" focusTraversable="false" layoutX="220.0" layoutY="558.0" pickOnBounds="false" prefHeight="79.0" prefWidth="1040.0" />
-      <ImageView fx:id="iconSun" fitHeight="16.0" fitWidth="16.0" layoutX="1240.0" layoutY="8.0" pickOnBounds="true" preserveRatio="true" visible="false">
+      <TextArea id="result" fx:id="resultArea" editable="false" focusTraversable="false" layoutX="65.0" layoutY="554.0" pickOnBounds="false" prefHeight="101.0" prefWidth="1208.0" />
+      <ImageView fx:id="iconSun" disable="true" fitHeight="16.0" fitWidth="16.0" layoutX="1224.0" layoutY="19.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
             <Image url="@../images/sunny.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="iconMoon" fitHeight="16.0" fitWidth="16.0" layoutX="1240.0" layoutY="8.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="iconMoon" disable="true" fitHeight="16.0" fitWidth="16.0" layoutX="1224.0" layoutY="19.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
             <Image url="@../images/moon.png" />
          </image>
       </ImageView>
-      <Button layoutX="1236.0" layoutY="3.0" mnemonicParsing="false" onAction="#change" opacity="0.0" prefHeight="17.0" prefWidth="24.0">
+      <Button disable="true" layoutX="1220.0" layoutY="14.0" mnemonicParsing="false" onAction="#change" opacity="0.28" prefHeight="17.0" prefWidth="24.0" visible="false">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor></Button>
-      <TableView fx:id="table" focusTraversable="false" layoutX="869.0" layoutY="64.0" prefHeight="482.0" prefWidth="387.0" visible="false" />
-      <TabPane fx:id="tabPane" layoutX="222.0" layoutY="64.0" prefHeight="482.0" prefWidth="1033.0" tabClosingPolicy="UNAVAILABLE" />
-      <Button fx:id="addArchive" layoutX="8.0" layoutY="80.0" mnemonicParsing="false" onAction="#newArchive" prefHeight="25.0" prefWidth="24.0" text="addArchive" />
-      <Pane fx:id="paneArchive" layoutX="8.0" layoutY="108.0" prefHeight="531.0" prefWidth="200.0">
+      <Pane fx:id="paneArchive" layoutY="2.0" prefHeight="658.0" prefWidth="65.0" style="-fx-background-color: #0F121C;">
          <children>
-            <Line endX="1.0" endY="-71.0" layoutX="99.0" layoutY="155.0" startX="1.0" startY="-103.0" />
-            <Label alignment="CENTER" layoutX="26.0" layoutY="158.0" prefHeight="17.0" prefWidth="150.0" text="Analise Semantica" textAlignment="CENTER">
-               <font>
-                  <Font name="Segoe UI Symbol" size="12.0" />
-               </font>
-            </Label>
-            <Line endX="1.0" endY="-71.0" layoutX="99.0" layoutY="219.0" startX="1.0" startY="-103.0" />
-            <Button layoutX="44.0" layoutY="88.0" mnemonicParsing="false" onAction="#runSintatica" prefHeight="25.0" prefWidth="109.0" text="Analise Sintatica" />
-            <Button layoutX="45.0" layoutY="25.0" mnemonicParsing="false" onAction="#runLexica" prefHeight="25.0" prefWidth="109.0" text="Analise Lexica" />
-            <Line endX="60.0" endY="379.0" layoutX="149.0" layoutY="157.0" startX="60.0" startY="-210.0" strokeWidth="0.5" />
-            <Line endX="1145.0" endY="-215.5" layoutX="109.0" layoutY="165.0" startX="-117.0" startY="-215.5" strokeWidth="0.5" />
-            <Line endX="1135.0" endY="268.5" layoutX="110.0" layoutY="175.0" startX="98.2928466796875" startY="268.5" strokeWidth="0.5" />
+            <ImageView fitHeight="37.0" fitWidth="30.0" layoutX="17.0" layoutY="255.0" opacity="0.63" pickOnBounds="true" preserveRatio="true" y="-11.0">
+               <image>
+                  <Image url="@../images/lexica.png" />
+               </image>
+            </ImageView>
+            <Button fx:id="lexical" layoutX="13.0" layoutY="240.0" mnemonicParsing="false" onAction="#runLexica" opacity="0.0" prefHeight="37.0" prefWidth="36.0">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></Button>
+            <ImageView id="play" fitHeight="37.0" fitWidth="36.0" layoutX="-1.0" layoutY="14.0" opacity="0.63" pickOnBounds="true" preserveRatio="true" x="15.0">
+               <image>
+                  <Image url="@../images/play.png" />
+               </image>
+            </ImageView>
+            <Button fx:id="play" layoutX="8.0" layoutY="7.0" mnemonicParsing="false" onAction="#run" opacity="0.0" prefHeight="42.0" prefWidth="45.0">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <ImageView fitHeight="37.0" fitWidth="36.0" layoutX="12.0" layoutY="198.0" opacity="0.63" pickOnBounds="true" preserveRatio="true" y="-25.0">
+               <image>
+                  <Image url="@../images/search.png" />
+               </image>
+            </ImageView>
+            <Button fx:id="search" layoutX="10.0" layoutY="171.0" mnemonicParsing="false" onAction="#openArchive" opacity="0.0" prefHeight="37.0" prefWidth="42.0">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <ImageView fitHeight="40.0" fitWidth="36.0" layoutX="14.0" layoutY="314.0" opacity="0.63" pickOnBounds="true" preserveRatio="true" y="-20.0">
+               <image>
+                  <Image url="@../images/sintatica.png" />
+               </image>
+            </ImageView>
+            <Button fx:id="syntax" layoutX="10.0" layoutY="294.0" mnemonicParsing="false" onAction="#runSintatica" opacity="0.0" prefHeight="37.0" prefWidth="43.0">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <ImageView fitHeight="37.0" fitWidth="36.0" layoutX="14.0" layoutY="136.0" opacity="0.63" pickOnBounds="true" preserveRatio="true" y="-15.0">
+               <image>
+                  <Image url="@../images/plus.png" />
+               </image>
+            </ImageView>
+            <Button fx:id="add" layoutX="10.0" layoutY="121.0" mnemonicParsing="false" onAction="#newArchive" opacity="0.0" prefHeight="37.0" prefWidth="42.0">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <ImageView fitHeight="37.0" fitWidth="36.0" layoutX="13.0" layoutY="73.0" opacity="0.63" pickOnBounds="true" preserveRatio="true" x="1.0" y="-7.0">
+               <image>
+                  <Image url="@../images/minus.png" />
+               </image>
+            </ImageView>
+            <Button fx:id="clear" layoutX="10.0" layoutY="65.0" mnemonicParsing="false" onAction="#clearEditor" opacity="0.0" prefHeight="37.0" prefWidth="42.0">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <ImageView fitHeight="40.0" fitWidth="45.0" layoutX="11.0" layoutY="434.0" opacity="0.63" pickOnBounds="true" preserveRatio="true" y="-28.0">
+               <image>
+                  <Image url="@../images/geradorCodInter.png" />
+               </image>
+            </ImageView>
+            <Button layoutX="9.0" layoutY="407.0" mnemonicParsing="false" onAction="#runSintatica" opacity="0.0" prefHeight="37.0" prefWidth="43.0">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <ImageView fitHeight="37.0" fitWidth="45.0" layoutX="12.0" layoutY="379.0" opacity="0.63" pickOnBounds="true" preserveRatio="true" x="1.0" y="-29.0">
+               <image>
+                  <Image url="@../images/semantica.png" />
+               </image>
+            </ImageView>
+            <Button layoutX="13.0" layoutY="351.0" mnemonicParsing="false" onAction="#runSintatica" opacity="0.0" prefHeight="37.0" prefWidth="36.0">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <ImageView fitHeight="34.0" fitWidth="34.0" layoutX="15.0" layoutY="592.0" opacity="0.63" pickOnBounds="true" preserveRatio="true" y="-76.0">
+               <image>
+                  <Image url="@../images/codobj.png" />
+               </image>
+            </ImageView>
+            <Button layoutX="9.0" layoutY="513.0" mnemonicParsing="false" onAction="#runSintatica" opacity="0.0" prefHeight="37.0" prefWidth="43.0">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="12.0" layoutY="500.0" opacity="0.63" pickOnBounds="true" preserveRatio="true" y="-37.0">
+               <image>
+                  <Image url="@../images/Otimizador.png" />
+               </image>
+            </ImageView>
+            <Button layoutX="9.0" layoutY="462.0" mnemonicParsing="false" onAction="#runSintatica" opacity="0.0" prefHeight="37.0" prefWidth="43.0">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Line endX="34.0" endY="8.0" layoutX="31.0" layoutY="218.0" startX="-31.0" startY="8.0" stroke="#2c3246" />
          </children></Pane>
-      <TextField fx:id="nameArchive" layoutX="39.0" layoutY="80.0" prefHeight="25.0" prefWidth="133.0" />
-      <Button fx:id="searchArchive" layoutX="180.0" layoutY="80.0" mnemonicParsing="false" onAction="#openArchive" prefHeight="25.0" prefWidth="24.0" text="searchArchive" />
-      <Button fx:id="run" layoutX="70.0" layoutY="7.0" mnemonicParsing="false" onAction="#run" prefHeight="42.0" prefWidth="45.0" text="play" />
-      <Button fx:id="clear" layoutX="10.0" layoutY="7.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="45.0" text="clear" />
+      <TableView fx:id="table" focusTraversable="false" layoutX="884.0" layoutY="1.0" prefHeight="545.0" prefWidth="400.0" visible="false" />
+      <TabPane fx:id="tabPane" layoutX="65.0" layoutY="2.0" prefHeight="545.0" prefWidth="1219.0" tabClosingPolicy="UNAVAILABLE" />
+      <TextField fx:id="nameArchive" layoutX="76.0" layoutY="145.0" prefHeight="24.0" prefWidth="142.0" visible="false" />
     </children>
 </AnchorPane>

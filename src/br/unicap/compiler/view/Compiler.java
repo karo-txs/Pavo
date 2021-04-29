@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 
 public class Compiler extends Application {
@@ -17,7 +18,7 @@ public class Compiler extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("/br/unicap/compiler/view/fxml/FXMLMainScreen.fxml"));
         stage.setScene(new Scene(root));
         stage.getScene().getStylesheets().add(getClass()
-                .getResource("/br/unicap/compiler/view/css/classic.css")
+                .getResource("/br/unicap/compiler/view/css/dark.css")
                 .toExternalForm());
         Image icon = new Image(getClass().getResourceAsStream("/br/unicap/compiler/view/images/peacock.png"), 32, 32,false,false);
         stage.getIcons().add(icon);

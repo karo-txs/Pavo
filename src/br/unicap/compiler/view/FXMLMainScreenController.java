@@ -30,8 +30,11 @@ import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import br.unicap.compiler.syntax.Parser;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Line;
 
 public class FXMLMainScreenController implements Initializable {
 
@@ -80,6 +83,24 @@ public class FXMLMainScreenController implements Initializable {
 
     @FXML
     private Pane paneArchive = new Pane();
+    
+    @FXML
+    private Button play = new Button();
+    
+    @FXML
+    private Button clear= new Button();
+    
+    @FXML
+    private Button add= new Button();
+    
+    @FXML
+    private Button search= new Button();
+    
+    @FXML
+    private Button lexical= new Button();
+    
+    @FXML
+    private Button syntax= new Button();
 
     @FXML
     private void run(ActionEvent event) {
@@ -171,7 +192,7 @@ public class FXMLMainScreenController implements Initializable {
                         resultArea.setStyle("-fx-text-fill: #B82524");
                     }
                 } else {
-                    resultArea.setText(tokens.size() + " identified tokens and no sintax errors found.\n\nSUCCESSFULLY BUILT!");
+                    resultArea.setText("No syntax errors found.\n\nSUCCESSFULLY BUILT!");
                     if (isDark) {
                         resultArea.setStyle("-fx-text-fill: #8DE38D");
                     } else {
@@ -261,6 +282,7 @@ public class FXMLMainScreenController implements Initializable {
 
             tabPane.getTabs().add(tab1);
             codeArea.replaceText(txtConteudo);
+            resultArea.setVisible(true);
         }
     }
 
@@ -282,12 +304,15 @@ public class FXMLMainScreenController implements Initializable {
         scroll = new VirtualizedScrollPane(codeArea);
         Tab tab1 = new Tab(this.filename, scroll);
         tabPane.getTabs().add(tab1);
+        nameArchive.setText("");
+        codeArea.requestFocus();
+        resultArea.setVisible(true);
     }
 
     @FXML
     private void clearEditor() {
         if (codeArea != null) {
-            codeArea.replaceText(" ");
+            codeArea.replaceText("");
         }
     }
 
@@ -315,15 +340,16 @@ public class FXMLMainScreenController implements Initializable {
     }
 
     public void padrao() {
-        tabPane.setPrefWidth(1033);
+        tabPane.setPrefWidth(1222);
         table.setVisible(false);
     }
 
     public void padraoLexica() {
-        tabPane.setPrefWidth(1033 - table.getWidth());
+        tabPane.setPrefWidth(tabPane.getWidth() - (table.getWidth()+10));
         table.setVisible(true);
     }
 
+    
     //******************
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -336,5 +362,14 @@ public class FXMLMainScreenController implements Initializable {
         typeCol.setSortable(false);
         tokenCol.setSortable(false);
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
+        play.setTooltip(new Tooltip("Compile"));
+        clear.setTooltip(new Tooltip("Clear"));
+        add.setTooltip(new Tooltip("Add file"));
+        search.setTooltip(new Tooltip("Search file"));
+        lexical.setTooltip(new Tooltip("Lexical Analysis"));
+        syntax.setTooltip(new Tooltip("Syntax Analysis"));
+        paneArchive.setId("pn");
+        resultArea.setVisible(false);
+        
     }
 }
