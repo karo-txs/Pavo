@@ -17,9 +17,6 @@ Students:
 ### - Syntactic Analyzer
 - Determines whether the input program represented by the token stream has valid sentences for the programming language with syntax similar to C.
 - Personalized error messages.
-### - General:
-- Import .txt files to editor;
-- Dark mode. 
 
 ## Technologies / Libraries Used 
 
@@ -27,6 +24,12 @@ Students:
 - [Scene Builder] - generates FXML, an XML-based markup language that enables users to define an application's user interface, separately from the application logic;
 - [JavaFX] - java-based multimedia software platform for creating and making rich Internet applications available;
 - [RichTextFX] - provides a text area for JavaFX with API to style ranges of text. It is intended as a base for rich-text editors and code editors with syntax highlighting.
+
+## How to run by terminal 
+```
+cd /dist
+java -jar pavo.jar
+```
 
 ## Program Preview
 ![PavoReview](https://user-images.githubusercontent.com/58193125/111394529-a87fd400-8699-11eb-8cc5-14f40b43cd29.gif)
