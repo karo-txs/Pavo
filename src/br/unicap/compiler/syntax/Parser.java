@@ -1,9 +1,10 @@
 package br.unicap.compiler.syntax;
 
-import br.unicap.compiler.exceptions.syntactic.SyntaxException;
+import br.unicap.compiler.exceptions.SyntaxException;
 import br.unicap.compiler.lexicon.Scanner;
 import br.unicap.compiler.lexicon.Token;
 import br.unicap.compiler.lexicon.TokenType;
+import br.unicap.compiler.semantic.Rules;
 import java.util.List;
 
 public class Parser {
@@ -11,6 +12,7 @@ public class Parser {
     private Token token;
     private String nameArchive;
     private String exception;
+    private Rules rulesSemantic;
     private boolean createdMain = false;
 
     public Parser(Scanner scan, String nameArchive) {
@@ -20,6 +22,8 @@ public class Parser {
     }
    
     public void runParser() {
+        rulesSemantic = new Rules();
+        
         scan();
         if (scan.isEOF()) {
             throwException("It does not have a main method");
@@ -355,6 +359,7 @@ public class Parser {
         if (first(First.type)) {
             scan();
             if (verification(TokenType.TK_IDENTIFIER)) {
+                rulesSemantic.add(token);
                 scan();
                 if (verification(TokenType.TK_SPECIAL_CHARACTER_SEMICOLON)) {
                     scan();
@@ -562,7 +567,8 @@ public class Parser {
     }
 
     private boolean verification(TokenType tokenType) {
-        return scan.getException().equals("NULL")
+        return scan.getException().equals("NULL") 
+                && rulesSemantic.getException().equals("NULL")
                 && token.getType() == tokenType;
     }
 

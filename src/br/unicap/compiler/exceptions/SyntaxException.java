@@ -1,4 +1,4 @@
-package br.unicap.compiler.exceptions.syntactic;
+package br.unicap.compiler.exceptions;
 
 import br.unicap.compiler.exceptions.*;
 import br.unicap.compiler.util.Cursor;

@@ -8,6 +8,7 @@ public enum TypeException {
     UNCLOSED("Unclosed"),
     EMPTY_CHAR("EmptyChar"),
     SYNTAX("Syntax"),
+    SEMANTIC("Semantic"),
     ;
 
     private String name;
