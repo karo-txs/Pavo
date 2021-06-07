@@ -6,7 +6,7 @@ This document aims to show the theoretical framework as well as the basis behind
 ## Index
  1. [Lexical Analyzer](#analisador-lexico)
  2. [Syntactic Analyzer](#analisador-sintatico)
- 3. [Semanticc Analyzer](#analisador-semantico)
+ 3. [Semantic Analyzer](#analisador-semantico)
 
 *******
 <div id='analisador-lexico'/>  
@@ -66,7 +66,7 @@ The parser, also known as parser, has the main task of determining whether the i
 ![image](https://user-images.githubusercontent.com/70172712/116501132-6fd13e00-a886-11eb-8b5e-fede1b68a6e8.png)
 
 *******
-<div id='analisador-sintatico'/>  
+<div id='analisador-semantico'/>  
 
 ## 3. Semantic Analyzer
 Checks for semantic errors in code, which concern scope of names, correspondence between declarations and use of names, and type compatibility, in expressions and commands.
