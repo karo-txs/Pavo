@@ -35,7 +35,7 @@ java -jar pavo.jar
 ```
 
 ## Program Preview
-![pavoScreen](https://user-images.githubusercontent.com/70172712/116619461-d9009200-a916-11eb-9b68-7cfe93190cb6.gif)
+![gifPavo](https://user-images.githubusercontent.com/70172712/120958221-a031b500-c72d-11eb-878e-dc2083f84df7.gif)
 
 [//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does its job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
 
