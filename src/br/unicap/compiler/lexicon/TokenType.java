@@ -9,7 +9,6 @@ public enum TokenType {
     TK_INT("Integer", Color.GREEN),
     TK_CHAR_SEQUENCE("Char_Sequence", Color.ORANGE),
     TK_CHAR("Char", Color.YELLOW),
-    TK_PUNCTUATION("Punctuation", Color.BEIGE),
     TK_ARITHMETIC_OPERATOR_PLUS("Arithmetic_Operator_Plus", Color.RED),
     TK_ARITHMETIC_OPERATOR_MINUS("Arithmetic_Operator_Minus", Color.RED),
     TK_ARITHMETIC_OPERATOR_POWER("Arithmetic_Operator_Power", Color.RED),
@@ -150,6 +149,29 @@ public enum TokenType {
                 return TokenType.TK_KEYWORD_CHAR;
             default:
                 return null;
+        }
+    }
+
+    public static TokenType returnType(String term) {
+        char[] termChar = term.toCharArray();
+        if (term.matches("[0-9]+")) {
+            return TK_INT;
+        } else if (term.matches("[0-9]+.[0-9]+")) {
+            return TK_FLOAT;
+        } else if (termChar[0] == '\'' && termChar[2] == '\'') {
+            return TK_CHAR;
+        } else if (termChar[0] == '\"' && termChar[termChar.length - 1] == '\"') {
+            return TK_CHAR_SEQUENCE;
+        } else if (returnSubtype(term) != null) {
+            return returnSubtype(term);
+        } else if (Character.isLetter(termChar[0])) {
+            return TK_IDENTIFIER;
+        } else if (termChar.length == 2 && termChar[0] == '&' && termChar[1] == '&') {
+            return TK_LOGIC_AND;
+        } else if (termChar.length == 2 && termChar[0] == '|' && termChar[1] == '|') {
+            return TK_LOGIC_OR;
+        } else {
+            return null;
         }
     }
 }

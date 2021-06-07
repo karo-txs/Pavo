@@ -17,7 +17,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" fx:id="pn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="644.0" prefWidth="1262.0" style="-fx-background-color: #282A34;" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.unicap.compiler.view.FXMLMainScreenController">
+<AnchorPane id="AnchorPane" fx:id="pn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="644.0" prefWidth="1262.0" style="-fx-background-color: #282A34;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.unicap.compiler.view.FXMLMainScreenController">
     <children>
       <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="584.0" layoutY="213.0" opacity="0.66" pickOnBounds="true" preserveRatio="true">
          <image>
@@ -118,101 +118,71 @@
          </cursor></Button>
       <Pane fx:id="paneArchive" layoutY="2.0" prefHeight="658.0" prefWidth="65.0" style="-fx-background-color: #0F121C;">
          <children>
-            <ImageView fitHeight="37.0" fitWidth="30.0" layoutX="17.0" layoutY="255.0" opacity="0.63" pickOnBounds="true" preserveRatio="true" y="-11.0">
+            <ImageView fitHeight="37.0" fitWidth="30.0" layoutX="17.0" layoutY="255.0" opacity="0.63" pickOnBounds="true" preserveRatio="true" scaleX="0.7" scaleY="0.7" y="-11.0">
                <image>
                   <Image url="@../images/lexica.png" />
                </image>
             </ImageView>
-            <Button fx:id="lexical" layoutX="13.0" layoutY="240.0" mnemonicParsing="false" onAction="#runLexica" opacity="0.0" prefHeight="37.0" prefWidth="36.0">
+            <Button fx:id="lexical" layoutX="13.0" layoutY="240.0" mnemonicParsing="false" onAction="#runLexica" opacity="0.0" prefHeight="37.0" prefWidth="36.0" scaleX="0.7" scaleY="0.7">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor></Button>
-            <ImageView id="play" fitHeight="37.0" fitWidth="36.0" layoutX="-1.0" layoutY="14.0" opacity="0.63" pickOnBounds="true" preserveRatio="true" x="15.0">
+            <ImageView id="play" fitHeight="37.0" fitWidth="36.0" layoutX="-1.0" layoutY="14.0" opacity="0.63" pickOnBounds="true" preserveRatio="true" scaleX="0.7" scaleY="0.7" x="15.0">
                <image>
                   <Image url="@../images/play.png" />
                </image>
             </ImageView>
-            <Button fx:id="play" layoutX="8.0" layoutY="7.0" mnemonicParsing="false" onAction="#run" opacity="0.0" prefHeight="42.0" prefWidth="45.0">
+            <Button fx:id="play" layoutX="8.0" layoutY="7.0" mnemonicParsing="false" onAction="#run" opacity="0.0" prefHeight="42.0" prefWidth="45.0" scaleX="0.7" scaleY="0.7">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <ImageView fitHeight="37.0" fitWidth="36.0" layoutX="12.0" layoutY="198.0" opacity="0.63" pickOnBounds="true" preserveRatio="true" y="-25.0">
+            <ImageView fitHeight="37.0" fitWidth="36.0" layoutX="12.0" layoutY="198.0" opacity="0.63" pickOnBounds="true" preserveRatio="true" scaleX="0.7" scaleY="0.7" y="-25.0">
                <image>
                   <Image url="@../images/search.png" />
                </image>
             </ImageView>
-            <Button fx:id="search" layoutX="10.0" layoutY="171.0" mnemonicParsing="false" onAction="#openArchive" opacity="0.0" prefHeight="37.0" prefWidth="42.0">
+            <Button fx:id="search" layoutX="10.0" layoutY="171.0" mnemonicParsing="false" onAction="#openArchive" opacity="0.0" prefHeight="37.0" prefWidth="42.0" scaleX="0.7" scaleY="0.7">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <ImageView fitHeight="40.0" fitWidth="36.0" layoutX="14.0" layoutY="314.0" opacity="0.63" pickOnBounds="true" preserveRatio="true" y="-20.0">
+            <ImageView fitHeight="40.0" fitWidth="36.0" layoutX="14.0" layoutY="314.0" opacity="0.63" pickOnBounds="true" preserveRatio="true" scaleX="0.7" scaleY="0.7" y="-20.0">
                <image>
                   <Image url="@../images/sintatica.png" />
                </image>
             </ImageView>
-            <Button fx:id="syntax" layoutX="10.0" layoutY="294.0" mnemonicParsing="false" onAction="#runSintatica" opacity="0.0" prefHeight="37.0" prefWidth="43.0">
+            <Button fx:id="syntax" layoutX="10.0" layoutY="294.0" mnemonicParsing="false" onAction="#runSintatica" opacity="0.0" prefHeight="37.0" prefWidth="43.0" scaleX="0.7" scaleY="0.7">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <ImageView fitHeight="37.0" fitWidth="36.0" layoutX="14.0" layoutY="136.0" opacity="0.63" pickOnBounds="true" preserveRatio="true" y="-15.0">
+            <ImageView fitHeight="37.0" fitWidth="36.0" layoutX="14.0" layoutY="136.0" opacity="0.63" pickOnBounds="true" preserveRatio="true" scaleX="0.7" scaleY="0.7" y="-15.0">
                <image>
                   <Image url="@../images/plus.png" />
                </image>
             </ImageView>
-            <Button fx:id="add" layoutX="10.0" layoutY="121.0" mnemonicParsing="false" onAction="#newArchive" opacity="0.0" prefHeight="37.0" prefWidth="42.0">
+            <Button fx:id="add" layoutX="10.0" layoutY="121.0" mnemonicParsing="false" onAction="#newArchive" opacity="0.0" prefHeight="37.0" prefWidth="42.0" scaleX="0.7" scaleY="0.7">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <ImageView fitHeight="37.0" fitWidth="36.0" layoutX="13.0" layoutY="73.0" opacity="0.63" pickOnBounds="true" preserveRatio="true" x="1.0" y="-7.0">
+            <ImageView fitHeight="37.0" fitWidth="36.0" layoutX="13.0" layoutY="73.0" opacity="0.63" pickOnBounds="true" preserveRatio="true" scaleX="0.7" scaleY="0.7" x="1.0" y="-7.0">
                <image>
                   <Image url="@../images/minus.png" />
                </image>
             </ImageView>
-            <Button fx:id="clear" layoutX="10.0" layoutY="65.0" mnemonicParsing="false" onAction="#clearEditor" opacity="0.0" prefHeight="37.0" prefWidth="42.0">
+            <Button fx:id="clear" layoutX="10.0" layoutY="65.0" mnemonicParsing="false" onAction="#clearEditor" opacity="0.0" prefHeight="37.0" prefWidth="42.0" scaleX="0.7" scaleY="0.7">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <ImageView fitHeight="40.0" fitWidth="45.0" layoutX="11.0" layoutY="434.0" opacity="0.63" pickOnBounds="true" preserveRatio="true" y="-28.0">
+            <ImageView fitHeight="40.0" fitWidth="45.0" layoutX="11.0" layoutY="376.0" opacity="0.63" pickOnBounds="true" preserveRatio="true" scaleX="0.7" scaleY="0.7" y="-28.0">
                <image>
                   <Image url="@../images/geradorCodInter.png" />
                </image>
             </ImageView>
-            <Button layoutX="9.0" layoutY="407.0" mnemonicParsing="false" onAction="#runSintatica" opacity="0.0" prefHeight="37.0" prefWidth="43.0">
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </Button>
-            <ImageView fitHeight="37.0" fitWidth="45.0" layoutX="12.0" layoutY="379.0" opacity="0.63" pickOnBounds="true" preserveRatio="true" x="1.0" y="-29.0">
-               <image>
-                  <Image url="@../images/semantica.png" />
-               </image>
-            </ImageView>
-            <Button layoutX="13.0" layoutY="351.0" mnemonicParsing="false" onAction="#runSintatica" opacity="0.0" prefHeight="37.0" prefWidth="36.0">
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </Button>
-            <ImageView fitHeight="34.0" fitWidth="34.0" layoutX="15.0" layoutY="592.0" opacity="0.63" pickOnBounds="true" preserveRatio="true" y="-76.0">
-               <image>
-                  <Image url="@../images/codobj.png" />
-               </image>
-            </ImageView>
-            <Button layoutX="9.0" layoutY="513.0" mnemonicParsing="false" onAction="#runSintatica" opacity="0.0" prefHeight="37.0" prefWidth="43.0">
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </Button>
-            <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="12.0" layoutY="500.0" opacity="0.63" pickOnBounds="true" preserveRatio="true" y="-37.0">
-               <image>
-                  <Image url="@../images/Otimizador.png" />
-               </image>
-            </ImageView>
-            <Button layoutX="9.0" layoutY="462.0" mnemonicParsing="false" onAction="#runSintatica" opacity="0.0" prefHeight="37.0" prefWidth="43.0">
+            <Button layoutX="9.0" layoutY="350.0" mnemonicParsing="false" onAction="#runSintatica" opacity="0.0" prefHeight="37.0" prefWidth="43.0" scaleX="0.7" scaleY="0.7">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>

@@ -1,13 +1,6 @@
 package br.unicap.compiler.lexicon;
 
-import br.unicap.compiler.exceptions.EmptyCharException;
-import br.unicap.compiler.exceptions.NumberFormatException;
-import br.unicap.compiler.exceptions.IdentifierFormatException;
-import br.unicap.compiler.exceptions.InvalidOperatorException;
-import br.unicap.compiler.exceptions.InvalidSymbolException;
-import br.unicap.compiler.exceptions.PersonalizedException;
-import br.unicap.compiler.exceptions.TypeException;
-import br.unicap.compiler.exceptions.UnclosedException;
+import br.unicap.compiler.exceptions.LexicalException;
 import br.unicap.compiler.util.Cursor;
 
 public class Scanner {
@@ -100,10 +93,10 @@ public class Scanner {
                         term += currentChar;
                         state = 11;
                         if (isEOF()) {
-                            exception = throwException(TypeException.INVALID_SYMBOL, term);
+                            throwException("Unrecognized Symbol: ");
                             return null;
                         }
-                    } else if (currentChar == ';'){
+                    } else if (currentChar == ';') {
                         term += currentChar;
                         return new Token(TokenType.TK_SPECIAL_CHARACTER_SEMICOLON, term);
                     } else if (Rules.isBar(currentChar)) {
@@ -117,34 +110,33 @@ public class Scanner {
                         term += currentChar;
                         state = 18;
                         if (isEOF()) {
-                            exception = throwException(TypeException.UNCLOSED, "Char Sequence: " + term);
+                            throwException("Unclosed " + term);
                             return null;
                         }
                     } else if (Rules.isSingleQuotes(currentChar)) {
                         term += currentChar;
                         state = 19;
                         if (isEOF()) {
-                            exception = throwException(TypeException.UNCLOSED, "Char: " + term);
+                            throwException("Unclosed Char: " + term);
                             return null;
                         }
-                    } else if(Rules.isAmpersand(currentChar)){
+                    } else if (Rules.isAmpersand(currentChar)) {
                         term += currentChar;
                         state = 24;
                         if (isEOF()) {
-                            exception = throwException(TypeException.INVALID_OPERATOR, "And: " + term);
+                            throwException("Invalid Operator And: " + term);
                             return null;
                         }
-                    }else if(Rules.isPipe(currentChar)){
+                    } else if (Rules.isPipe(currentChar)) {
                         term += currentChar;
                         state = 25;
                         if (isEOF()) {
-                            exception = throwException(TypeException.INVALID_OPERATOR, "Or: " + term);
+                            throwException("Invalid Operator Or: " + term);
                             return null;
                         }
-                    }
-                    else {
+                    } else {
                         term += currentChar;
-                        exception = throwException(TypeException.INVALID_SYMBOL, term);
+                        throwException("Unrecognized Symbol: " + term);
                         return null;
                     }
                     break;
@@ -162,7 +154,7 @@ public class Scanner {
                     } else {
                         if (Rules.isUnrecognizableSymbol(currentChar)) {
                             term += currentChar;
-                            exception = throwException(TypeException.IDENTIFIER_FORMAT, term);
+                            throwException("Bad Format Identifier: " + term);
                             return null;
                         } else {
                             pause = true;
@@ -194,7 +186,7 @@ public class Scanner {
                         term += currentChar;
                         state = 5;
                         if (isEOF()) {
-                            exception = throwException(TypeException.NUMBER_FORMAT, "Float Number :" + term);
+                            throwException("Bad Format of Float Number :" + term);
                             return null;
                         }
                     } else if (!Rules.isChar(currentChar)) {
@@ -202,7 +194,7 @@ public class Scanner {
                         state = 7;
                         if (isEOF() && Rules.isUnrecognizableSymbol(currentChar)) {
                             term = "" + currentChar;
-                            exception = throwException(TypeException.INVALID_SYMBOL, term);
+                            throwException("Unrecognized Symbol: " + term);
                             return null;
                         }
                     } else {
@@ -219,27 +211,30 @@ public class Scanner {
                     }
                     if (isEOF()) {
                         if (Rules.isChar(currentChar) || Rules.isDigit(currentChar)) {
-                            if(pause == false) term += currentChar;
-                            exception = throwException(TypeException.NUMBER_FORMAT, "Integer Number : " + term);
-                        }else if(Rules.isPunctuation(currentChar)){
-                            if (pause == false)term += currentChar;
-                            exception = throwException(TypeException.NUMBER_FORMAT, "Float Number : " + term);
-                        }else{
-                            exception = throwException(TypeException.NUMBER_FORMAT, "Integer Number : " + term);
+                            if (pause == false) {
+                                term += currentChar;
+                            }
+                            throwException("Bad Format of Integer Number :" + term);
+                        } else if (Rules.isPunctuation(currentChar)) {
+                            if (pause == false) {
+                                term += currentChar;
+                            }
+                            throwException("Bad Format of Float Number :" + term);
+                        } else {
+                            throwException("Bad Format of Integer Number :" + term);
                         }
                         return null;
                     } else if (!Rules.isChar(currentChar) && !Rules.isDigit(currentChar) && !Rules.isPunctuation(currentChar)) {
-                        exception = throwException(TypeException.NUMBER_FORMAT, "Integer Number : " + term);
+                        throwException("Bad Format of Integer Number :" + term);
                         return null;
-                    } else if(Rules.isPunctuation(currentChar)){
+                    } else if (Rules.isPunctuation(currentChar)) {
                         state = 6;
                         term += currentChar;
-                        if(isEOF()){
-                            exception = throwException(TypeException.NUMBER_FORMAT, "Float Number : " + term);
+                        if (isEOF()) {
+                            throwException("Bad Format of Float Number :" + term);
                             return null;
                         }
-                    }
-                    else {
+                    } else {
                         term += currentChar;
                         state = 4;
                     }
@@ -252,30 +247,30 @@ public class Scanner {
                             pause = true;
                             state = 10;
                         }
-                    } else if (Rules.isChar(currentChar)||Rules.isDigit(currentChar)||Rules.isPunctuation(currentChar)) {
+                    } else if (Rules.isChar(currentChar) || Rules.isDigit(currentChar) || Rules.isPunctuation(currentChar)) {
                         term += currentChar;
                         state = 6;
                         if (isEOF()) {
-                            exception = throwException(TypeException.NUMBER_FORMAT, "Float Number : " + term);
+                            throwException("Bad Format of Float Number :" + term);
                             return null;
                         }
                     } else {
                         cs.moveCursorBack(currentChar, antColCursor);
-                        exception = throwException(TypeException.NUMBER_FORMAT, "Float Number : " + term);
+                        throwException("Bad Format of Float Number :" + term);
                         return null;
                     }
                     break;
                 case 6:
-                    if (Rules.isChar(currentChar)||Rules.isDigit(currentChar)||Rules.isPunctuation(currentChar)) {
+                    if (Rules.isChar(currentChar) || Rules.isDigit(currentChar) || Rules.isPunctuation(currentChar)) {
                         term += currentChar;
                         state = 6;
                         if (isEOF()) {
-                            exception = throwException(TypeException.NUMBER_FORMAT, "Float Number : " + term);
+                            throwException("Bad Format of Float Number :" + term);
                             return null;
                         }
                     } else {
                         cs.moveCursorBack(currentChar, antColCursor);
-                        exception = throwException(TypeException.NUMBER_FORMAT, "Float Number : " + term);
+                        throwException("Bad Format of Float Number :" + term);
                         return null;
                     }
                     break;
@@ -314,14 +309,14 @@ public class Scanner {
                     }
                     if (isEOF() && Rules.isChar(currentChar)) {
                         term += currentChar;
-                        exception = throwException(TypeException.NUMBER_FORMAT, "Float Number : " + term);
+                        throwException("Bad Format of Float Number :" + term);
                         return null;
                     }
                     if (!Rules.isChar(currentChar) && !Rules.isDigit(currentChar) && !Rules.isPunctuation(currentChar) || isEOF()) {
                         if (Rules.isChar(currentChar) || Rules.isDigit(currentChar)) {
                             term += currentChar;
                         }
-                        exception = throwException(TypeException.NUMBER_FORMAT, "Float Number : " + term);
+                        throwException("Bad Format of Float Number :" + term);
                         return null;
                     } else {
                         term += currentChar;
@@ -357,18 +352,18 @@ public class Scanner {
                     }
                     break;
                 case 21:
-                    exception = throwException(TypeException.INVALID_SYMBOL, term);
+                    throwException("Unrecognized Symbol: ");
                     return null;
                 case 22:
                     if (!Rules.isChar(currentChar) && !Rules.isDigit(currentChar)) {
                         cs.moveCursorBack(currentChar, antColCursor);
-                        exception = throwException(TypeException.IDENTIFIER_FORMAT, term);
+                        throwException("Bad Format Identifier: " + term);
                         return null;
                     } else if (isEOF()) {
                         if ((Rules.isChar(currentChar) || Rules.isDigit(currentChar)) && pause == false) {
                             term += currentChar;
                         }
-                        exception = throwException(TypeException.IDENTIFIER_FORMAT, term);
+                        throwException("Bad Format Identifier: " + term);
                         return null;
                     } else {
                         term += currentChar;
@@ -379,13 +374,13 @@ public class Scanner {
                 case 23:
                     if (!Rules.isChar(currentChar) && !Rules.isDigit(currentChar)) {
                         cs.moveCursorBack(currentChar, antColCursor);
-                        exception = throwException(TypeException.NUMBER_FORMAT, "Float Number : " + term);
+                        throwException("Bad Format of Float Number :" + term);
                         return null;
                     } else if (isEOF()) {
                         if (Rules.isChar(currentChar) || Rules.isDigit(currentChar)) {
                             term += currentChar;
                         }
-                        exception = throwException(TypeException.NUMBER_FORMAT, "Float Number : " + term);
+                        throwException("Bad Format of Float Number :" + term);
                         return null;
                     } else {
                         term += currentChar;
@@ -466,11 +461,12 @@ public class Scanner {
                         } else {
                             cs.moveCursorBack(currentChar, antColCursor);
                         }
-                        exception = throwException(TypeException.UNCLOSED, "Char Sequence: " + term);
+
+                        throwException("Unclosed Char Sequence: " + term);
                         return null;
                     } else if (currentChar == '\n') {
                         cs.moveCursorBack(currentChar, antColCursor);
-                        exception = throwException(TypeException.UNCLOSED, "Char Sequence: " + term);
+                        throwException("Unclosed Char Sequence: " + term);
                         return null;
                     } else {
                         term += currentChar;
@@ -483,7 +479,7 @@ public class Scanner {
                 case 19:
                     if (Rules.isSingleQuotes(currentChar)) {
                         term += currentChar;
-                        exception = throwException(TypeException.EMPTY_CHAR, term);
+                        throwException("Empty Character Literal: " + term);
                         return null;
                     } else if (isEOF()) {
                         if (currentChar != '\n') {
@@ -491,11 +487,11 @@ public class Scanner {
                         } else {
                             cs.moveCursorBack(currentChar, antColCursor);
                         }
-                        exception = throwException(TypeException.UNCLOSED, "Char: " + term);
+                        throwException("Unclosed Char: " + term);
                         return null;
                     } else if (Rules.isJumpLine(currentChar)) {
                         cs.moveCursorBack(currentChar, antColCursor);
-                        exception = throwException(TypeException.UNCLOSED, "Char: " + term);
+                        throwException("Unclosed Char: " + term);
                         return null;
                     } else {
                         term += currentChar;
@@ -508,7 +504,7 @@ public class Scanner {
                         return new Token(TokenType.TK_CHAR, term);
                     } else {
                         cs.moveCursorBack(currentChar, antColCursor);
-                        exception = throwException(TypeException.UNCLOSED, "Char: " + term);
+                        throwException("Unclosed Char: " + term);
                         return null;
                     }
                 /*
@@ -518,18 +514,18 @@ public class Scanner {
                     if (Rules.isAmpersand(currentChar)) {
                         term += currentChar;
                         return new Token(TokenType.TK_LOGIC_AND, term);
-                    }else {
+                    } else {
                         cs.moveCursorBack(currentChar, antColCursor);
-                        exception = throwException(TypeException.INVALID_OPERATOR, "And: " + term);
+                        throwException("Invalid Operator And: " + term);
                         return null;
                     }
                 case 25:
                     if (Rules.isPipe(currentChar)) {
                         term += currentChar;
                         return new Token(TokenType.TK_LOGIC_OR, term);
-                    }else {
+                    } else {
                         cs.moveCursorBack(currentChar, antColCursor);
-                        exception = throwException(TypeException.INVALID_OPERATOR, "Or: " + term);
+                        throwException("Invalid Operator Or: " + term);
                         return null;
                     }
             }
@@ -540,7 +536,7 @@ public class Scanner {
         return content[pos++];
     }
 
-    public  boolean isEOF() {
+    public boolean isEOF() {
         return pos == content.length;
     }
 
@@ -548,37 +544,23 @@ public class Scanner {
         pos--;
     }
 
-    public String getException() {
-        return this.exception;
-    }
-    
-    public Cursor getCursor(){
+    public Cursor getCursor() {
         return this.cs;
     }
 
-    private String throwException(TypeException type, String msg) {
-        PersonalizedException ex = null;
+    public void resetCursor() {
+        cs = new Cursor();
+        pos = 0;
+    }
 
-        switch (type) {
-            case NUMBER_FORMAT:
-                ex = new NumberFormatException(msg, cs, nameArchive);
-                break;
-            case IDENTIFIER_FORMAT:
-                ex = new IdentifierFormatException(msg, cs, nameArchive);
-                break;
-            case EMPTY_CHAR:
-                ex = new EmptyCharException(msg, cs, nameArchive);
-                break;
-            case INVALID_OPERATOR:
-                ex = new InvalidOperatorException(msg, cs, nameArchive);
-                break;
-            case INVALID_SYMBOL:
-                ex = new InvalidSymbolException(msg, cs, nameArchive);
-                break;
-            case UNCLOSED:
-                ex = new UnclosedException(msg, cs, nameArchive);
-                break;
+    private void throwException(String msg) {
+        if (exception.equals("NULL")) {
+            LexicalException ex = new LexicalException(msg, getCursor(), nameArchive);
+            exception = ex.throwException();
         }
-        return ex.throwException();
+    }
+
+    public String getException() {
+        return this.exception;
     }
 }

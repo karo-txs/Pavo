@@ -26,15 +26,31 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
-import org.fxmisc.flowless.VirtualizedScrollPane;
-import org.fxmisc.richtext.CodeArea;
-import org.fxmisc.richtext.LineNumberFactory;
 import br.unicap.compiler.syntax.Parser;
+import br.unicap.compiler.view.util.CKeywordsAsync;
+import br.unicap.compiler.view.util.NewArchiveBox;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Line;
+
+import org.fxmisc.flowless.VirtualizedScrollPane;
+import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.GenericStyledArea;
+import org.fxmisc.richtext.LineNumberFactory;
+import org.fxmisc.richtext.model.Paragraph;
+import org.fxmisc.richtext.model.StyleSpans;
+import org.fxmisc.richtext.model.StyleSpansBuilder;
+import org.reactfx.collection.ListModification;
 
 public class FXMLMainScreenController implements Initializable {
 
@@ -43,8 +59,6 @@ public class FXMLMainScreenController implements Initializable {
 
     @FXML
     private AnchorPane pn;
-
-    private CodeArea codeArea;
 
     @FXML
     private TextArea resultArea;
@@ -83,24 +97,24 @@ public class FXMLMainScreenController implements Initializable {
 
     @FXML
     private Pane paneArchive = new Pane();
-    
+
     @FXML
     private Button play = new Button();
-    
+
     @FXML
-    private Button clear= new Button();
-    
+    private Button clear = new Button();
+
     @FXML
-    private Button add= new Button();
-    
+    private Button add = new Button();
+
     @FXML
-    private Button search= new Button();
-    
+    private Button search = new Button();
+
     @FXML
-    private Button lexical= new Button();
-    
+    private Button lexical = new Button();
+
     @FXML
-    private Button syntax= new Button();
+    private Button syntax = new Button();
 
     @FXML
     private void run(ActionEvent event) {
@@ -109,90 +123,38 @@ public class FXMLMainScreenController implements Initializable {
 
     @FXML
     private void runLexica(ActionEvent event) {
-
-        if (codeArea != null) {
-            padraoLexica();
-            tokens = new ArrayList<>();
-            resultArea.setText("");
-            data = FXCollections.observableArrayList(tokens);
-            table.setItems(data);
-
-            Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
+        Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
+        if (selectedTab != null) {
             //cast pra receber o codeArea que esta dentro de scroll
             scroll = (VirtualizedScrollPane) selectedTab.getContent();
             //CodeArea ca = (CodeArea) selectedTab.getContent();
             CodeArea ca = (CodeArea) scroll.getContent();
+            if (ca != null) {
+                padraoLexica();
+                tokens = new ArrayList<>();
+                resultArea.setText("");
+                data = FXCollections.observableArrayList(tokens);
+                table.setItems(data);
 
-            filename = selectedTab.getText();
+                filename = selectedTab.getText();
 
-            Scanner sc = new Scanner(ca.getText(), filename);
-            Token token;
-            do {
-                token = sc.nextToken();
-                if (token != null) {
-                    tokens.add(token);
-                }
-            } while (token != null);
-            if (!sc.getException().equals("NULL")) {
-                resultArea.setText(sc.getException() + "\n\nCONSTRUCTION FAILURE!");
-                if (isDark) {
-                    resultArea.setStyle("-fx-text-fill: #FF2800");
-                } else {
-                    resultArea.setStyle("-fx-text-fill: #B82524");
-                }
-            } else {
-                resultArea.setText(tokens.size() + " identified tokens and no lexical errors found.\n\nSUCCESSFULLY BUILT!");
-                if (isDark) {
-                    resultArea.setStyle("-fx-text-fill: #8DE38D");
-                } else {
-                    resultArea.setStyle("-fx-text-fill: green");
-
-                }
-            }
-            data = FXCollections.observableArrayList(tokens);
-            table.setItems(data);
-
-        }
-    }
-
-    @FXML
-    private void runSintatica(ActionEvent event) {
-
-        if (codeArea != null) {
-            padrao();
-            tokens = new ArrayList<>();
-            resultArea.setText("");
-            data = FXCollections.observableArrayList(tokens);
-            table.setItems(data);
-
-            Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
-            //cast pra receber o codeArea que esta dentro de scroll
-            scroll = (VirtualizedScrollPane) selectedTab.getContent();
-            //CodeArea ca = (CodeArea) selectedTab.getContent();
-            CodeArea ca = (CodeArea) scroll.getContent();
-
-            filename = selectedTab.getText();
-
-            Scanner sc = new Scanner(ca.getText(), filename);
-            Parser ps = new Parser(sc, filename);
-            ps.runParser();
-            if (!sc.getException().equals("NULL")) {
-                resultArea.setText(sc.getException() + "\n\nCONSTRUCTION FAILURE!");
-                if (isDark) {
-                    resultArea.setStyle("-fx-text-fill: #FF2800");
-                } else {
-                    resultArea.setStyle("-fx-text-fill: #B82524");
-                }
-            } else {
-                if (!ps.getException().equals("NULL")) {
-                    resultArea.setText(ps.getException() + "\n\nCONSTRUCTION FAILURE!");
+                Scanner sc = new Scanner(ca.getText(), filename);
+                Token token;
+                do {
+                    token = sc.nextToken();
+                    if (token != null) {
+                        tokens.add(token);
+                    }
+                } while (token != null);
+                if (!sc.getException().equals("NULL")) {
+                    resultArea.setText(sc.getException() + "\n\nCONSTRUCTION FAILURE!");
                     if (isDark) {
                         resultArea.setStyle("-fx-text-fill: #FF2800");
                     } else {
                         resultArea.setStyle("-fx-text-fill: #B82524");
                     }
                 } else {
-                    resultArea.setText("No syntax errors found.\n\nSUCCESSFULLY BUILT!");
+                    resultArea.setText(tokens.size() + " identified tokens and no lexical errors found.\n\nSUCCESSFULLY BUILT!");
                     if (isDark) {
                         resultArea.setStyle("-fx-text-fill: #8DE38D");
                     } else {
@@ -200,7 +162,59 @@ public class FXMLMainScreenController implements Initializable {
 
                     }
                 }
+                data = FXCollections.observableArrayList(tokens);
+                table.setItems(data);
 
+            }
+        }
+    }
+
+    @FXML
+    private void runSintatica(ActionEvent event) {
+        Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
+        if (selectedTab != null) {
+            //cast pra receber o codeArea que esta dentro de scroll
+            scroll = (VirtualizedScrollPane) selectedTab.getContent();
+            //CodeArea ca = (CodeArea) selectedTab.getContent();
+            CodeArea ca = (CodeArea) scroll.getContent();
+            if (ca != null) {
+                padrao();
+                tokens = new ArrayList<>();
+                resultArea.setText("");
+                data = FXCollections.observableArrayList(tokens);
+                table.setItems(data);
+
+                filename = selectedTab.getText();
+
+                Scanner sc = new Scanner(ca.getText(), filename);
+                Parser ps = new Parser(sc, filename);
+                ps.runParser();
+                if (!sc.getException().equals("NULL")) {
+                    resultArea.setText(sc.getException() + "\n\nCONSTRUCTION FAILURE!");
+                    if (isDark) {
+                        resultArea.setStyle("-fx-text-fill: #FF2800");
+                    } else {
+                        resultArea.setStyle("-fx-text-fill: #B82524");
+                    }
+                } else {
+                    if (!ps.getException().equals("NULL")) {
+                        resultArea.setText(ps.getException() + "\n\nCONSTRUCTION FAILURE!");
+                        if (isDark) {
+                            resultArea.setStyle("-fx-text-fill: #FF2800");
+                        } else {
+                            resultArea.setStyle("-fx-text-fill: #B82524");
+                        }
+                    } else {
+                        resultArea.setText("No errors found.\n\nSUCCESSFULLY BUILT!");
+                        if (isDark) {
+                            resultArea.setStyle("-fx-text-fill: #8DE38D");
+                        } else {
+                            resultArea.setStyle("-fx-text-fill: green");
+
+                        }
+                    }
+
+                }
             }
         }
     }
@@ -272,22 +286,21 @@ public class FXMLMainScreenController implements Initializable {
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-            codeArea = new CodeArea();
-            codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
-            codeArea.setId("codearea");
-
+            startCodeArea(filename);
             //cria uma ScrollBar, coloca o codeArea e adiciona na tab1 o scroll ao inves do codeArea
-            scroll = new VirtualizedScrollPane(codeArea);
+            scroll = new VirtualizedScrollPane(Compiler.codeAreas.get(filename));
             Tab tab1 = new Tab(name, scroll);
 
             tabPane.getTabs().add(tab1);
-            codeArea.replaceText(txtConteudo);
+            Compiler.codeAreas.get(filename).replaceText(txtConteudo);
             resultArea.setVisible(true);
         }
     }
 
     @FXML
     private void newArchive() {
+        this.nameArchive.setText(NewArchiveBox.display("Novo arquivo", "Digite o nome do arquivo", this));
+
         if (this.nameArchive.getText().equals("")) {
             this.filename = "Untitled.c";
         } else {
@@ -297,22 +310,26 @@ public class FXMLMainScreenController implements Initializable {
                 this.filename = nameArchive.getText();
             }
         }
-        codeArea = new CodeArea();
-        codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
-        codeArea.setId("codearea");
+        startCodeArea(filename);
         //cria uma ScrollBar, coloca o codeArea e adiciona na tab1 o scroll ao inves do codeArea
-        scroll = new VirtualizedScrollPane(codeArea);
+        scroll = new VirtualizedScrollPane(Compiler.codeAreas.get(filename));
         Tab tab1 = new Tab(this.filename, scroll);
         tabPane.getTabs().add(tab1);
         nameArchive.setText("");
-        codeArea.requestFocus();
+        Compiler.codeAreas.get(filename).requestFocus();
         resultArea.setVisible(true);
     }
 
     @FXML
     private void clearEditor() {
-        if (codeArea != null) {
-            codeArea.replaceText("");
+        Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
+        if (selectedTab != null) {
+            scroll = (VirtualizedScrollPane) selectedTab.getContent();
+            filename = selectedTab.getText();
+
+            if (Compiler.codeAreas.get(filename) != null) {
+                Compiler.codeAreas.get(filename).replaceText("");
+            }
         }
     }
 
@@ -345,11 +362,14 @@ public class FXMLMainScreenController implements Initializable {
     }
 
     public void padraoLexica() {
-        tabPane.setPrefWidth(tabPane.getWidth() - (table.getWidth()+10));
+        tabPane.setPrefWidth(1222 - (table.getWidth() + 10));
         table.setVisible(true);
     }
 
-    
+    public Button getAdd() {
+        return this.add;
+    }
+
     //******************
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -370,6 +390,83 @@ public class FXMLMainScreenController implements Initializable {
         syntax.setTooltip(new Tooltip("Syntax Analysis"));
         paneArchive.setId("pn");
         resultArea.setVisible(false);
-        
+    }
+
+    private StyleSpans<Collection<String>> computeHighlighting(String text) {
+        Matcher matcher = CKeywordsAsync.PATTERN.matcher(text);
+        int lastKwEnd = 0;
+        StyleSpansBuilder<Collection<String>> spansBuilder
+                = new StyleSpansBuilder<>();
+        while (matcher.find()) {
+            String styleClass
+                    = matcher.group("KEYWORD") != null ? "keyword"
+                    : matcher.group("PAREN") != null ? "paren"
+                    : matcher.group("BRACE") != null ? "brace"
+                    : matcher.group("BRACKET") != null ? "bracket"
+                    : matcher.group("SEMICOLON") != null ? "semicolon"
+                    : matcher.group("STRING") != null ? "string"
+                    : matcher.group("COMMENT") != null ? "comment"
+                    : null;
+            /* never happens */ assert styleClass != null;
+            spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);
+            spansBuilder.add(Collections.singleton(styleClass), matcher.end() - matcher.start());
+            lastKwEnd = matcher.end();
+        }
+        spansBuilder.add(Collections.emptyList(), text.length() - lastKwEnd);
+        return spansBuilder.create();
+    }
+
+    public void startCodeArea(String filename) {
+        CodeArea codeArea = new CodeArea();
+
+        codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
+        codeArea.setId("codearea");
+        codeArea.getVisibleParagraphs().addModificationObserver(
+                new FXMLMainScreenController.VisibleParagraphStyler<>(codeArea, this::computeHighlighting)
+        );
+
+        // auto-indent: insert previous line's indents on enter
+        final Pattern whiteSpace = Pattern.compile("^\\s+");
+        codeArea.addEventHandler(KeyEvent.KEY_PRESSED, KE
+                -> {
+            if (KE.getCode() == KeyCode.ENTER) {
+                int caretPosition = codeArea.getCaretPosition();
+                int currentParagraph = codeArea.getCurrentParagraph();
+                Matcher m0 = whiteSpace.matcher(codeArea.getParagraph(currentParagraph - 1).getSegments().get(0));
+                if (m0.find()) {
+                    Platform.runLater(() -> codeArea.insertText(caretPosition, m0.group()));
+                }
+            }
+        });
+
+        codeArea.replaceText(0, 0, CKeywordsAsync.sampleCode);
+        Compiler.codeAreas.put(filename, codeArea);
+    }
+
+    private class VisibleParagraphStyler<PS, SEG, S> implements Consumer<ListModification<? extends Paragraph<PS, SEG, S>>> {
+
+        private final GenericStyledArea<PS, SEG, S> area;
+        private final Function<String, StyleSpans<S>> computeStyles;
+        private int prevParagraph, prevTextLength;
+
+        public VisibleParagraphStyler(GenericStyledArea<PS, SEG, S> area, Function<String, StyleSpans<S>> computeStyles) {
+            this.computeStyles = computeStyles;
+            this.area = area;
+        }
+
+        @Override
+        public void accept(ListModification<? extends Paragraph<PS, SEG, S>> lm) {
+            if (lm.getAddedSize() > 0) {
+                int paragraph = Math.min(area.firstVisibleParToAllParIndex() + lm.getFrom(), area.getParagraphs().size() - 1);
+                String text = area.getText(paragraph, 0, paragraph, area.getParagraphLength(paragraph));
+
+                if (paragraph != prevParagraph || text.length() != prevTextLength) {
+                    int startPos = area.getAbsolutePosition(paragraph, 0);
+                    Platform.runLater(() -> area.setStyleSpans(startPos, computeStyles.apply(text)));
+                    prevTextLength = text.length();
+                    prevParagraph = paragraph;
+                }
+            }
+        }
     }
 }

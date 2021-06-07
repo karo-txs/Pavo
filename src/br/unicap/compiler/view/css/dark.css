@@ -18,7 +18,6 @@
 }
 
 #codearea .text{
-    -fx-fill: #DADADA;
 }
 
 .text-area {
@@ -81,4 +80,8 @@
 
 .separator-label {
     -fx-text-fill: orange;
+}
+
+.caret {
+    -fx-stroke: white;
 }
