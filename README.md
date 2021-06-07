@@ -11,13 +11,13 @@ Students:
 > Project Status: In development :warning:
 
 ## Features (Functionalities)
-### - Lexical Analysis
+### ![lexica](https://user-images.githubusercontent.com/70172712/120956577-3663dc00-c72a-11eb-99fa-70c4e3b59a0c.png) Lexical Analysis 
 - Token identification of programs with syntax similar to the C programming language;
 - Personalized error messages.
-### - Syntactic Analyzer
+### ![sintatica](https://user-images.githubusercontent.com/70172712/120956626-5398aa80-c72a-11eb-8442-8a1aa082bcf9.png) Syntactic Analyzer
 - Determines whether the input program represented by the token stream has valid sentences for the programming language with syntax similar to C.
 - Personalized error messages.
-### - Semantic Analyzer
+### ![sintatica](https://user-images.githubusercontent.com/70172712/120956626-5398aa80-c72a-11eb-8442-8a1aa082bcf9.png) Semantic Analyzer
 - Type compatibility (assignment, instance and operations) and scope of variables and methods.
 - Personalized error messages.
 
