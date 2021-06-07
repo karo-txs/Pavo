@@ -19,12 +19,12 @@
 
 <AnchorPane id="AnchorPane" fx:id="pn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="644.0" prefWidth="1262.0" style="-fx-background-color: #282A34;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.unicap.compiler.view.FXMLMainScreenController">
     <children>
-      <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="584.0" layoutY="213.0" opacity="0.66" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="233.0" fitWidth="229.0" layoutX="530.0" layoutY="177.0" opacity="0.66" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../images/peacock.png" />
+            <Image url="@../images/newPavo.png" />
          </image>
       </ImageView>
-      <Label fx:id="newFile" alignment="CENTER" layoutX="575.0" layoutY="362.0" prefHeight="27.0" prefWidth="170.0" text="Welcome to Pavo">
+      <Label fx:id="newFile" alignment="CENTER" layoutX="575.0" layoutY="362.0" prefHeight="27.0" prefWidth="170.0" text="Welcome to Pavo" visible="false">
          <font>
             <Font size="18.0" />
          </font>
@@ -55,7 +55,7 @@
             </LinearGradient>
          </textFill>
       </Label>
-      <Label fx:id="openFile" layoutX="575.0" layoutY="381.0" prefHeight="27.0" prefWidth="170.0" text="a minimalist compiler">
+      <Label fx:id="openFile" layoutX="575.0" layoutY="381.0" prefHeight="27.0" prefWidth="170.0" text="a minimalist compiler" visible="false">
          <font>
             <Font size="18.0" />
          </font>
@@ -190,7 +190,7 @@
             <Line endX="34.0" endY="8.0" layoutX="31.0" layoutY="218.0" startX="-31.0" startY="8.0" stroke="#2c3246" />
          </children></Pane>
       <TableView fx:id="table" focusTraversable="false" layoutX="884.0" layoutY="1.0" prefHeight="545.0" prefWidth="400.0" visible="false" />
-      <TabPane fx:id="tabPane" layoutX="65.0" layoutY="2.0" prefHeight="545.0" prefWidth="1219.0" tabClosingPolicy="UNAVAILABLE" />
+      <TabPane fx:id="tabPane" layoutX="65.0" layoutY="1.0" prefHeight="545.0" prefWidth="1219.0" tabClosingPolicy="UNAVAILABLE" />
       <TextField fx:id="nameArchive" layoutX="76.0" layoutY="145.0" prefHeight="24.0" prefWidth="142.0" visible="false" />
     </children>
 </AnchorPane>
