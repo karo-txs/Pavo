@@ -17,6 +17,9 @@ Students:
 ### - Syntactic Analyzer
 - Determines whether the input program represented by the token stream has valid sentences for the programming language with syntax similar to C.
 - Personalized error messages.
+### - Semantic Analyzer
+- Type compatibility (assignment, instance and operations) and scope of variables and methods.
+- Personalized error messages.
 
 ## Technologies / Libraries Used 
 
