@@ -25,8 +25,7 @@ public class Rules {
         tableMethod = new LinkedList<>();
         tableMethodAux = new LinkedList<>();
         this.scan = scan;
-        this.nameArchive = nameArchive;
-        
+        this.nameArchive = nameArchive; 
     }
 
     /*
@@ -109,6 +108,7 @@ public class Rules {
     public boolean verifyCompatibility(List<Token> scope, Token id, List<Token> list) {
         Map<String, TokenType> tableVar = null;
         for (Token esc: scope) {
+            System.out.println("estou aqui");
             if (verifyExists(esc.getToken(), id.getToken())) {
                 tableVar = tableScope.get(esc.getToken());
             }
@@ -121,6 +121,7 @@ public class Rules {
         Token lastVar = null;
 
         for (Token var : list) {
+            System.out.println(list.size());
             if (var.getType() == TokenType.TK_INT
                     || var.getType() == TokenType.TK_FLOAT
                     || var.getType() == TokenType.TK_CHAR
@@ -130,6 +131,7 @@ public class Rules {
                 if (var.getType() == TokenType.TK_IDENTIFIER) {
                     var.setType(tableVar.get(var.getToken()));
                 }
+                System.out.println(idType+"->"+var.getType());
                 if (idType == TokenType.TK_INT && var.getType() != TokenType.TK_INT
                         && var.getType() != TokenType.TK_CHAR) { // int recebe int e char
                     correctOperation = false;

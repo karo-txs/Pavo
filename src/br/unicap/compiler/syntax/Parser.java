@@ -47,7 +47,7 @@ public class Parser {
             } else if (verification(TokenType.TK_KEYWORD_VOID)) {
                 scan();
                 if (verification(TokenType.TK_IDENTIFIER)) {
-                    escopo(new Token(TokenType.TK_IDENTIFIER, token.getToken()));
+                    scope(new Token(TokenType.TK_IDENTIFIER, token.getToken()));
                     scan();
                     method();
                 } else {
@@ -68,13 +68,13 @@ public class Parser {
                 throwException("Duplicate main method");
             } else {
                 createdMain = true;
-                escopo(new Token(TokenType.TK_KEYWORD_MAIN, "main"));
+                scope(new Token(TokenType.TK_KEYWORD_MAIN, "main"));
                 scan();
                 main();
             }
         } else if (verification(TokenType.TK_IDENTIFIER)) {
             scan();
-            escopo(new Token(TokenType.TK_IDENTIFIER, token.getToken()));
+            scope(new Token(TokenType.TK_IDENTIFIER, token.getToken()));
             method();
         } else {
             throwException("<identifier> expected");
@@ -132,16 +132,16 @@ public class Parser {
             }
             while (exception.equals("NULL") && token != null && !scan.isEOF() && (token.getType()
                     != TokenType.TK_SPECIAL_CHARACTER_BRACES_CLOSED)) {
-                if (first(First.statement_var)) {
-                    while (first(First.statement_var)) {
+                if (first(First.statement_var)&& exception.equals("NULL")) {
+                    while (first(First.statement_var) && exception.equals("NULL")) {
                         statement_var();
                     }
-                } else if (first(First.command)) {
-                    while (first(First.command)) {
+                } else if (first(First.command)&& exception.equals("NULL")) {
+                    while (first(First.command)&& exception.equals("NULL")) {
                         command();
                     }
-                } else if (first(First.print)) {
-                    while (first(First.print)) {
+                } else if (first(First.print)&& exception.equals("NULL")) {
+                    while (first(First.print)&& exception.equals("NULL")) {
                         print();
                     }
                 } else {
@@ -212,9 +212,8 @@ public class Parser {
                 if (first(First.arithmetic_exp)) {
                     arithmetic_exp();
                     if (verification(TokenType.TK_SPECIAL_CHARACTER_SEMICOLON)) {
-
-                        rulesSemantic.verifyCompatibility(accumulateScope.get(scope), identificador, accumulateOperation);
                         scan();
+                        rulesSemantic.verifyCompatibility(accumulateScope.get(scope), identificador, accumulateOperation);
                     } else {
                         throwException("';' expected");
                     }
@@ -262,8 +261,8 @@ public class Parser {
                     if (first(First.arithmetic_exp)) {
                         arithmetic_exp();
                         if (verification(TokenType.TK_SPECIAL_CHARACTER_SEMICOLON)) {
-                            rulesSemantic.verifyCompatibility(accumulateScope.get(scope), identificador, accumulateOperation);
                             scan();
+                            rulesSemantic.verifyCompatibility(accumulateScope.get(scope), identificador, accumulateOperation);          
                         } 
                         else {
                             throwException("';' expected");
@@ -432,9 +431,9 @@ public class Parser {
             if (isIdentifier()) {
                 rulesSemantic.assignment(accumulateScope.get(scope), token);
             }
-            scan();
             accumulateOperation.add(token);
-
+            scan();
+           
         }
     }
 
@@ -445,7 +444,7 @@ public class Parser {
             if (first(First.logical_exp)) {
                 logical_exp();
                 if (verification(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_CLOSED)) {
-                    escopo(new Token(TokenType.TK_KEYWORD_IF, "if"));
+                    scope(new Token(TokenType.TK_KEYWORD_IF, "if"));
                     scan();
                     if (first(First.command)) {
                         command();
@@ -482,7 +481,7 @@ public class Parser {
             if (first(First.logical_exp)) {
                 logical_exp();
                 if (verification(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_CLOSED)) {
-                    escopo(new Token(TokenType.TK_KEYWORD_WHILE, "while"));
+                    scope(new Token(TokenType.TK_KEYWORD_WHILE, "while"));
                     scan();
                     if (first(First.command)) {
                         command();
@@ -511,7 +510,7 @@ public class Parser {
                     if (first(First.logical_exp)) {
                         logical_exp();
                         if (verification(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_CLOSED)) {
-                            escopo(new Token(TokenType.TK_KEYWORD_DO_WHILE, "do_while"));
+                            scope(new Token(TokenType.TK_KEYWORD_DO_WHILE, "do_while"));
                             scan();
                             if (verification(TokenType.TK_SPECIAL_CHARACTER_SEMICOLON)) {
                                 scan();
@@ -550,7 +549,7 @@ public class Parser {
                             if (first(First.assignment)) {
                                 assignment_();
                                 if (verification(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_CLOSED)) {
-                                    escopo(new Token(TokenType.TK_KEYWORD_FOR, "for"));
+                                    scope(new Token(TokenType.TK_KEYWORD_FOR, "for"));
                                     scan();
                                     if (first(First.command)) {
                                         command();
@@ -652,7 +651,7 @@ public class Parser {
         return token != null && first.contains(token.getType());
     }
 
-    private void escopo(Token token) {
+    private void scope(Token token) {
         LinkedList visibList = new LinkedList();
 
         if (accumulateScope.containsKey(scope)) {
