@@ -11,7 +11,7 @@ Students:
 > Project Status: In development :warning:
 
 ## Features (Functionalities)
-### ![lexica](https://user-images.githubusercontent.com/70172712/120956577-3663dc00-c72a-11eb-99fa-70c4e3b59a0c.png) Lexical Analysis 
+### ![lexica](https://user-images.githubusercontent.com/70172712/120956577-3663dc00-c72a-11eb-99fa-70c4e3b59a0c.png) Lexical Analyzer 
 - Token identification of programs with syntax similar to the C programming language;
 - Personalized error messages.
 ### ![sintatica](https://user-images.githubusercontent.com/70172712/120956626-5398aa80-c72a-11eb-8442-8a1aa082bcf9.png) Syntactic Analyzer
