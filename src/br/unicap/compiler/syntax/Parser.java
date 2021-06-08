@@ -212,8 +212,9 @@ public class Parser {
                 if (first(First.arithmetic_exp)) {
                     arithmetic_exp();
                     if (verification(TokenType.TK_SPECIAL_CHARACTER_SEMICOLON)) {
-                        scan();
+                        System.out.println("--"+accumulateOperation.size());
                         rulesSemantic.verifyCompatibility(accumulateScope.get(scope), identificador, accumulateOperation);
+                        scan();
                     } else {
                         throwException("';' expected");
                     }
@@ -261,8 +262,8 @@ public class Parser {
                     if (first(First.arithmetic_exp)) {
                         arithmetic_exp();
                         if (verification(TokenType.TK_SPECIAL_CHARACTER_SEMICOLON)) {
-                            scan();
                             rulesSemantic.verifyCompatibility(accumulateScope.get(scope), identificador, accumulateOperation);          
+                            scan();
                         } 
                         else {
                             throwException("';' expected");

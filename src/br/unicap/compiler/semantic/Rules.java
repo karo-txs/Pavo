@@ -25,7 +25,7 @@ public class Rules {
         tableMethod = new LinkedList<>();
         tableMethodAux = new LinkedList<>();
         this.scan = scan;
-        this.nameArchive = nameArchive; 
+        this.nameArchive = nameArchive;
     }
 
     /*
@@ -44,6 +44,7 @@ public class Rules {
             throwException("Variable was not created / Cannot find symbol");
         }
     }
+
     public void addStatement(Token escopo, Token token, TokenType value) {
         if (!verifyExists(escopo.getToken(), token.getToken())) {
             value = value == TokenType.TK_KEYWORD_INT ? TokenType.TK_INT
@@ -107,7 +108,7 @@ public class Rules {
     //Compatibilidade de tipos
     public boolean verifyCompatibility(List<Token> scope, Token id, List<Token> list) {
         Map<String, TokenType> tableVar = null;
-        for (Token esc: scope) {
+        for (Token esc : scope) {
             System.out.println("estou aqui");
             if (verifyExists(esc.getToken(), id.getToken())) {
                 tableVar = tableScope.get(esc.getToken());
@@ -115,6 +116,7 @@ public class Rules {
         }
         boolean correctOperation = true;
         TokenType idType = tableVar.get(id.getToken());
+        System.out.println("id"+idType);
         boolean isString = idType == TokenType.TK_CHAR_SEQUENCE;
         boolean concatString = false;
         TokenType previous = null;
@@ -128,36 +130,37 @@ public class Rules {
                     || var.getType() == TokenType.TK_CHAR_SEQUENCE
                     || var.getType() == TokenType.TK_IDENTIFIER) {
 
-                if (var.getType() == TokenType.TK_IDENTIFIER) {
+                if (var.getType() == TokenType.TK_IDENTIFIER && tableVar.containsKey(var.getToken())) {
                     var.setType(tableVar.get(var.getToken()));
                 }
-                System.out.println(idType+"->"+var.getType());
-                if (idType == TokenType.TK_INT && var.getType() != TokenType.TK_INT
-                        && var.getType() != TokenType.TK_CHAR) { // int recebe int e char
-                    correctOperation = false;
-                    lastVar = var;
-                    break;
+                    System.out.println(idType + "->" + var.getType());
+                    if (idType == TokenType.TK_INT && var.getType() != TokenType.TK_INT
+                            && var.getType() != TokenType.TK_CHAR) { // int recebe int e char
+                        correctOperation = false;
+                        lastVar = var;
+                        break;
 
-                } else if (idType == TokenType.TK_CHAR && var.getType() != idType) { //char so recebe char
-                    correctOperation = false;
-                    lastVar = var;
-                    break;
+                    } else if (idType == TokenType.TK_CHAR && var.getType() != idType) { //char so recebe char
+                        correctOperation = false;
+                        lastVar = var;
+                        break;
 
-                } else if (idType == TokenType.TK_FLOAT && var.getType() != idType //float recebe float, int e char
-                        && var.getType() != TokenType.TK_INT && var.getType() != TokenType.TK_CHAR) {
-                    correctOperation = false;
-                    lastVar = var;
-                    break;
+                    } else if (idType == TokenType.TK_FLOAT && var.getType() != idType //float recebe float, int e char
+                            && var.getType() != TokenType.TK_INT && var.getType() != TokenType.TK_CHAR) {
+                        correctOperation = false;
+                        lastVar = var;
+                        break;
 
-                } else if (previous == TokenType.TK_ARITHMETIC_OPERATOR_PLUS
-                        && isString && var.getType() == idType) {//string recebe tudo, se tiver somado a uma string
-                    concatString = true;
-                }
+                    } else if (previous == TokenType.TK_ARITHMETIC_OPERATOR_PLUS
+                            && isString && var.getType() == idType) {//string recebe tudo, se tiver somado a uma string
+                        concatString = true;
+                    }
 
-                previous = var.getType();
+                    previous = var.getType();
+                
             }
         }
-        if (!correctOperation) {
+        if (!correctOperation && lastVar!=null && idType!=null) {
             throwException("Expected type " + idType.getText() + ", found " + lastVar.getType().getText());
         }
 
