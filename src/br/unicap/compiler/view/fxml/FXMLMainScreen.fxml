@@ -182,7 +182,7 @@
                   <Image url="@../images/geradorCodInter.png" />
                </image>
             </ImageView>
-            <Button layoutX="9.0" layoutY="350.0" mnemonicParsing="false" onAction="#runSintatica" opacity="0.0" prefHeight="37.0" prefWidth="43.0" scaleX="0.7" scaleY="0.7">
+            <Button fx:id="codGen" layoutX="9.0" layoutY="350.0" mnemonicParsing="false" opacity="0.0" prefHeight="37.0" prefWidth="43.0" scaleX="0.7" scaleY="0.7">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
@@ -192,5 +192,6 @@
       <TableView fx:id="table" focusTraversable="false" layoutX="884.0" layoutY="1.0" prefHeight="545.0" prefWidth="400.0" visible="false" />
       <TabPane fx:id="tabPane" layoutX="65.0" layoutY="1.0" prefHeight="545.0" prefWidth="1219.0" tabClosingPolicy="UNAVAILABLE" />
       <TextField fx:id="nameArchive" layoutX="76.0" layoutY="145.0" prefHeight="24.0" prefWidth="142.0" visible="false" />
+      <TextArea fx:id="txtCodGen" editable="false" layoutX="883.0" layoutY="1.0" prefHeight="545.0" prefWidth="400.0" visible="false" />
     </children>
 </AnchorPane>

@@ -64,6 +64,9 @@ public class FXMLMainScreenController implements Initializable {
     private TextArea resultArea;
 
     @FXML
+    private TextArea txtCodGen;
+
+    @FXML
     private ImageView iconMoon;
 
     @FXML
@@ -115,6 +118,9 @@ public class FXMLMainScreenController implements Initializable {
 
     @FXML
     private Button syntax = new Button();
+
+    @FXML
+    private Button codGen = new Button();
 
     @FXML
     private void run(ActionEvent event) {
@@ -206,6 +212,7 @@ public class FXMLMainScreenController implements Initializable {
                         }
                     } else {
                         resultArea.setText("No errors found.\n\nSUCCESSFULLY BUILT!");
+                        runCodGen(ps);
                         if (isDark) {
                             resultArea.setStyle("-fx-text-fill: #8DE38D");
                         } else {
@@ -215,11 +222,29 @@ public class FXMLMainScreenController implements Initializable {
                     }
 
                 }
+
+                
             }
         }
     }
-    //******************
 
+    @FXML
+    private void runCodGen(Parser ps) {
+        padraoCodGen();
+        String codGenTitle = "+---------------------------------------------------------------------------+\n"
+                + " |                                        CODE GENERATION                                       |\n"
+                + "+---------------------------------------------------------------------------+\n";
+
+        txtCodGen.setText(codGenTitle + ps.getPrintCode());
+        resultArea.setStyle("-fx-text-fill: green");
+
+        if (ps.getException().equals("NULL")) {
+            resultArea.setText("The intermediate code was generated successfully!");
+        }
+
+    }
+
+    //******************
     @FXML
     private void change() {
         if (isDark) {
@@ -359,11 +384,20 @@ public class FXMLMainScreenController implements Initializable {
     public void padrao() {
         tabPane.setPrefWidth(1222);
         table.setVisible(false);
+        txtCodGen.setVisible(false);
     }
 
     public void padraoLexica() {
         tabPane.setPrefWidth(1222 - (table.getWidth() + 10));
         table.setVisible(true);
+        txtCodGen.setVisible(false);
+
+    }
+
+    public void padraoCodGen() {
+        tabPane.setPrefWidth(1222 - (table.getWidth() + 10));
+        txtCodGen.setVisible(true);
+        table.setVisible(false);
     }
 
     public Button getAdd() {

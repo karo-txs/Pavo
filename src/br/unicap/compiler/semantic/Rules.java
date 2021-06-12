@@ -167,6 +167,10 @@ public class Rules {
         return isString ? concatString : correctOperation;
     }
 
+    public Map<String, Map<String, TokenType>> getTableEscopo(){
+        return tableScope;
+    }
+    
     /*
         EXEÇÕES
      */
