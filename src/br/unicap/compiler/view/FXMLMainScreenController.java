@@ -118,6 +118,9 @@ public class FXMLMainScreenController implements Initializable {
 
     @FXML
     private Button syntax = new Button();
+    
+    @FXML
+    private Button semantic = new Button();
 
     @FXML
     private Button codGen = new Button();
@@ -193,7 +196,7 @@ public class FXMLMainScreenController implements Initializable {
                 filename = selectedTab.getText();
 
                 Scanner sc = new Scanner(ca.getText(), filename);
-                Parser ps = new Parser(sc, filename);
+                Parser ps = new Parser(sc, filename, 1);
                 ps.runParser();
                 if (!sc.getException().equals("NULL")) {
                     resultArea.setText(sc.getException() + "\n\nCONSTRUCTION FAILURE!");
@@ -211,7 +214,104 @@ public class FXMLMainScreenController implements Initializable {
                             resultArea.setStyle("-fx-text-fill: #B82524");
                         }
                     } else {
-                        resultArea.setText("No errors found.\n\nSUCCESSFULLY BUILT!");
+                        resultArea.setText("No syntax errors found.\n\nSUCCESSFULLY BUILT!");
+                        if (isDark) {
+                            resultArea.setStyle("-fx-text-fill: #8DE38D");
+                        } else {
+                            resultArea.setStyle("-fx-text-fill: green");
+
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    @FXML
+    private void runSemantica(ActionEvent event) {
+        Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
+        if (selectedTab != null) {
+            //cast pra receber o codeArea que esta dentro de scroll
+            scroll = (VirtualizedScrollPane) selectedTab.getContent();
+            //CodeArea ca = (CodeArea) selectedTab.getContent();
+            CodeArea ca = (CodeArea) scroll.getContent();
+            if (ca != null) {
+                padrao();
+                tokens = new ArrayList<>();
+                resultArea.setText("");
+                data = FXCollections.observableArrayList(tokens);
+                table.setItems(data);
+
+                filename = selectedTab.getText();
+
+                Scanner sc = new Scanner(ca.getText(), filename);
+                Parser ps = new Parser(sc, filename, 2);
+                ps.runParser();
+                if (!sc.getException().equals("NULL")) {
+                    resultArea.setText(sc.getException() + "\n\nCONSTRUCTION FAILURE!");
+                    if (isDark) {
+                        resultArea.setStyle("-fx-text-fill: #FF2800");
+                    } else {
+                        resultArea.setStyle("-fx-text-fill: #B82524");
+                    }
+                } else {
+                    if (!ps.getException().equals("NULL")) {
+                        resultArea.setText(ps.getException() + "\n\nCONSTRUCTION FAILURE!");
+                        if (isDark) {
+                            resultArea.setStyle("-fx-text-fill: #FF2800");
+                        } else {
+                            resultArea.setStyle("-fx-text-fill: #B82524");
+                        }
+                    } else {
+                        resultArea.setText("No semantic errors found.\n\nSUCCESSFULLY BUILT!");
+                        if (isDark) {
+                            resultArea.setStyle("-fx-text-fill: #8DE38D");
+                        } else {
+                            resultArea.setStyle("-fx-text-fill: green");
+
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    @FXML
+    private void runGenerator(ActionEvent event) {
+        Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
+        if (selectedTab != null) {
+            //cast pra receber o codeArea que esta dentro de scroll
+            scroll = (VirtualizedScrollPane) selectedTab.getContent();
+            //CodeArea ca = (CodeArea) selectedTab.getContent();
+            CodeArea ca = (CodeArea) scroll.getContent();
+            if (ca != null) {
+                padrao();
+                tokens = new ArrayList<>();
+                resultArea.setText("");
+                data = FXCollections.observableArrayList(tokens);
+                table.setItems(data);
+
+                filename = selectedTab.getText();
+
+                Scanner sc = new Scanner(ca.getText(), filename);
+                Parser ps = new Parser(sc, filename, 3);
+                ps.runParser();
+                if (!sc.getException().equals("NULL")) {
+                    resultArea.setText(sc.getException() + "\n\nCONSTRUCTION FAILURE!");
+                    if (isDark) {
+                        resultArea.setStyle("-fx-text-fill: #FF2800");
+                    } else {
+                        resultArea.setStyle("-fx-text-fill: #B82524");
+                    }
+                } else {
+                    if (!ps.getException().equals("NULL")) {
+                        resultArea.setText(ps.getException() + "\n\nCONSTRUCTION FAILURE!");
+                        if (isDark) {
+                            resultArea.setStyle("-fx-text-fill: #FF2800");
+                        } else {
+                            resultArea.setStyle("-fx-text-fill: #B82524");
+                        }
+                    } else {
                         runCodGen(ps);
                         if (isDark) {
                             resultArea.setStyle("-fx-text-fill: #8DE38D");
@@ -220,10 +320,7 @@ public class FXMLMainScreenController implements Initializable {
 
                         }
                     }
-
                 }
-
-                
             }
         }
     }
@@ -421,6 +518,8 @@ public class FXMLMainScreenController implements Initializable {
         add.setTooltip(new Tooltip("Add file"));
         search.setTooltip(new Tooltip("Search file"));
         lexical.setTooltip(new Tooltip("Lexical Analysis"));
+        semantic.setTooltip(new Tooltip("Semantic Analysis"));
+        codGen.setTooltip(new Tooltip("Code Generation"));
         syntax.setTooltip(new Tooltip("Syntax Analysis"));
         paneArchive.setId("pn");
         resultArea.setVisible(false);

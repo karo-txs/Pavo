@@ -3,25 +3,29 @@ package br.unicap.compiler.codeGen;
 import br.unicap.compiler.lexicon.Token;
 import br.unicap.compiler.lexicon.TokenType;
 import br.unicap.compiler.semantic.Rules;
+import java.util.ArrayDeque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Deque;
 
 public class CodeGenOperation {
 
     private final CodeGen code;
+    private Rules rules;
     private int i, cast1, cast2;
     private Token tk1, tk2, operator, firstVar;
     private TokenType dominantType;
-    private boolean firstVerify, secVerify, castAntes, isRelational;
+    private boolean firstVerify, secVerify, cast1Antes, cast2Antes, isRelational;
     private List<String> auxStructure;
 
-    public CodeGenOperation(CodeGen code) {
+    public CodeGenOperation(CodeGen code, Rules rules) {
+        this.rules = rules;
         this.code = code;
         cast1 = cast2 = i = -1;
         this.tk1 = this.tk2 = operator = null;
         dominantType = null;
-        castAntes = firstVerify = secVerify = false;
+        cast1Antes = cast2Antes = firstVerify = secVerify = false;
         auxStructure = new LinkedList<>();
     }
 
@@ -42,112 +46,149 @@ public class CodeGenOperation {
         operator = t;
     }
 
-    public void storeVar(List<Token> scope, Token id, Rules r, boolean isRelational) {
-        this.isRelational = isRelational;
-        if (firstVar == null) {
-            firstVar = id;
+    public void storeVar(List<Token> scope, Token id, boolean isRelational) {
+        if (rules.getException().equals("NULL")) {
+            cast1Antes = cast2Antes = false;
+            cast1 = cast2 = -1;
+            this.isRelational = isRelational;
+            if (firstVar == null) {
+                firstVar = id;
 
-            if (firstVar.getType() == TokenType.TK_IDENTIFIER) {
+                if (firstVar.getType() == TokenType.TK_IDENTIFIER) {
 
-                Map<String, TokenType> tableVar = null;
-                for (Token esc : scope) {
-                    if (r.verifyExists(esc.getToken(), id.getToken())) {
-                        tableVar = r.getTableEscopo().get(esc.getToken());
+                    Map<String, TokenType> tableVar = null;
+                    for (Token esc : scope) {
+                        if (rules.verifyExists(esc.getToken(), id.getToken())) {
+                            tableVar = rules.getTableEscopo().get(esc.getToken());
+                        }
+                    }
+                    TokenType idType;
+
+                    if (id.getToken() != null && tableVar != null) {
+                        idType = tableVar.get(id.getToken());
+                        firstVar.setType(idType);
                     }
                 }
-                TokenType idType = tableVar.get(id.getToken());
-                firstVar.setType(idType);
             }
         }
     }
 
-    public void typeOfIdentifier(List<Token> scope, Token id, Rules r) {
-        Map<String, TokenType> tableVar = null;
-        for (Token esc : scope) {
-            if (r.verifyExists(esc.getToken(), id.getToken())) {
-                tableVar = r.getTableEscopo().get(esc.getToken());
+    public void typeOfIdentifier(List<Token> scope, Token id) {
+        if (rules.getException().equals("NULL")) {
+            Map<String, TokenType> tableVar = null;
+            for (Token esc : scope) {
+                if (rules.verifyExists(esc.getToken(), id.getToken())) {
+                    tableVar = rules.getTableEscopo().get(esc.getToken());
+                }
             }
-        }
-        TokenType idType = tableVar.get(id.getToken());
+            TokenType idType = tableVar.get(id.getToken());
 
-        if (!secVerify) {
-            tk1.setType(idType);
-        } else {
-            tk2.setType(idType);
+            if (!secVerify) {
+                tk1.setType(idType);
+            } else {
+                tk2.setType(idType);
+            }
         }
     }
 
-    public void calculate(List<Token> scope, Token id, Rules r) {
-        if (tk1 != null && tk1.getType() == TokenType.TK_IDENTIFIER || tk2 != null && tk2.getType() == TokenType.TK_IDENTIFIER) {
-            typeOfIdentifier(scope, id, r);
-        }
-        dominantType();
+    public void calculate(List<Token> scope, Token id) {
+        if (rules.getException().equals("NULL")) {
 
-        if (tk1.getType() != dominantType) {
-            //ex.: T0 = (float) a;
-            code.addCode("T" + i + " = (" + dominantType.getText() + ") " + tk1.getToken() + "\n");
-            cast1 = i;
+            if (tk1 != null && tk1.getType() == TokenType.TK_IDENTIFIER || tk2 != null && tk2.getType() == TokenType.TK_IDENTIFIER) {
+                typeOfIdentifier(scope, id);
+            }
+            dominantType();
+
+            if (tk1.getType() != dominantType) {
+                //ex.: T0 = (float) a;
+                code.addCode("T" + i + " = (" + dominantType.getText() + ") " + tk1.getToken() + "\n");
+                cast1 = i;
+                i++;
+                tk1.setType(dominantType);
+            }
+
+            if (tk2 != null && tk2.getType() != dominantType) {
+                //ex.: T1 = (float) b;
+                code.addCode("T" + i + " = (" + dominantType.getText() + ") " + tk2.getToken() + "\n");
+                cast2 = i;
+                i++;
+            }
+
+            if (firstVerify && secVerify) {
+                code.addCode(
+                        cast1 != -1 && !cast1Antes ? "T" + i + " = T" + cast1
+                                : cast2 != -1 && (i < 2 && i != 1) ? "T" + i + " = T" + (i - 2)
+                                        : cast1Antes ? "T" + i + " = T" + (i - 1)
+                                                : "T" + i + " = " + tk1.getToken());
+
+                firstVerify = false;
+            } else if (secVerify) {
+                code.addCode(
+                        cast1 != -1 && !cast2Antes ? "T" + i + " = T" + cast1
+                                : cast2 != -1 && i < 2 && i != 1 ? "T" + i + " = T" + (i - 2)
+                                        : cast2Antes ? "T" + i + " = T" + (i - 1)
+                                                : "T" + i + " = T" + (i - 1) + "");
+            }
+            if (tk2 != null && operator!=null) {
+                code.addCode(cast2 != -1 ? " " + operator.getToken() + " T" + cast2
+                        : " " + operator.getToken() + " " + tk2.getToken());
+                firstVerify = false;
+            }
+            code.addCode("\n");
             i++;
-            tk1.setType(dominantType);
-        }
 
-        if (tk2 != null && tk2.getType() != dominantType) {
-            //ex.: T1 = (float) b;
-            code.addCode("T" + i + " = (" + dominantType.getText() + ") " + tk2.getToken() + "\n");
-            cast2 = i;
-            i++;
-        }
+            if (cast1 != -1) {
+                cast1 = -1;
+                cast1Antes = true;
+            } else {
+                cast1Antes = false;
+            }
 
-        if (firstVerify && secVerify) {
-            code.addCode(cast1 != -1 && !castAntes ? "T" + i + " = T" + cast1
-                    : (castAntes || cast2 != -1) && i != 1 ? "T" + i + " = T" + (i - 2)
-                            : "T" + i + " = " + tk1.getToken());
-            firstVerify = false;
-        } else if (secVerify) {
-            code.addCode(cast1 != -1 && !castAntes ? "T" + i + " = T" + cast1
-                    : castAntes || cast2 != -1 ? "T" + i + " = T" + (i - 2)
-                            : "T" + i + " = T" + (i - 1) + "");
-        }
-        if (tk2 != null) {
-            code.addCode(cast2 != -1 ? " " + operator.getToken() + " T" + cast2
-                    : " " + operator.getToken() + " " + tk2.getToken());
-            firstVerify = false;
-        }
-        code.addCode("\n");
-        i++;
-
-        if (cast1 != -1) {
-            cast1 = -1;
-            castAntes = true;
-        } else {
-            castAntes = false;
-        }
-
-        if (cast2 != -1) {
-            cast2 = -1;
-            castAntes = true;
-        } else {
-            castAntes = false;
+            if (cast2 != -1) {
+                cast2 = -1;
+                cast2Antes = true;
+            } else {
+                cast2Antes = false;
+            }
         }
     }
 
-    public void calculateAux(List<Token> scope, List<Token> tokens, Rules r) {
-
-        storeVar(scope, tokens.get(0), r, false);
-        for (int i = 2; i < tokens.size(); i++) {
-
-            if (tokens.get(i).getType() == TokenType.TK_CHAR
-                    || tokens.get(i).getType() == TokenType.TK_FLOAT
-                    || tokens.get(i).getType() == TokenType.TK_INT
-                    || tokens.get(i).getType() == TokenType.TK_IDENTIFIER) {
-                storeElement(tokens.get(i));
-            } else if (tokens.get(i).getType() != TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_OPEN
-                    && tokens.get(i).getType() != TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_CLOSED) {
-                storeOperator(tokens.get(i));
+    public void calculatePriority(List<Token> scope, Token identifier, List<Token> tokens) {
+        //10 + 10 * 10 + 10;
+        if (rules.getException().equals("NULL")) {
+            for (int i = 0; i < tokens.size(); i++) {
+                if (tokens.get(i).getType() == TokenType.TK_ARITHMETIC_OPERATOR_MULTIPLICATION) {
+                    i += 1;
+                } else if (tokens.get(i).getType() == TokenType.TK_ARITHMETIC_OPERATOR_DIVISION) {
+                    i += 1;
+                } else {
+                }
             }
+            System.out.println("Ordenação");
         }
-        calculate(scope, tokens.get(0), r);
-        closeOperation();
+    }
+
+    public void calculateAux(List<Token> scope, List<Token> tokens) {
+        if (rules.getException().equals("NULL")) {
+            storeVar(scope, tokens.get(0), false);
+
+            for (int i = 2; i < tokens.size(); i++) {
+                if (tokens.get(i).getType() == TokenType.TK_IDENTIFIER && tokens.get(i).getToken().equals(firstVar.getToken())) {
+                    tokens.get(i).setType(firstVar.getType());
+                }
+
+                if (tokens.get(i).getType() == TokenType.TK_CHAR
+                        || tokens.get(i).getType() == TokenType.TK_FLOAT
+                        || tokens.get(i).getType() == TokenType.TK_INT) {
+                    storeElement(tokens.get(i));
+                } else if (tokens.get(i).getType() != TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_OPEN
+                        && tokens.get(i).getType() != TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_CLOSED) {
+                    storeOperator(tokens.get(i));
+                }
+            }
+            calculate(scope, tokens.get(0));
+            closeOperation();
+        }
     }
 
     private void dominantType() {
@@ -168,34 +209,48 @@ public class CodeGenOperation {
     }
 
     public void closeOperation() {
-        if (secVerify == false) {
-            if (firstVar.getType() != dominantType) {
-                code.addCode("T" + i + " = (" + firstVar.getType().getText() + ") " + tk1.getToken() + "\n");
-                i++;
-                code.addCode((isRelational ? "T" + i : firstVar.getToken()) + " = T" + (i - 1) + "\n");
+        if (firstVar != null) {
+            if (secVerify == false) {
+                if (firstVar.getType() != dominantType) {
+                    code.addCode("T" + i + " = (" + firstVar.getType().getText() + ") " + tk1.getToken() + "\n");
+
+                    if (!isRelational) {
+                        code.addCode(firstVar.getToken() + " = T" + i);
+                    } else {
+                        //i++;
+                        code.addCode("T" + i + " = T" + (i - 1) + "\n");
+                    }
+                } else {
+                    code.addCode((isRelational ? "T" + i : firstVar.getToken()) + " = " + tk1.getToken() + "\n");
+                }
             } else {
-                code.addCode((isRelational ? "T" + i : firstVar.getToken()) + " = " + tk1.getToken() + "\n");
+                if (firstVar.getType() != dominantType) {
+                    dominantType = firstVar.getType();
+                    code.addCode("T" + i + " = (" + dominantType.getText() + ") T" + (i - 1) + "\n");
+
+                    if (!isRelational) {
+                        code.addCode(firstVar.getToken() + " = T" + i);
+                    } else {
+                        //i++;
+                        code.addCode("T" + i + " = T" + (i - 1) + "\n");
+                    }
+                } else {
+                    code.addCode((isRelational ? "T" + i : firstVar.getToken()) + " = T" + (i - 1) + "\n");
+                }
             }
-        } else {
-            if (firstVar.getType() != dominantType) {
-                dominantType = firstVar.getType();
-                code.addCode("T" + i + " = (" + dominantType.getText() + ") T" + (i - 1) + "\n");
-                i++;
-                code.addCode((isRelational ? "T" + i : firstVar.getToken()) + " = T" + (i - 1) + "\n");
-            } else {
-                code.addCode((isRelational ? "T" + i : firstVar.getToken()) + " = T" + (i - 1) + "\n");
-            }
+
+            tk1 = tk2 = operator = null;
+            dominantType = null;
+            firstVerify = secVerify = false;
+            firstVar = null;
         }
-
-        tk1 = tk2 = operator = null;
-        dominantType = null;
-        firstVerify = secVerify = false;
-        firstVar = null;
-
     }
 
     public int getPos() {
         return i;
     }
 
+    public void resetFirstVar() {
+        firstVar = null;
+    }
 }

@@ -109,21 +109,18 @@ public class Rules {
     public boolean verifyCompatibility(List<Token> scope, Token id, List<Token> list) {
         Map<String, TokenType> tableVar = null;
         for (Token esc : scope) {
-            System.out.println("estou aqui");
             if (verifyExists(esc.getToken(), id.getToken())) {
                 tableVar = tableScope.get(esc.getToken());
             }
         }
         boolean correctOperation = true;
         TokenType idType = tableVar.get(id.getToken());
-        System.out.println("id"+idType);
         boolean isString = idType == TokenType.TK_CHAR_SEQUENCE;
         boolean concatString = false;
         TokenType previous = null;
         Token lastVar = null;
-
         for (Token var : list) {
-            System.out.println(list.size());
+            System.out.println(var.getToken());
             if (var.getType() == TokenType.TK_INT
                     || var.getType() == TokenType.TK_FLOAT
                     || var.getType() == TokenType.TK_CHAR
@@ -133,44 +130,43 @@ public class Rules {
                 if (var.getType() == TokenType.TK_IDENTIFIER && tableVar.containsKey(var.getToken())) {
                     var.setType(tableVar.get(var.getToken()));
                 }
-                    System.out.println(idType + "->" + var.getType());
-                    if (idType == TokenType.TK_INT && var.getType() != TokenType.TK_INT
-                            && var.getType() != TokenType.TK_CHAR) { // int recebe int e char
-                        correctOperation = false;
-                        lastVar = var;
-                        break;
+                if (idType == TokenType.TK_INT && var.getType() != TokenType.TK_INT
+                        && var.getType() != TokenType.TK_CHAR) { // int recebe int e char
+                    correctOperation = false;
+                    lastVar = var;
+                    break;
 
-                    } else if (idType == TokenType.TK_CHAR && var.getType() != idType) { //char so recebe char
-                        correctOperation = false;
-                        lastVar = var;
-                        break;
+                } else if (idType == TokenType.TK_CHAR && var.getType() != idType) { //char so recebe char
+                    correctOperation = false;
+                    lastVar = var;
+                    break;
 
-                    } else if (idType == TokenType.TK_FLOAT && var.getType() != idType //float recebe float, int e char
-                            && var.getType() != TokenType.TK_INT && var.getType() != TokenType.TK_CHAR) {
-                        correctOperation = false;
-                        lastVar = var;
-                        break;
+                } else if (idType == TokenType.TK_FLOAT && var.getType() != idType //float recebe float, int e char
+                        && var.getType() != TokenType.TK_INT && var.getType() != TokenType.TK_CHAR) {
+                    correctOperation = false;
+                    lastVar = var;
+                    break;
 
-                    } else if (previous == TokenType.TK_ARITHMETIC_OPERATOR_PLUS
-                            && isString && var.getType() == idType) {//string recebe tudo, se tiver somado a uma string
-                        concatString = true;
-                    }
+                } else if (previous == TokenType.TK_ARITHMETIC_OPERATOR_PLUS
+                        && isString && var.getType() == idType) {//string recebe tudo, se tiver somado a uma string
+                    concatString = true;
+                }
 
-                    previous = var.getType();
-                
+                previous = var.getType();
+
             }
         }
-        if (!correctOperation && lastVar!=null && idType!=null) {
+        if (!correctOperation && lastVar != null && idType != null) {
             throwException("Expected type " + idType.getText() + ", found " + lastVar.getType().getText());
         }
 
         return isString ? concatString : correctOperation;
     }
 
-    public Map<String, Map<String, TokenType>> getTableEscopo(){
+    public Map<String, Map<String, TokenType>> getTableEscopo() {
         return tableScope;
     }
-    
+
     /*
         EXEÇÕES
      */

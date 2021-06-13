@@ -18,7 +18,7 @@ public class Parser {
     private Scanner scan;
     private Token token, previousToken, scope, previousScope;
     private String nameArchive, exception;
-    private Rules rulesSemantic;
+    private static Rules rulesSemantic;
     private boolean createdMain, openScope;
     private List<Token> accumulateOperation;
     private List<String> histScope;
@@ -30,17 +30,20 @@ public class Parser {
     private final boolean isRelational = true;
     private boolean isFor = false;
     private List<Token> aux;
+    
+    private int level = 1; // 1 - Parser; 2 - Semantic; 3 - CodeGen
 
-    public Parser(Scanner scan, String nameArchive) {
+    public Parser(Scanner scan, String nameArchive, int level) {
         this.scan = scan;
         this.nameArchive = nameArchive;
         exception = "NULL";
+        this.level = level;
     }
 
     public void runParser() {
         rulesSemantic = new Rules(scan, nameArchive);
         genCode = new CodeGen();
-        genCodeOp = new CodeGenOperation(genCode);
+        genCodeOp = new CodeGenOperation(genCode, rulesSemantic);
         genCodeStructure = new CodeGenStructure(genCode, genCodeOp);
         accumulateOperation = new LinkedList();
         accumulateScope = new LinkedHashMap<>();
@@ -48,7 +51,7 @@ public class Parser {
 
         //tem que rodar algo aqui pra capturar todos os 
         //metodos criados antes de rodar o programa normal
-        accumulateMethod();
+        if(level==2 || level==3)accumulateMethod();
         scan();
         if (scan.isEOF()) {
             throwException("It does not have a main method");
@@ -73,7 +76,6 @@ public class Parser {
         if (createdMain == false) {
             throwException("It does not have a main method");
         }
-        System.out.println(genCode.printCode());
     }
 
     public void program_() {
@@ -136,7 +138,7 @@ public class Parser {
                         previousScope = accumulateScope.get(scope).get(tam - 2);
                     }
                 }
-                genCodeStructure.closeStructure(rulesSemantic, accumulateScope.get(scope), aux);
+                if(level==3)genCodeStructure.closeStructure(accumulateScope.get(scope), aux);
                 scan();
                 return;
             }
@@ -176,7 +178,7 @@ public class Parser {
                         previousScope = accumulateScope.get(scope).get(tam - 2);
                     }
                 }
-                genCodeStructure.closeStructure(rulesSemantic, accumulateScope.get(scope), aux);
+                if(level==3)genCodeStructure.closeStructure(accumulateScope.get(scope), aux);
                 scan();
             } else {
                 throwException("'}' expected");
@@ -220,18 +222,18 @@ public class Parser {
         accumulateOperation = new LinkedList();
         Token identificador = token;
         if (verification(TokenType.TK_IDENTIFIER)) {
-            genCodeOp.storeVar(accumulateScope.get(scope), token, rulesSemantic, !isRelational);
+            if(level==3)genCodeOp.storeVar(accumulateScope.get(scope), token, !isRelational);
             scan();
             if (verification(TokenType.TK_ARITHMETIC_OPERATOR_ASSIGN)) {
-                rulesSemantic.assignment(accumulateScope.get(scope), previousToken);
+                if(level==2 || level==3)rulesSemantic.assignment(accumulateScope.get(scope), previousToken);
                 scan();
-                accumulateOperation.add(token);
+                //accumulateOperation.add(token);
                 if (first(First.arithmetic_exp)) {
                     arithmetic_exp();
                     if (verification(TokenType.TK_SPECIAL_CHARACTER_SEMICOLON)) {
-                        genCodeOp.closeOperation();
-                        System.out.println("--" + accumulateOperation.size());
-                        rulesSemantic.verifyCompatibility(accumulateScope.get(scope), identificador, accumulateOperation);
+                        if(level==3)genCodeOp.closeOperation();
+                        if(level==2 || level==3)rulesSemantic.verifyCompatibility(accumulateScope.get(scope), identificador, accumulateOperation);
+                        genCodeOp.calculatePriority(accumulateScope.get(scope), identificador, accumulateOperation);
                         scan();
                     } else {
                         throwException("';' expected");
@@ -240,7 +242,7 @@ public class Parser {
                     throwException("Illegal start of expression");
                 }
             } else if (verification(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_OPEN)) {
-                rulesSemantic.callExists(previousToken);
+                if(level==2 || level==3)rulesSemantic.callExists(previousToken);
                 method_call();
             } else {
                 throwException("';' expected");
@@ -251,7 +253,7 @@ public class Parser {
     public void assignment_() {
         if (verification(TokenType.TK_IDENTIFIER)) {
             if(!isFor){
-                genCodeOp.storeVar(accumulateScope.get(scope), token, rulesSemantic, !isRelational);
+                if(level==3)genCodeOp.storeVar(accumulateScope.get(scope), token, !isRelational);
             }
             scan();
             if (verification(TokenType.TK_ARITHMETIC_OPERATOR_ASSIGN)) {
@@ -272,20 +274,21 @@ public class Parser {
             scan();
             Token identificador = token;
             if (verification(TokenType.TK_IDENTIFIER)) {
-                rulesSemantic.addStatement(scope, token, previousToken.getType());
-                genCodeOp.storeVar(accumulateScope.get(scope), token, rulesSemantic, !isRelational);
+                if(level==2 || level==3)rulesSemantic.addStatement(scope, token, previousToken.getType());
+                if(level==3)genCodeOp.storeVar(accumulateScope.get(scope), token, !isRelational);
                 scan();
                 if (verification(TokenType.TK_SPECIAL_CHARACTER_SEMICOLON)) {
+                    if(level==3)genCodeOp.resetFirstVar();
                     scan();
                 } else if (verification(TokenType.TK_ARITHMETIC_OPERATOR_ASSIGN)) {
-                    rulesSemantic.assignment(accumulateScope.get(scope), previousToken);
+                    if(level==2 || level==3)rulesSemantic.assignment(accumulateScope.get(scope), previousToken);
                     scan();
                     accumulateOperation.add(token);
                     if (first(First.arithmetic_exp)) {
                         arithmetic_exp();
                         if (verification(TokenType.TK_SPECIAL_CHARACTER_SEMICOLON)) {
-                            genCodeOp.closeOperation();
-                            rulesSemantic.verifyCompatibility(accumulateScope.get(scope), identificador, accumulateOperation);
+                            if(level==3)genCodeOp.closeOperation();
+                            if(level==2 || level==3)rulesSemantic.verifyCompatibility(accumulateScope.get(scope), identificador, accumulateOperation);
                             scan();
                         } else {
                             throwException("';' expected");
@@ -322,13 +325,13 @@ public class Parser {
 
     public void relational_exp() {
         if (first(First.arithmetic_exp)) {
-           genCodeOp.storeVar(accumulateScope.get(scope), token, rulesSemantic, isRelational);
+           if(level==3)genCodeOp.storeVar(accumulateScope.get(scope), token, isRelational);
             arithmetic_exp();
             if (first(First.relational_operator)) {
-                genCodeOp.closeOperation();
+                if(level==3)genCodeOp.closeOperation();
                 relational_operator();
                 if (first(First.arithmetic_exp)) {
-                    genCodeOp.storeVar(accumulateScope.get(scope), token, rulesSemantic, isRelational);
+                    if(level==3)genCodeOp.storeVar(accumulateScope.get(scope), token, isRelational);
                     arithmetic_exp();
                 } else {
                     throwException("Illegal start of expression");
@@ -369,7 +372,7 @@ public class Parser {
                 || token.getType() == TokenType.TK_RELATIONAL_OPERATOR_MORE_EQUAL
                 || token.getType() == TokenType.TK_RELATIONAL_OPERATOR_NOT
                 || token.getType() == TokenType.TK_RELATIONAL_OPERATOR_NOT_EQUAL) {
-            genCodeStructure.addOperator(token);
+            if(level==3)genCodeStructure.addOperator(token);
             scan();
         }
     }
@@ -383,9 +386,9 @@ public class Parser {
 
     public void arithmetic_exp_() {
         if (verification(TokenType.TK_ARITHMETIC_OPERATOR_PLUS)) {
-            if(!isFor)genCodeOp.storeOperator(token);
-            scan();
+            if(!isFor && level==3)genCodeOp.storeOperator(token);
             accumulateOperation.add(token);
+            scan();
             if (first(First.term)) {
                 term();
                 arithmetic_exp_();
@@ -393,9 +396,9 @@ public class Parser {
                 throwException("Illegal start of expression");
             }
         } else if (verification(TokenType.TK_ARITHMETIC_OPERATOR_MINUS)) {
-            if(!isFor)genCodeOp.storeOperator(token);
-            scan();
+            if(!isFor && level ==3)genCodeOp.storeOperator(token);
             accumulateOperation.add(token);
+            scan();
             if (first(First.term)) {
                 term();
                 arithmetic_exp_();
@@ -414,9 +417,9 @@ public class Parser {
 
     public void term_() {
         if (verification(TokenType.TK_ARITHMETIC_OPERATOR_MULTIPLICATION)) {
-            if(!isFor)genCodeOp.storeOperator(token);
-            scan();
+            if(!isFor && level ==3)genCodeOp.storeOperator(token);
             accumulateOperation.add(token);
+            scan();
             if (first(First.factor)) {
                 factor();
                 term_();
@@ -424,9 +427,9 @@ public class Parser {
                 throwException("Illegal start of expression");
             }
         } else if (verification(TokenType.TK_ARITHMETIC_OPERATOR_DIVISION)) {
-            if(!isFor)genCodeOp.storeOperator(token);
-            scan();
+            if(!isFor && level ==3)genCodeOp.storeOperator(token);
             accumulateOperation.add(token);
+            scan();
             if (first(First.factor)) {
                 factor();
                 term_();
@@ -460,11 +463,11 @@ public class Parser {
                 || token.getType() == TokenType.TK_CHAR_SEQUENCE)) {
 
             if (isIdentifier()) {
-                rulesSemantic.assignment(accumulateScope.get(scope), token);
+                if(level==2 || level==3)rulesSemantic.assignment(accumulateScope.get(scope), token);
             }
             accumulateOperation.add(token);
-            genCodeOp.storeElement(token);
-            if(!isFor) genCodeOp.calculate(accumulateScope.get(scope), token, rulesSemantic);
+            if(level==3)genCodeOp.storeElement(token);
+            if(!isFor&& level==3) genCodeOp.calculate(accumulateScope.get(scope), token);
             scan();
 
         }
@@ -478,15 +481,15 @@ public class Parser {
                 logical_exp();
                 if (verification(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_CLOSED)) {
                     scope(new Token(TokenType.TK_KEYWORD_IF, "if"));
-                    genCodeOp.closeOperation(); 
-                    genCodeStructure.generateIf();
+                    if(level==3){genCodeOp.closeOperation(); 
+                    genCodeStructure.generateIf();}
                     scan();
                     if (first(First.command)) {
                         command();
                         if (token != null
                                 && verification(TokenType.TK_KEYWORD_ELSE)) {
                             scan();
-                            genCodeStructure.closeStructure(rulesSemantic, accumulateScope.get(scope), aux);
+                            if(level==3)genCodeStructure.closeStructure(accumulateScope.get(scope), aux);
                             if (first(First.command_)) {
                                 command_();
                             }
@@ -518,8 +521,8 @@ public class Parser {
                 logical_exp();
                 if (verification(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_CLOSED)) {
                     scope(new Token(TokenType.TK_KEYWORD_WHILE, "while"));
-                    genCodeOp.closeOperation();
-                    genCodeStructure.generateWhile();
+                    if(level==3){genCodeOp.closeOperation();
+                    genCodeStructure.generateWhile();}
                     scan();
                     if (first(First.command)) {
                         command();
@@ -579,12 +582,12 @@ public class Parser {
             if (first(First.assignment)) {
                 assignment_();
                 if (verification(TokenType.TK_SPECIAL_CHARACTER_SEMICOLON)) {
-                    genCodeOp.closeOperation();
+                    if(level==3)genCodeOp.closeOperation();
                     scan();
                     if (first(First.logical_exp)) {
                         logical_exp();
                         if (verification(TokenType.TK_SPECIAL_CHARACTER_SEMICOLON)) {
-                            genCodeOp.closeOperation();
+                            if(level==3)genCodeOp.closeOperation();
                             scan();
                             if (first(First.assignment)) {
                                 isFor = true;
@@ -594,7 +597,7 @@ public class Parser {
                                 if (verification(TokenType.TK_SPECIAL_CHARACTER_PARENTHESES_CLOSED)) {
                                     //genCodeOp.closeOperation();
                                     scope(new Token(TokenType.TK_KEYWORD_FOR, "for"));
-                                    genCodeStructure.generateFor();
+                                    if(level==3)genCodeStructure.generateFor();
                                     scan();
                                     if (first(First.command)) {
                                         command();
@@ -691,9 +694,14 @@ public class Parser {
     }
 
     private boolean verification(TokenType tokenType) {
-        return scan.getException().equals("NULL")
+        if(level==2 || level==3|| level == 3){
+            return scan.getException().equals("NULL")
                 && rulesSemantic.getException().equals("NULL")
                 && token.getType() == tokenType;
+        }else{
+            return scan.getException().equals("NULL")
+                && token.getType() == tokenType;
+        }
     }
 
     private boolean first(List first) {

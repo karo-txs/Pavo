@@ -1,7 +1,6 @@
 package br.unicap.compiler.codeGen;
 
 import br.unicap.compiler.lexicon.Token;
-import br.unicap.compiler.semantic.Rules;
 import java.util.List;
 
 public class CodeGenStructure extends CodeGen {
@@ -19,35 +18,40 @@ public class CodeGenStructure extends CodeGen {
         this.operator = null;
         this.structureOpen = this.isWhile = false;
     }
-    
+
     public void generateIf() {
-        if(operator!=null){
-            String t1 = "T"+(codeOp.getPos()-1);
-            String t2 = "T"+codeOp.getPos();
-            
+        if (!isWhile && !isFor) {
+            code.addCode("//IF\n");
+        }
+        if (operator != null) {
+            String t1 = "T" + (codeOp.getPos() - 1);
+            String t2 = "T" + codeOp.getPos();
+
             pos++;
             code.addCode("L" + pos + ": if " + t1 + " " + operator + " " + t2
-                    + " goto " + "L" + (pos + 1)+"\n");//L1: T1 < T2 goto L2
+                    + " goto " + "L" + (pos + 1) + "\n");//L1: T1 < T2 goto L2
             pos++;
             structureOpen = true;
         }
     }
-    
+
     public void generateWhile() {
-        if(operator!=null){
-            generateIf();
+        code.addCode("//WHILE\n");
+        if (operator != null) {
             isWhile = true;
-        }
-    }
-    
-    public void generateFor() {
-        if(operator!=null){
             generateIf();
-            isFor = true;
         }
     }
-    
-    public void addOperator(Token op){
+
+    public void generateFor() {
+        code.addCode("//FOR\n");
+        if (operator != null) {
+            isFor = true;
+            generateIf();
+        }
+    }
+
+    public void addOperator(Token op) {
         operator = invertOperation(op);
     }
 
@@ -68,24 +72,26 @@ public class CodeGenStructure extends CodeGen {
         }
         return null;
     }
-    
-    public void closeStructure(Rules r, List<Token> scope, List<Token> ... aux){
-        if(structureOpen){
-            if(isWhile){
-                code.addCode("goto L"+(pos-1)+"\n");  
-                code.addCode("L" + pos + ":");  
-            }else if(isFor){
-                codeOp.calculateAux(scope, aux[0], r);
-                code.addCode("goto L"+(pos-1)+"\n");  
-                code.addCode("L" + pos + ":");  
-            }else{
+
+    public void closeStructure(List<Token> scope, List<Token>... aux) {
+        if (structureOpen) {
+            if (isWhile) {
+                code.addCode("goto L" + (pos - 1) + "\n");
+                code.addCode("L" + pos + ":");
+                isWhile = false;
+            } else if (isFor) {
+                codeOp.calculateAux(scope, aux[0]);
+                code.addCode("goto L" + (pos - 1) + "\n");
+                code.addCode("L" + pos + ":");
+                isFor = false;
+            } else {
                 code.addCode("L" + pos + ":");
             }
-            structureOpen = false; 
+            structureOpen = false;
         }
     }
-    
-    public int getPos(){
+
+    public int getPos() {
         return pos;
     }
 }

@@ -132,7 +132,7 @@
                   <Image url="@../images/play.png" />
                </image>
             </ImageView>
-            <Button fx:id="play" layoutX="8.0" layoutY="7.0" mnemonicParsing="false" onAction="#run" opacity="0.0" prefHeight="42.0" prefWidth="45.0" scaleX="0.7" scaleY="0.7">
+            <Button fx:id="play" layoutX="8.0" layoutY="7.0" mnemonicParsing="false" onAction="#runGenerator" opacity="0.0" prefHeight="42.0" prefWidth="45.0" scaleX="0.7" scaleY="0.7">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
@@ -177,17 +177,27 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <ImageView fitHeight="40.0" fitWidth="45.0" layoutX="11.0" layoutY="376.0" opacity="0.63" pickOnBounds="true" preserveRatio="true" scaleX="0.7" scaleY="0.7" y="-28.0">
+            <ImageView fitHeight="40.0" fitWidth="45.0" layoutX="12.0" layoutY="428.0" opacity="0.63" pickOnBounds="true" preserveRatio="true" scaleX="0.7" scaleY="0.7" y="-28.0">
                <image>
                   <Image url="@../images/geradorCodInter.png" />
                </image>
             </ImageView>
-            <Button fx:id="codGen" layoutX="9.0" layoutY="350.0" mnemonicParsing="false" opacity="0.0" prefHeight="37.0" prefWidth="43.0" scaleX="0.7" scaleY="0.7">
+            <Button fx:id="codGen" layoutX="10.0" layoutY="402.0" mnemonicParsing="false" onAction="#runGenerator" opacity="0.0" prefHeight="37.0" prefWidth="43.0" scaleX="0.7" scaleY="0.7">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
             <Line endX="34.0" endY="8.0" layoutX="31.0" layoutY="218.0" startX="-31.0" startY="8.0" stroke="#2c3246" />
+            <ImageView fitHeight="40.0" fitWidth="45.0" layoutX="12.0" layoutY="375.0" opacity="0.63" pickOnBounds="true" preserveRatio="true" scaleX="0.7" scaleY="0.7" y="-28.0">
+               <image>
+                  <Image url="@../images/semantica.png" />
+               </image>
+            </ImageView>
+            <Button fx:id="semantic" layoutX="10.0" layoutY="349.0" mnemonicParsing="false" onAction="#runSemantica" opacity="0.0" prefHeight="37.0" prefWidth="43.0" scaleX="0.7" scaleY="0.7">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
          </children></Pane>
       <TableView fx:id="table" focusTraversable="false" layoutX="884.0" layoutY="1.0" prefHeight="545.0" prefWidth="400.0" visible="false" />
       <TabPane fx:id="tabPane" layoutX="65.0" layoutY="1.0" prefHeight="545.0" prefWidth="1219.0" tabClosingPolicy="UNAVAILABLE" />
