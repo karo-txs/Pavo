@@ -1,13 +1,21 @@
 package br.unicap.compiler.view.util;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
+import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javafx.application.Application;
 import javafx.concurrent.Task;
@@ -24,11 +32,11 @@ import org.reactfx.Subscription;
 
 public class CKeywordsAsync extends Application {
 
-    public static final String[] KEYWORDS = new String[] {
-        "asm","auto","break","case","char","const","continue","default","do",
-        "double","else","enum","extern","float","for","goto","if","int","long",
-        "main","register","return","short","signed","sizeof","static","struct",
-        "switch","typedef","union","unsigned","void","volatile","while", "print"
+    public static final String[] KEYWORDS = new String[]{
+        "asm", "auto", "break", "case", "char", "const", "continue", "default", "do",
+        "double", "else", "enum", "extern", "float", "for", "goto", "if", "int", "long",
+        "main", "register", "return", "short", "signed", "sizeof", "static", "struct",
+        "switch", "typedef", "union", "unsigned", "void", "volatile", "while", "print"
     };
 
     private static final String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";
@@ -49,33 +57,82 @@ public class CKeywordsAsync extends Application {
             + "|(?<COMMENT>" + COMMENT_PATTERN + ")"
     );
 
-    public static final String sampleCode = String.join("\n", new String[] {
-            "int main(){",
-            "    int a = 10;",
-            "",
-            "    if(a>10){",
-            "        a = 10;",
-            "    }",
-            "",
-            "    int b;",
-            "  ",
-            "    while(a==b){",
-            "        float c;",
-            "        char d;",
-            "    ",
-            "        int i;",
-            "        for(i=0; i < 10; i = i+1){",
-            "            c = d;",
-            "        }",
-            "    }",
-            "    if(a==b){",
-            "        a = b;",
-            "    }else{",
-            "        b = a;",
-            "    }",
-            "}"
+    public static final String sampleCode = String.join("\n", new String[]{
+        "// Pavo, a minimalist Compiler"
+        , "// Universidade Católica de Pernambuco - ICAM TECH"
+        , "// Mini Demo - v1.0.0"
+        , ""
+        , "int main(){"
+        , "    // Criação de variáveis"
+        , "    int a = 4;"
+        , "    int b = b/a*(a+5)/12*(5-a*2);"
+        , "    int c = c*a;"
+        , "    float d = (b*b - 4*a*c)*(a+b-c); "
+        , "    "
+        , "    int fimOp = 1;"
+        , "    "
+        , "    do{       "
+        , "        while(b<=50 && b!=c || a>=30 && c!=0){ //expressões lógicas e relacionais"
+        , "              int a;"
+        , "              int g;"
+        , "              g = a * b; //utilização de variáveis locais e globais"
+        , "        }"
+        , "        "
+        , "        if(a<b){ //Encadeamento de if e else"
+        , "            calculaB();"
+        , "            print(\"executou o calcularB!\");"
+        , "            "
+        , "        }else if(a<c || b!=c){ "
+        , "            calculaOperacao(); //chama de funções"
+        , "            print(\"executou o calculaOperacao!\");"
+        , "            "
+        , "        }else if(a==b+c && c!=b/a){"
+        , "            calculaB();"
+        , "            calculaOperacao();"
+        , "            print(\"executou calculaB e calculaOperacao\");"
+        , "            "
+        , "        }else if(a+b+c>=c){"
+        , "            print(\"não executou\");"
+        , "            "
+        , "        }else{"
+        , "            print(\"não existe!\");"
+        , "        }"
+        , "        "
+        , "        do{"
+        , "            char resp = 'n';"
+        , "            print(\"continuar calculando? s - (sim) / n - (não)\");"
+        , "            "
+        , "            if(resp!='n')resp = 's'; //estruturas sem chaves     "
+        , "        }while(resp!='s');"
+        , "    }while(fimOp!=0);"
+        , "}"
+        , ""
+        , "void calculaOperacao(){ //criação de métodos"
+        , "    int i;"
+        , "    int fib1 = 1;"
+        , "    int fib2 = fib1;"
+        , "    int soma;"
+        , "	"
+        , "    for(i = 3; i <= soma; i = i + 1){	"
+        , "        soma = fib1 + fib2;"
+        , "	fib1 = fib2;"
+        , "	fib2 = soma;"
+        , "	print(\"fib2\");"
+        , "    }"
+        , "}"
+        , ""
+        , "int calculaB(){"
+        , "    float a = 10.0;"
+        , "    float b = a*2-(a+a*2)*a+4;"
+        , "    "
+        , "    if(a<10 && a!=0 || a*a!=a+a){"
+        , "    	float d;"
+        , "    	d = a + b;"
+        , "    "
+        , "        calculaOperacao();"
+        , "    }"
+        , "}"
     });
-
 
     public static void main(String[] args) {
         launch(args);
@@ -94,7 +151,7 @@ public class CKeywordsAsync extends Application {
                 .supplyTask(this::computeHighlightingAsync)
                 .awaitLatest(codeArea.multiPlainChanges())
                 .filterMap(t -> {
-                    if(t.isSuccess()) {
+                    if (t.isSuccess()) {
                         return Optional.of(t.get());
                     } else {
                         t.getFailure().printStackTrace();
@@ -104,7 +161,6 @@ public class CKeywordsAsync extends Application {
                 .subscribe(this::applyHighlighting);
 
         // call when no longer need it: `cleanupWhenFinished.unsubscribe();`
-
         codeArea.replaceText(0, 0, sampleCode);
 
         Scene scene = new Scene(new StackPane(new VirtualizedScrollPane<>(codeArea)), 600, 400);
@@ -140,16 +196,17 @@ public class CKeywordsAsync extends Application {
         int lastKwEnd = 0;
         StyleSpansBuilder<Collection<String>> spansBuilder
                 = new StyleSpansBuilder<>();
-        while(matcher.find()) {
-            String styleClass =
-                    matcher.group("KEYWORD") != null ? "keyword" :
-                    matcher.group("PAREN") != null ? "paren" :
-                    matcher.group("BRACE") != null ? "brace" :
-                    matcher.group("BRACKET") != null ? "bracket" :
-                    matcher.group("SEMICOLON") != null ? "semicolon" :
-                    matcher.group("STRING") != null ? "string" :
-                    matcher.group("COMMENT") != null ? "comment" :
-                    null; /* never happens */ assert styleClass != null;
+        while (matcher.find()) {
+            String styleClass
+                    = matcher.group("KEYWORD") != null ? "keyword"
+                    : matcher.group("PAREN") != null ? "paren"
+                    : matcher.group("BRACE") != null ? "brace"
+                    : matcher.group("BRACKET") != null ? "bracket"
+                    : matcher.group("SEMICOLON") != null ? "semicolon"
+                    : matcher.group("STRING") != null ? "string"
+                    : matcher.group("COMMENT") != null ? "comment"
+                    : null;
+            /* never happens */ assert styleClass != null;
             spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);
             spansBuilder.add(Collections.singleton(styleClass), matcher.end() - matcher.start());
             lastKwEnd = matcher.end();

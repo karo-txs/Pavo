@@ -81,6 +81,7 @@ public class CodeGenOperation {
                     tableVar = rules.getTableEscopo().get(esc.getToken());
                 }
             }
+            
             TokenType idType = tableVar.get(id.getToken());
 
             if (!secVerify) {

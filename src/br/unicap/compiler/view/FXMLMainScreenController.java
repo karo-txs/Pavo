@@ -2,6 +2,7 @@ package br.unicap.compiler.view;
 
 import br.unicap.compiler.lexicon.Scanner;
 import br.unicap.compiler.lexicon.Token;
+import br.unicap.compiler.syntax.Level;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -196,7 +197,7 @@ public class FXMLMainScreenController implements Initializable {
                 filename = selectedTab.getText();
 
                 Scanner sc = new Scanner(ca.getText(), filename);
-                Parser ps = new Parser(sc, filename, 1);
+                Parser ps = new Parser(sc, filename, Level.PARSER);
                 ps.runParser();
                 if (!sc.getException().equals("NULL")) {
                     resultArea.setText(sc.getException() + "\n\nCONSTRUCTION FAILURE!");
@@ -245,7 +246,7 @@ public class FXMLMainScreenController implements Initializable {
                 filename = selectedTab.getText();
 
                 Scanner sc = new Scanner(ca.getText(), filename);
-                Parser ps = new Parser(sc, filename, 2);
+                Parser ps = new Parser(sc, filename, Level.SEMANTIC);
                 ps.runParser();
                 if (!sc.getException().equals("NULL")) {
                     resultArea.setText(sc.getException() + "\n\nCONSTRUCTION FAILURE!");
@@ -294,7 +295,7 @@ public class FXMLMainScreenController implements Initializable {
                 filename = selectedTab.getText();
 
                 Scanner sc = new Scanner(ca.getText(), filename);
-                Parser ps = new Parser(sc, filename, 3);
+                Parser ps = new Parser(sc, filename, Level.CODGEN);
                 ps.runParser();
                 if (!sc.getException().equals("NULL")) {
                     resultArea.setText(sc.getException() + "\n\nCONSTRUCTION FAILURE!");

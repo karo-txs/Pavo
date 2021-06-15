@@ -1,0 +1,74 @@
+// Pavo, a minimalist Compiler
+// Universidade Católica de Pernambuco - ICAM TECH
+// Mini Demo - v1.0.0
+
+int main(){
+    // Criação de variáveis
+    int a = 4;
+    int b = b/a*(a+5)/12*(5-a*2);
+    int c = c*a;
+    float d = (b*b - 4*a*c)*(a+b-c); 
+    
+    int fimOp = 1;
+    
+    do{       
+        while(b<=50 && b!=c || a>=30 && c!=0){ //expressões lógicas e relacionais
+              int a;
+              int g;
+              g = a * b; //utilização de variáveis locais e globais
+        }
+        
+        if(a<b){ //Encademaneto de if e else
+            calculaB();
+            print("executou o calcularB!");
+            
+        }else if(a<c || b!=c){ 
+            calculaOperacao(); //chama de funções
+            print("executou o calculaOperacao!");
+            
+        }else if(a==b+c && c!=b/a){
+            calculaB();
+            calculaOperacao();
+            print("executou calculaB e calculaOperacao");
+            
+        }else if(a+b+c>=c){
+            print("não executou");
+            
+        }else{
+            print("não existe!");
+        }
+        
+        do{
+            char resp = 'n';
+            print("continuar calculando? s - (sim) / n - (não)");
+            
+            if(resp!='n')resp = 's'; //estruturas sem chaves     
+        }while(resp!='s');
+    }while(fimOp!=0);
+}
+
+void calculaOperacao(){ //criação de métodos
+    int i;
+    int fib1 = 1;
+    int fib2 = fib1;
+    int soma;
+	
+    for(i = 3; i <= soma; i = i + 1){	
+        soma = fib1 + fib2;
+	fib1 = fib2;
+	fib2 = soma;
+	print("fib2");
+    }
+}
+
+int calculaB(){
+    float a = 10.0;
+    float b = a*2-(a+a*2)*a+4;
+    
+    if(a<10 && a!=0 || a*a!=a+a){
+    	float d;
+    	d = a + b;
+    
+        calculaOperacao();
+    }
+}

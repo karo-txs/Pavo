@@ -41,7 +41,7 @@ public class Rules {
         }
 
         if (!exists) {
-            throwException("Variable was not created / Cannot find symbol");
+            throwException("Variable was not created");
         }
     }
 
@@ -98,7 +98,7 @@ public class Rules {
 
     public void callExists(Token token) {
         if (!tableMethod.contains(token.getToken())) {
-            throwException("Method was not created / Cannot find symbol");
+            throwException("Method was not created");
         }
     }
 
@@ -108,17 +108,20 @@ public class Rules {
     //Compatibilidade de tipos
     public boolean verifyCompatibility(List<Token> scope, Token id, List<Token> list) {
         Map<String, TokenType> tableVar = null;
+        boolean correctOperation = true;
+        boolean concatString = false;
+        TokenType previous = null;
+        Token lastVar = null;
+        
         for (Token esc : scope) {
             if (verifyExists(esc.getToken(), id.getToken())) {
                 tableVar = tableScope.get(esc.getToken());
             }
         }
-        boolean correctOperation = true;
+        
         TokenType idType = tableVar.get(id.getToken());
         boolean isString = idType == TokenType.TK_CHAR_SEQUENCE;
-        boolean concatString = false;
-        TokenType previous = null;
-        Token lastVar = null;
+        
         for (Token var : list) {
             System.out.println(var.getToken());
             if (var.getType() == TokenType.TK_INT
@@ -126,10 +129,21 @@ public class Rules {
                     || var.getType() == TokenType.TK_CHAR
                     || var.getType() == TokenType.TK_CHAR_SEQUENCE
                     || var.getType() == TokenType.TK_IDENTIFIER) {
-
-                if (var.getType() == TokenType.TK_IDENTIFIER && tableVar.containsKey(var.getToken())) {
-                    var.setType(tableVar.get(var.getToken()));
+//                System.out.println("Var" + var.getToken() + "+" + var.getType());
+//                if (var.getType() == TokenType.TK_IDENTIFIER && tableVar.containsKey(var.getToken())) {
+//                    System.out.println("Convertido para: " + tableVar.get(var.getToken()));
+//                    var.setType(tableVar.get(var.getToken()));
+//                }
+                if (var.getType() == TokenType.TK_IDENTIFIER) {
+                    for (Token esc : scope) {
+                        if (verifyExists(esc.getToken(), var.getToken())) {
+                            tableVar = tableScope.get(esc.getToken());
+                            System.out.println("Convertido para: " + tableVar.get(var.getToken()));
+                            var.setType(tableVar.get(var.getToken()));
+                        }
+                    }
                 }
+
                 if (idType == TokenType.TK_INT && var.getType() != TokenType.TK_INT
                         && var.getType() != TokenType.TK_CHAR) { // int recebe int e char
                     correctOperation = false;

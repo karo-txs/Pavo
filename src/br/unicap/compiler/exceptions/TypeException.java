@@ -1,7 +1,7 @@
 package br.unicap.compiler.exceptions;
 
 public enum TypeException {
-    LEXICAL("EmptyChar"),
+    LEXICAL("Lexical"),
     SYNTAX("Syntax"),
     SEMANTIC("Semantic"),
     ;

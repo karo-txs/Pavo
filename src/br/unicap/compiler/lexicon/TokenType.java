@@ -174,4 +174,20 @@ public enum TokenType {
             return null;
         }
     }
+
+    public static String returnMasterType(Token t) {
+        if (t.getType() == TK_RELATIONAL_OPERATOR_EQUAL
+                || t.getType() == TK_RELATIONAL_OPERATOR_MORE
+                || t.getType() == TK_RELATIONAL_OPERATOR_MORE_EQUAL
+                || t.getType() == TK_RELATIONAL_OPERATOR_LESS
+                || t.getType() == TK_RELATIONAL_OPERATOR_LESS_EQUAL
+                || t.getType() == TK_RELATIONAL_OPERATOR_NOT_EQUAL) {
+            return "RELATIONAL";
+        }else if (t.getType() == TK_LOGIC_AND
+                || t.getType() == TK_LOGIC_OR){
+            return "LOGICAL";
+        }else{
+            return "OTHER";
+        }
+    }
 }
