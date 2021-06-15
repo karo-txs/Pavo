@@ -20,9 +20,6 @@ Students:
 ### ![semantica](https://user-images.githubusercontent.com/58193125/122065197-20a88380-cdc8-11eb-8077-06262fc48366.png) Semantic Analyzer
 - Type compatibility (assignment, instance and operations) and scope of variables and methods.
 - Personalized error messages.
-### ![semantica](https://user-images.githubusercontent.com/58193125/122065197-20a88380-cdc8-11eb-8077-06262fc48366.png) Semantic Analyzer
-- Type compatibility (assignment, instance and operations) and scope of variables and methods.
-- Personalized error messages.
 ### ![geradorCodInter](https://user-images.githubusercontent.com/58193125/122065280-3158f980-cdc8-11eb-8995-b46a5b05a4ee.png) Intermediate Code Generator
 - Arithmetic operations (order of precedence, scope, cast)
 - Structures (if, if else, while, for)
